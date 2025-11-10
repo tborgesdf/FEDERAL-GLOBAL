@@ -124,32 +124,18 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
           </div>
 
           {/* Desktop: Informações à direita */}
-          <div className="hidden xl:flex flex-col gap-4">
+          <div className="hidden lg:flex flex-col gap-3 flex-shrink-0">
             {/* Botões Login e Cadastrar-se / User Info */}
-            <div className="flex items-center justify-end gap-4">
+            <div className="flex items-center justify-end gap-2 lg:gap-3">
               {isLoggedIn ? (
                 <>
-                  <div className="flex items-center gap-3 rounded-xl bg-[#F5F6F8] px-4 py-2 border border-[#0A4B9E20]">
-                    <div className="h-8 w-8 rounded-full bg-[#0A4B9E] flex items-center justify-center">
-                      <span
-                        style={{
-                          fontFamily: "Poppins, sans-serif",
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          color: "#FFFFFF"
-                        }}
-                      >
+                  <div className="flex items-center gap-2 rounded-lg bg-[#F5F6F8] px-3 py-1.5 border border-[#0A4B9E20]">
+                    <div className="h-7 w-7 rounded-full bg-[#0A4B9E] flex items-center justify-center">
+                      <span className="text-xs font-bold text-white">
                         {userEmail?.charAt(0).toUpperCase() || "U"}
                       </span>
                     </div>
-                    <span
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 500,
-                        color: "#0A4B9E"
-                      }}
-                    >
+                    <span className="text-xs font-medium text-[#0A4B9E] max-w-[100px] xl:max-w-[150px] truncate">
                       {userEmail || "Usuário"}
                     </span>
                   </div>
@@ -157,11 +143,8 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                     onClick={onNavigateToLogin}
                     onMouseEnter={() => setHoveredButton("logout")}
                     onMouseLeave={() => setHoveredButton(null)}
-                    className="rounded-xl px-6 py-2 shadow-lg transition-all duration-200"
+                    className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200"
                     style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "16px",
-                      fontWeight: 600,
                       backgroundColor: "#FF4444",
                       color: "white",
                       opacity: hoveredButton === "logout" ? 0.9 : 1,
@@ -177,11 +160,8 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                     onClick={onNavigateToLogin}
                     onMouseEnter={() => setHoveredButton("login")}
                     onMouseLeave={() => setHoveredButton(null)}
-                    className="rounded-xl px-6 py-2 shadow-lg transition-all duration-200"
+                    className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200"
                     style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "16px",
-                      fontWeight: 600,
                       backgroundColor: "#0058CC",
                       color: "white",
                       opacity: hoveredButton === "login" ? 0.9 : 1,
@@ -195,60 +175,51 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                     onClick={currentPage === "home" ? onNavigateToRegister : undefined}
                     onMouseEnter={() => setHoveredButton("signup")}
                     onMouseLeave={() => setHoveredButton(null)}
-                    className="rounded-xl px-6 py-2 shadow-lg transition-all duration-200"
+                    className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200 whitespace-nowrap"
                     style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "16px",
-                      fontWeight: 600,
                       backgroundColor: "#0058CC",
                       color: "white",
                       opacity: hoveredButton === "signup" ? 0.9 : 1,
                       transform: hoveredButton === "signup" ? "scale(1.03)" : "scale(1)"
                     }}
                   >
-                    Cadastrar-se
+                    Cadastrar
                   </button>
                 </>
               )}
             </div>
             
-            <div className="flex items-center gap-4 2xl:gap-6">
-              {/* Localização */}
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#0A4B9E] flex-shrink-0" />
-                <span className="text-sm text-[#555] whitespace-nowrap">{mockWeatherData.location}</span>
-              </div>
-
+            <div className="flex items-center gap-2 lg:gap-3 xl:gap-4 flex-wrap justify-end">
               {/* Data e hora */}
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-[#0A4B9E] flex-shrink-0" />
-                <span className="text-sm text-[#555] whitespace-nowrap">{formatDate(currentTime)}</span>
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-[#0A4B9E] flex-shrink-0" />
+                <span className="text-xs text-[#555] whitespace-nowrap">{formatDateShort(currentTime)}</span>
               </div>
 
               {/* Clima atual */}
-              <div className="flex items-center gap-2 rounded-lg bg-[#F7F8FA] px-3 py-2">
-                <span className="text-2xl">{mockWeatherData.icon}</span>
+              <div className="flex items-center gap-1.5 rounded-lg bg-[#F7F8FA] px-2.5 py-1.5">
+                <span className="text-lg">{mockWeatherData.icon}</span>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
-                  <span className="text-xs text-[#555]">
+                  <span className="text-xs font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
+                  <span className="text-[10px] text-[#555] leading-tight">
                     {mockWeatherData.description}
                   </span>
                 </div>
               </div>
 
-              {/* Previsão 5 dias */}
-              <div className="flex gap-2">
-                {mockWeatherData.forecast.map((day, index) => (
+              {/* Previsão - apenas em telas muito grandes */}
+              <div className="hidden 2xl:flex gap-1.5">
+                {mockWeatherData.forecast.slice(0, 3).map((day, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center rounded-lg bg-[#F7F8FA] px-2 py-2"
+                    className="flex flex-col items-center rounded-lg bg-[#F7F8FA] px-1.5 py-1.5"
                   >
-                    <span className="text-xs text-[#555]">
+                    <span className="text-[10px] text-[#555]">
                       {getDayName(day.dateISO)}
                     </span>
-                    <span className="text-lg">{day.icon}</span>
-                    <span className="text-xs text-[#111]">
-                      {day.maxC}° / {day.minC}°
+                    <span className="text-sm">{day.icon}</span>
+                    <span className="text-[10px] text-[#111]">
+                      {day.maxC}°/{day.minC}°
                     </span>
                   </div>
                 ))}
@@ -257,24 +228,24 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
           </div>
 
           {/* Tablet: Versão simplificada */}
-          <div className="hidden md:flex xl:hidden flex-col gap-3 flex-1 items-end ml-4">
+          <div className="hidden md:flex lg:hidden flex-col gap-2 flex-shrink-0 items-end ml-3">
             {/* Botões */}
             <div className="flex items-center gap-2">
               {isLoggedIn ? (
                 <>
-                  <div className="flex items-center gap-2 rounded-lg bg-[#F5F6F8] px-3 py-1.5 border border-[#0A4B9E20]">
+                  <div className="flex items-center gap-2 rounded-lg bg-[#F5F6F8] px-2.5 py-1.5 border border-[#0A4B9E20]">
                     <div className="h-6 w-6 rounded-full bg-[#0A4B9E] flex items-center justify-center">
                       <span className="text-xs font-bold text-white">
                         {userEmail?.charAt(0).toUpperCase() || "U"}
                       </span>
                     </div>
-                    <span className="text-xs font-medium text-[#0A4B9E] max-w-[120px] truncate">
-                      {userEmail || "Usuário"}
+                    <span className="text-xs font-medium text-[#0A4B9E] max-w-[80px] truncate">
+                      {userEmail || "User"}
                     </span>
                   </div>
                   <button
                     onClick={onNavigateToLogin}
-                    className="rounded-lg px-4 py-1.5 text-sm font-semibold bg-[#FF4444] text-white shadow-md transition-all hover:opacity-90"
+                    className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-[#FF4444] text-white shadow-md transition-all hover:opacity-90"
                   >
                     Sair
                   </button>
@@ -283,13 +254,13 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                 <>
                   <button
                     onClick={onNavigateToLogin}
-                    className="rounded-lg px-4 py-1.5 text-sm font-semibold bg-[#0058CC] text-white shadow-md transition-all hover:opacity-90"
+                    className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-[#0058CC] text-white shadow-md transition-all hover:opacity-90"
                   >
                     Login
                   </button>
                   <button
                     onClick={currentPage === "home" ? onNavigateToRegister : undefined}
-                    className="rounded-lg px-4 py-1.5 text-sm font-semibold bg-[#0058CC] text-white shadow-md transition-all hover:opacity-90"
+                    className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-[#0058CC] text-white shadow-md transition-all hover:opacity-90 whitespace-nowrap"
                   >
                     Cadastrar
                   </button>
@@ -298,30 +269,26 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
             </div>
 
             {/* Info compacta */}
-            <div className="flex items-center gap-3 text-xs">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5 text-[#0A4B9E]" />
-                <span className="text-[#555]">{formatDateShort(currentTime)}</span>
-              </div>
-              <div className="flex items-center gap-1.5 rounded-md bg-[#F7F8FA] px-2 py-1">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 rounded-md bg-[#F7F8FA] px-2 py-1">
                 <span className="text-base">{mockWeatherData.icon}</span>
-                <span className="font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
+                <span className="text-xs font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
               </div>
             </div>
           </div>
 
           {/* Mobile: Menu hambúrguer */}
-          <div className="flex md:hidden items-center gap-3">
-            <div className="flex items-center gap-1.5 rounded-md bg-[#F7F8FA] px-2 py-1">
-              <span className="text-lg">{mockWeatherData.icon}</span>
-              <span className="text-sm font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
+          <div className="flex md:hidden items-center gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 rounded-md bg-[#F7F8FA] px-2 py-1">
+              <span className="text-base">{mockWeatherData.icon}</span>
+              <span className="text-xs font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
             </div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg bg-[#0058CC] text-white shadow-md transition-transform active:scale-95"
               aria-label="Menu"
             >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
         </div>
