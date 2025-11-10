@@ -18,7 +18,7 @@ test.describe('Home Page - Federal Express Brasil', () => {
     
     // Verificar Footer
     await expect(page.locator('footer')).toBeVisible();
-    await expect(page.locator('text=/Â© 2025 Federal Express Brasil/i')).toBeVisible();
+    await expect(page.locator('text=/© 2025 Federal Express Brasil/i')).toBeVisible();
   });
 
   test('deve ter responsividade mobile (360px)', async ({ page }) => {

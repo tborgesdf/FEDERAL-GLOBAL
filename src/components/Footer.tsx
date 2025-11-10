@@ -28,7 +28,7 @@ export default function Footer() {
                 lineHeight: "1.6"
               }}
             >
-              Soluçéµes migratórias completas para você e sua família. Unindo
+              Soluções migratórias completas para você e sua família. Unindo
               pessoas, culturas e oportunidades desde 2010.
             </p>
           </div>
@@ -196,7 +196,7 @@ export default function Footer() {
             color: "rgba(255, 255, 255, 0.8)"
           }}
         >
-          Â© 2025 Federal Express Brasil â€” Soluçéµes Migratórias. Todos os direitos
+          © 2025 Federal Express Brasil â€” Soluções Migratórias. Todos os direitos
           reservados.
         </p>
 
