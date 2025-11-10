@@ -1,9 +1,9 @@
-/**
+﻿/**
  * BreakpointTester - Componente para teste visual de responsividade
  * 
- * Exibe informações em tempo real sobre:
+ * Exibe informaçéµes em tempo real sobre:
  * - Breakpoint atual
- * - Dimensões da tela
+ * - Dimenséµes da tela
  * - Grid ativo
  * - Margins/Gutters
  * 
@@ -179,20 +179,20 @@ export default function BreakpointTester() {
             e.currentTarget.style.backgroundColor = "#F3F4F6";
           }}
         >
-          ×
+          é—
         </button>
       </div>
 
       {/* Divisor */}
       <div style={{ height: "1px", backgroundColor: "#E5E7EB", margin: "16px 0" }} />
 
-      {/* Informações */}
+      {/* Informaçéµes */}
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {/* Dimensões */}
+        {/* Dimenséµes */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ color: "#6B7280", fontSize: "13px" }}>Dimensões:</span>
+          <span style={{ color: "#6B7280", fontSize: "13px" }}>Dimenséµes:</span>
           <span style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600, color: "#111827" }}>
-            {windowSize.width} × {windowSize.height}px
+            {windowSize.width} é— {windowSize.height}px
           </span>
         </div>
 
@@ -228,33 +228,35 @@ export default function BreakpointTester() {
       <div style={{ fontSize: "12px", color: "#6B7280", lineHeight: "1.6" }}>
         {windowSize.width < 360 && (
           <div style={{ padding: "8px", backgroundColor: "#FEF2F2", borderRadius: "8px", color: "#DC2626", marginBottom: "8px" }}>
-            ⚠️ Largura abaixo do mínimo recomendado (360px)
+            âš ï¸ Largura abaixo do mínimo recomendado (360px)
           </div>
         )}
         
         {windowSize.width >= 360 && windowSize.width < 768 && (
           <div style={{ padding: "8px", backgroundColor: "#F0FDF4", borderRadius: "8px", color: "#16A34A" }}>
-            ✓ Layout mobile ativo
+            âœ“ Layout mobile ativo
           </div>
         )}
         
         {windowSize.width >= 768 && windowSize.width < 1024 && (
           <div style={{ padding: "8px", backgroundColor: "#EFF6FF", borderRadius: "8px", color: "#2563EB" }}>
-            ✓ Layout tablet ativo
+            âœ“ Layout tablet ativo
           </div>
         )}
         
         {windowSize.width >= 1024 && (
           <div style={{ padding: "8px", backgroundColor: "#F5F3FF", borderRadius: "8px", color: "#7C3AED" }}>
-            ✓ Layout desktop ativo
+            âœ“ Layout desktop ativo
           </div>
         )}
       </div>
 
       {/* Footer */}
       <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E5E7EB", fontSize: "11px", color: "#9CA3AF", textAlign: "center" }}>
-        Federal Express Brasil • Design System v1.0
+        Federal Express Brasil â€¢ Design System v1.0
       </div>
     </div>
   );
 }
+
+

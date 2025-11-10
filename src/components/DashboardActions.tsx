@@ -1,4 +1,4 @@
-import { PlusCircle, Clock, FileText } from "lucide-react";
+﻿import { PlusCircle, Clock, FileText } from "lucide-react";
 
 interface ActionCard {
   id: string;
@@ -19,14 +19,14 @@ const actionCards: ActionCard[] = [
   {
     id: "in-progress",
     title: "Acompanhar Solicitação em Andamento",
-    description: "Visualize o status das suas operações em processamento",
+    description: "Visualize o status das suas operaçéµes em processamento",
     icon: "clock",
     color: "#2BA84A"
   },
   {
     id: "history",
-    title: "Histórico de Solicitações",
-    description: "Acesse todas as suas transações e operações anteriores",
+    title: "Histórico de Solicitaçéµes",
+    description: "Acesse todas as suas transaçéµes e operaçéµes anteriores",
     icon: "history",
     color: "#7C6EE4"
   }
@@ -73,7 +73,7 @@ export default function DashboardActions({ onCardClick }: DashboardActionsProps)
 
           {/* Conteúdo */}
           <div className="relative z-10">
-            {/* Ícone */}
+            {/* écone */}
             <div
               className="inline-flex items-center justify-center rounded-xl p-3 mb-4 transition-all duration-300 group-hover:scale-110"
               style={{
@@ -144,3 +144,5 @@ export default function DashboardActions({ onCardClick }: DashboardActionsProps)
     </div>
   );
 }
+
+

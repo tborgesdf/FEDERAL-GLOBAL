@@ -1,4 +1,4 @@
-import { MapPin, Calendar } from "lucide-react";
+﻿import { MapPin, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 import logoImage from "figma:asset/fdb4ef494a99e771ad2534fa1ee70561858f6471.png";
 
@@ -30,13 +30,13 @@ const mockWeatherData: WeatherData = {
   location: "São Paulo, Brasil",
   tempC: 24,
   description: "Parcialmente nublado",
-  icon: "⛅",
+  icon: "â›…",
   forecast: [
-    { dateISO: "2025-11-07", minC: 18, maxC: 26, icon: "⛅" },
-    { dateISO: "2025-11-08", minC: 19, maxC: 27, icon: "☀️" },
-    { dateISO: "2025-11-09", minC: 17, maxC: 25, icon: "🌧️" },
-    { dateISO: "2025-11-10", minC: 16, maxC: 23, icon: "⛈️" },
-    { dateISO: "2025-11-11", minC: 18, maxC: 26, icon: "☀️" }
+    { dateISO: "2025-11-07", minC: 18, maxC: 26, icon: "â›…" },
+    { dateISO: "2025-11-08", minC: 19, maxC: 27, icon: "â˜€ï¸" },
+    { dateISO: "2025-11-09", minC: 17, maxC: 25, icon: "Œ§ï¸" },
+    { dateISO: "2025-11-10", minC: 16, maxC: 23, icon: "â›ˆï¸" },
+    { dateISO: "2025-11-11", minC: 18, maxC: 26, icon: "â˜€ï¸" }
   ],
   fetchedAt: "2025-11-06T20:21:00Z"
 };
@@ -81,7 +81,7 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     
-    return `${dayName}, ${day} de ${month} de ${year} – ${hours}:${minutes}`;
+    return `${dayName}, ${day} de ${month} de ${year} â€“ ${hours}:${minutes}`;
   };
 
   const getDayName = (dateISO: string) => {
@@ -107,15 +107,15 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
             >
               <img
                 src={logoImage}
-                alt="Federal Express Brasil - Soluções Migratórias"
+                alt="Federal Express Brasil - Soluçéµes Migratórias"
                 className="h-24 w-auto"
               />
             </div>
           </div>
 
-          {/* Informações à direita */}
+          {/* Informaçéµes é  direita */}
           <div className="flex flex-col gap-4">
-            {/* Botões Login e Cadastrar-se / User Info */}
+            {/* Botéµes Login e Cadastrar-se / User Info */}
             <div className="flex items-center justify-end gap-4">
               {isLoggedIn ? (
                 <>
@@ -219,7 +219,7 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
               <div className="flex items-center gap-2 rounded-lg bg-[#F7F8FA] px-3 py-2">
                 <span className="text-2xl">{mockWeatherData.icon}</span>
                 <div className="flex flex-col">
-                  <span className="text-[#111]">{mockWeatherData.tempC}°C</span>
+                  <span className="text-[#111]">{mockWeatherData.tempC}Â°C</span>
                   <span className="text-xs text-[#555]">
                     {mockWeatherData.description}
                   </span>
@@ -238,7 +238,7 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                     </span>
                     <span className="text-lg">{day.icon}</span>
                     <span className="text-xs text-[#111]">
-                      {day.maxC}° / {day.minC}°
+                      {day.maxC}Â° / {day.minC}Â°
                     </span>
                   </div>
                 ))}
@@ -250,3 +250,4 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
     </header>
   );
 }
+

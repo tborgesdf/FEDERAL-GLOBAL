@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Header from "./Header";
 import Hero from "./Hero";
 import MultimediaSection from "./MultimediaSection";
@@ -282,3 +282,5 @@ export default function RegisterPage({
     </div>
   );
 }
+
+

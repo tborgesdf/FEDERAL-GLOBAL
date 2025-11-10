@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import Header from "./Header";
 import Hero from "./Hero";
 import TickerBar from "./TickerBar";
@@ -7,7 +7,7 @@ import CurrencyCalculator from "./CurrencyCalculator";
 import SummaryTipsCard from "./SummaryTipsCard";
 import MultimediaSection from "./MultimediaSection";
 import Footer from "./Footer";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 interface DashboardProps {
   onLogout: () => void;
@@ -21,10 +21,10 @@ export default function Dashboard({ onLogout, userEmail }: DashboardProps) {
         toast.info("Contratar Novo Serviço - Em desenvolvimento");
         break;
       case "in-progress":
-        toast.info("Acompanhar Solicitações - Em desenvolvimento");
+        toast.info("Acompanhar Solicitaçéµes - Em desenvolvimento");
         break;
       case "history":
-        toast.info("Histórico de Solicitações - Em desenvolvimento");
+        toast.info("Histórico de Solicitaçéµes - Em desenvolvimento");
         break;
       default:
         break;
@@ -66,7 +66,7 @@ export default function Dashboard({ onLogout, userEmail }: DashboardProps) {
                 textAlign: "center"
               }}
             >
-              Área do Cliente
+              érea do Cliente
             </h2>
 
             {/* Cards de ação */}
@@ -97,3 +97,5 @@ export default function Dashboard({ onLogout, userEmail }: DashboardProps) {
     </div>
   );
 }
+
+

@@ -1,9 +1,9 @@
-# 📐 HANDOFF TÉCNICO - Federal Express Brasil
+﻿# 📐 HANDOFF TÉCNICO - Federal Express Brasil
 
-## ✅ VALIDAÇÃO DE PRODUÇÃO
+## ✅ VALIDAÇéO DE PRODUÇéO
 
 **Data:** 2025-11-07  
-**Status:** ✅ APROVADO PARA PRODUÇÃO  
+**Status:** ✅ APROVADO PARA PRODUÇéO  
 **Design System:** Federal Express Brasil v1.0  
 **Stack:** React 18 + Vite 5 + TypeScript + Tailwind CSS 4 + Supabase
 
@@ -15,7 +15,7 @@
 ```css
 --primary-blue: #0A4B9E;      /* Primária - Títulos, Header */
 --secondary-blue: #0058CC;    /* Secundária - Links, Destaques */
---action-green: #2BA84A;      /* Ação - CTAs principais */
+--action-green: #2BA84A;      /* Açéo - CTAs principais */
 --support-green: #56B544;     /* Suporte - Botões secundários */
 --accent-purple: #7C6EE4;     /* Destaque - Cards especiais */
 --neutral-bg: #F5F6F8;        /* Fundo - Seções alternadas */
@@ -116,7 +116,7 @@ Max Width: 328px
 - Altura fixa: 48px
 - Background: #063E74
 - Texto: #FFFFFF (compra) / #8CD000 (venda)
-- Animação: scroll infinito 60s linear
+- Animaçéo: scroll infinito 60s linear
 - Ícones: TrendingUp (verde) / TrendingDown (vermelho)
 
 **Responsividade:**
@@ -167,7 +167,7 @@ gap: 16px;
     icon: "Plus"
   },
   {
-    title: "Acompanhar Solicitação em Andamento",
+    title: "Acompanhar Solicitaçéo em Andamento",
     color: "#2BA84A",
     icon: "Clock"
   },
@@ -231,7 +231,7 @@ color: #FFFFFF;
 border: 1px solid #8CD000;
 font-weight: 600;
 
-/* Transição */
+/* Transiçéo */
 transition: all 300ms ease-out;
 ```
 
@@ -239,7 +239,7 @@ transition: all 300ms ease-out;
 ```typescript
 [
   {
-    label: "Taxa de conversão",
+    label: "Taxa de converséo",
     value: "1 USD = R$ 5,4321"
   },
   {
@@ -262,7 +262,7 @@ transition: all 300ms ease-out;
 ]
 ```
 
-**Botão CTA:**
+**Botéo CTA:**
 ```css
 background: #56B544;
 color: #FFFFFF;
@@ -354,7 +354,7 @@ margin-top: 24px;
       <SummaryTipsCard />
     </div>
     
-    <!-- Seção Canal Migratório -->
+    <!-- Seçéo Canal Migratório -->
     <MultimediaSection />
   </main>
   
@@ -438,18 +438,18 @@ border: 1px solid #DC2626;
 ✅ Ticker (#8CD000) em Azul Escuro (#063E74): 9.2:1 (AAA)
 ```
 
-### Navegação por Teclado
+### Navegaçéo por Teclado
 ```typescript
-// Todos os botões e links são focáveis
+// Todos os botões e links séo focáveis
 tabIndex={0}
 
 // Ordem de foco lógica
 1. Header → Logo, Links, Login/Logout
-2. TickerBar → (sem interação)
+2. TickerBar → (sem interaçéo)
 3. Dashboard Actions → Card 1, 2, 3
-4. Calculator → Abas, Inputs, Botão
-5. Tips Card → (sem interação)
-6. Footer → Links de navegação
+4. Calculator → Abas, Inputs, Botéo
+5. Tips Card → (sem interaçéo)
+6. Footer → Links de navegaçéo
 ```
 
 ### Textos Alternativos
@@ -458,7 +458,7 @@ tabIndex={0}
 <img src="..." alt="" />
 
 <!-- Imagens informativas -->
-<img src="..." alt="Descrição completa" />
+<img src="..." alt="Descriçéo completa" />
 
 <!-- Ícones -->
 <LucideIcon aria-hidden="true" />
@@ -503,30 +503,30 @@ tabIndex={0}
 
 ---
 
-## 🔍 VALIDAÇÃO DE HOTSPOTS
+## 🔍 VALIDAÇéO DE HOTSPOTS
 
 ### Zonas Clicáveis Verificadas
 ```typescript
 // Todos os botões têm área mínima de 44x44px (iOS/Android)
 const minTouchTarget = 44; // pixels
 
-// Nenhum elemento sobreposto bloqueia interação
+// Nenhum elemento sobreposto bloqueia interaçéo
 // Testado com DevTools → Elements → Show Rulers
 ```
 
 ### Z-Index Hierarchy
 ```css
-z-index: 9999; /* Botão flutuante de teste */
+z-index: 9999; /* Botéo flutuante de teste */
 z-index: 1000; /* Header sticky */
 z-index: 100;  /* Modais/Dialogs */
 z-index: 50;   /* TickerBar */
 z-index: 10;   /* Cards com hover */
-z-index: 1;    /* Conteúdo padrão */
+z-index: 1;    /* Conteúdo padréo */
 ```
 
 ---
 
-## 🚫 REMOÇÃO DE reCAPTCHA
+## 🚫 REMOÇéO DE reCAPTCHA
 
 ### Status: ✅ REMOVIDO COMPLETAMENTE
 
@@ -543,13 +543,13 @@ Verificado em:
 
 ### Smart Animate (Figma → CSS)
 ```css
-/* Transição padrão */
+/* Transiçéo padréo */
 transition: all 200ms ease-out;
 
-/* Transição de cor */
+/* Transiçéo de cor */
 transition: background-color 200ms ease-out, color 200ms ease-out;
 
-/* Transição de transformação */
+/* Transiçéo de transformaçéo */
 transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
 ```
 
@@ -565,7 +565,7 @@ animation: scroll 60s linear infinite;
 
 ---
 
-## 📦 EXPORTAÇÃO DEV MODE
+## 📦 EXPORTAÇéO DEV MODE
 
 ### Componentes Exportáveis (Figma → Code)
 
@@ -578,7 +578,7 @@ animation: scroll 60s linear infinite;
 ✅ Footer
 ```
 
-### Sincronização Design ↔ Code
+### Sincronizaçéo Design ↔ Code
 ```bash
 # Tokens sincronizados via globals.css
 /styles/globals.css
@@ -589,7 +589,7 @@ animation: scroll 60s linear infinite;
 
 ---
 
-## ✅ APROVAÇÃO PARA PRODUÇÃO
+## ✅ APROVAÇéO PARA PRODUÇéO
 
 ### Checklist Final
 
@@ -610,17 +610,17 @@ animation: scroll 60s linear infinite;
 - [x] DashboardActions: 3 cards responsivos
 - [x] CurrencyCalculator: abas funcionais, breakdown completo
 - [x] SummaryTipsCard: layout adaptável
-- [x] Dashboard: integração perfeita
+- [x] Dashboard: integraçéo perfeita
 
 #### Interatividade
 - [x] Hover effects em todos os botões
 - [x] Smart Animate 200ms ease-out
-- [x] Navegação Login ↔ Cadastro funcionando
+- [x] Navegaçéo Login ↔ Cadastro funcionando
 - [x] CTAs com links mock (SERVICOS_*)
 
 #### Acessibilidade
 - [x] Contraste WCAG AA em todos os textos
-- [x] Navegação por teclado funcional
+- [x] Navegaçéo por teclado funcional
 - [x] Alt texts apropriados
 - [x] Touch targets mínimos (44px)
 
@@ -628,11 +628,11 @@ animation: scroll 60s linear infinite;
 - [x] Sem reCAPTCHA (carga reduzida)
 - [x] Animações com GPU (transform/opacity)
 - [x] Imagens otimizadas (Unsplash)
-- [x] CSS minificado em produção
+- [x] CSS minificado em produçéo
 
 #### Backend
 - [x] Servidor Supabase online
-- [x] Rotas de autenticação funcionais
+- [x] Rotas de autenticaçéo funcionais
 - [x] KV Store configurado
 - [x] CORS habilitado
 
@@ -653,12 +653,12 @@ animation: scroll 60s linear infinite;
 /supabase/functions/server/   ← Backend completo
 ```
 
-### Documentação
+### Documentaçéo
 ```
-/README.md          ← Visão geral do projeto
+/README.md          ← Viséo geral do projeto
 /DESENVOLVIMENTO.md ← Roadmap e próximos passos
 /HANDOFF.md        ← Este documento
-/.env.example      ← Configuração de ambiente
+/.env.example      ← Configuraçéo de ambiente
 ```
 
 ### Deploy
@@ -666,7 +666,7 @@ animation: scroll 60s linear infinite;
 # Desenvolvimento
 npm run dev
 
-# Build de produção
+# Build de produçéo
 npm run build
 
 # Preview
@@ -677,14 +677,14 @@ npm run preview
 
 ## 🎯 PRÓXIMAS ETAPAS
 
-1. **Integração API PTAX Real**
+1. **Integraçéo API PTAX Real**
    - Conectar com Banco Central do Brasil
    - Cache de cotações (1 hora)
    - Fallback para último dia útil
 
 2. **SSE (Server-Sent Events)**
-   - Atualização push das moedas
-   - Indicador visual de conexão
+   - Atualizaçéo push das moedas
+   - Indicador visual de conexéo
 
 3. **Páginas de Serviços**
    - Contratar Novo Serviço
@@ -698,5 +698,5 @@ npm run preview
 ---
 
 **Documento aprovado por:** Equipe de Design + Desenvolvimento  
-**Data de aprovação:** 2025-11-07  
-**Versão:** 1.0 - Produção Ready ✅
+**Data de aprovaçéo:** 2025-11-07  
+**Verséo:** 1.0 - Produçéo Ready ✅

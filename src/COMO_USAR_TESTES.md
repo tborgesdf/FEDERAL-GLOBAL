@@ -1,8 +1,8 @@
-# 🧪 COMO USAR AS FERRAMENTAS DE TESTE
+﻿# 🧪 COMO USAR AS FERRAMENTAS DE TESTE
 
-## 📍 LOCALIZAÇÃO
+## 📍 LOCALIZAÇéO
 
-Quando você abrir a aplicação, verá **dois elementos flutuantes**:
+Quando você abrir a aplicaçéo, verá **dois elementos flutuantes**:
 
 ### 1️⃣ BreakpointTester (Canto Inferior Esquerdo)
 ![Widget no canto inferior esquerdo]
@@ -12,11 +12,11 @@ Quando você abrir a aplicação, verá **dois elementos flutuantes**:
 - Ícone do dispositivo atual
 - Informações em tempo real
 
-### 2️⃣ Botão "Ver Dashboard" (Canto Inferior Direito)
-![Botão verde no canto inferior direito]
+### 2️⃣ Botéo "Ver Dashboard" (Canto Inferior Direito)
+![Botéo verde no canto inferior direito]
 
 **Aparência:**
-- Botão verde grande
+- Botéo verde grande
 - Texto: "🚀 TESTE: Ver Dashboard"
 - Visível apenas na home
 
@@ -26,7 +26,7 @@ Quando você abrir a aplicação, verá **dois elementos flutuantes**:
 
 ### Passo 1: Visualizar Informações
 
-Ao abrir a aplicação, o widget aparece automaticamente mostrando:
+Ao abrir a aplicaçéo, o widget aparece automaticamente mostrando:
 
 ```
 ┌───────────────────────────────┐
@@ -44,12 +44,12 @@ Ao abrir a aplicação, o widget aparece automaticamente mostrando:
 
 ### Passo 2: Redimensionar a Janela
 
-**Opção A: Redimensionar manualmente**
+**Opçéo A: Redimensionar manualmente**
 1. Arraste a borda da janela do navegador
 2. Observe as informações mudarem em tempo real
 3. O widget muda de cor conforme o breakpoint
 
-**Opção B: Usar DevTools (Recomendado)**
+**Opçéo B: Usar DevTools (Recomendado)**
 1. Pressione `F12` (ou `Cmd+Opt+I` no Mac)
 2. Clique no ícone de celular no topo (ou `Cmd+Shift+M`)
 3. Selecione um dispositivo no dropdown:
@@ -90,17 +90,17 @@ Margin 48px      →      Margin 80px
 
 **Para minimizar:**
 1. Clique no "×" no canto superior direito do widget
-2. O widget se transforma em um **botão circular** com ícone
+2. O widget se transforma em um **botéo circular** com ícone
 
 **Para expandir novamente:**
-1. Clique no botão circular
+1. Clique no botéo circular
 2. O widget volta a aparecer completo
 
 ---
 
 ## 📊 CORES DOS BREAKPOINTS
 
-O widget muda de cor para facilitar identificação:
+O widget muda de cor para facilitar identificaçéo:
 
 | Breakpoint | Cor da Borda | Ícone |
 |------------|--------------|-------|
@@ -112,18 +112,18 @@ O widget muda de cor para facilitar identificação:
 
 ---
 
-## 🚀 COMO USAR O BOTÃO "VER DASHBOARD"
+## 🚀 COMO USAR O BOTéO "VER DASHBOARD"
 
-### Passo 1: Localizar o Botão
+### Passo 1: Localizar o Botéo
 
 **Onde está:**
 - Canto inferior direito
 - Apenas visível na **home page**
-- Botão verde grande
+- Botéo verde grande
 
 ### Passo 2: Clicar
 
-1. Clique no botão "🚀 TESTE: Ver Dashboard"
+1. Clique no botéo "🚀 TESTE: Ver Dashboard"
 2. Você será **imediatamente redirecionado** para o dashboard
 3. Um token de teste é salvo automaticamente
 
@@ -131,7 +131,7 @@ O widget muda de cor para facilitar identificação:
 
 Você agora está na **área logada** com:
 - ✅ TickerBar no topo (10 moedas)
-- ✅ 3 cards de ação
+- ✅ 3 cards de açéo
 - ✅ Calculadora PTAX
 - ✅ Card de resumo & dicas
 - ✅ Header mostrando email: `teste@federalexpress.com.br`
@@ -213,8 +213,8 @@ Você agora está na **área logada** com:
 2. Observe o TickerBar no topo
 3. Aguarde 8 segundos
 4. As moedas devem:
-   - Mudar de valor (simulação)
-   - Ícones de variação mudam (↗/↘)
+   - Mudar de valor (simulaçéo)
+   - Ícones de variaçéo mudam (↗/↘)
    - Cores mudam (verde/vermelho)
 5. Aguarde 60 segundos
 6. O carrossel deve **completar um loop** sem quebras
@@ -229,7 +229,7 @@ Você agora está na **área logada** com:
 3. Selecione uma moeda (ex: USD)
 4. Digite um valor (ex: 1000)
 5. Observe o breakdown:
-   - Taxa de conversão
+   - Taxa de converséo
    - IOF 0,38%
    - Custos
    - VET destacado
@@ -237,7 +237,7 @@ Você agora está na **área logada** com:
 7. Repita o teste
 8. Valores devem recalcular
 
-### Teste 4: Cards de Ação
+### Teste 4: Cards de Açéo
 
 **Objetivo:** Verificar hover e click
 
@@ -246,15 +246,15 @@ Você agora está na **área logada** com:
 2. Deve acontecer:
    - Escala aumenta (1.02)
    - Sombra fica maior
-   - Transição suave 300ms
+   - Transiçéo suave 300ms
 3. Clique em um card
 4. Deve acontecer:
    - Escala diminui momentaneamente (0.98)
    - Feedback visual de clique
 
-### Teste 5: Navegação Login ↔ Cadastro
+### Teste 5: Navegaçéo Login ↔ Cadastro
 
-**Objetivo:** Testar navegação cruzada
+**Objetivo:** Testar navegaçéo cruzada
 
 **Passos:**
 1. Na home, clique em "Login"
@@ -265,7 +265,7 @@ Você agora está na **área logada** com:
 
 ---
 
-## 🎯 CHECKLIST DE VALIDAÇÃO VISUAL
+## 🎯 CHECKLIST DE VALIDAÇéO VISUAL
 
 Use este checklist ao testar:
 
@@ -274,15 +274,15 @@ Use este checklist ao testar:
 - [ ] MarketTicker anima
 - [ ] 2 carrosséis de notícias funcionam
 - [ ] Botões "Login" e "Cadastrar" visíveis
-- [ ] Botão de teste verde no canto direito
+- [ ] Botéo de teste verde no canto direito
 
 ### Dashboard
 - [ ] TickerBar no topo com 10 moedas
-- [ ] 3 cards de ação visíveis
+- [ ] 3 cards de açéo visíveis
 - [ ] Calculadora com abas Receber/Enviar
 - [ ] Card de resumo ao lado (desktop) ou abaixo (mobile)
 - [ ] Header mostra email do usuário
-- [ ] Botão "Sair" funciona
+- [ ] Botéo "Sair" funciona
 
 ### Responsividade
 - [ ] Mobile (360px): 1 coluna, elementos empilhados
@@ -299,10 +299,10 @@ Use este checklist ao testar:
 
 ## 🐛 PROBLEMAS COMUNS E SOLUÇÕES
 
-### Problema 1: Widget não aparece
+### Problema 1: Widget néo aparece
 
-**Causa:** Componente não importado  
-**Solução:** Verifique se `<BreakpointTester />` está no `App.tsx`
+**Causa:** Componente néo importado  
+**Soluçéo:** Verifique se `<BreakpointTester />` está no `App.tsx`
 
 ```typescript
 // App.tsx
@@ -316,15 +316,15 @@ return (
 );
 ```
 
-### Problema 2: Botão "Ver Dashboard" não aparece
+### Problema 2: Botéo "Ver Dashboard" néo aparece
 
-**Causa:** Você não está na home  
-**Solução:** Navegue para a home page primeiro
+**Causa:** Você néo está na home  
+**Soluçéo:** Navegue para a home page primeiro
 
-### Problema 3: Dashboard não carrega após clicar no botão
+### Problema 3: Dashboard néo carrega após clicar no botéo
 
 **Causa:** Erro de estado  
-**Solução:**
+**Soluçéo:**
 1. Abra o DevTools Console (`F12`)
 2. Veja se há erros em vermelho
 3. Limpe o localStorage:
@@ -336,11 +336,11 @@ return (
 ### Problema 4: BreakpointTester mostra valores errados
 
 **Causa:** Cache do navegador  
-**Solução:** Hard refresh (`Cmd+Shift+R` ou `Ctrl+Shift+R`)
+**Soluçéo:** Hard refresh (`Cmd+Shift+R` ou `Ctrl+Shift+R`)
 
 ---
 
-## 🗑️ REMOVER FERRAMENTAS DE TESTE (Produção)
+## 🗑️ REMOVER FERRAMENTAS DE TESTE (Produçéo)
 
 **⚠️ IMPORTANTE:** Antes de fazer deploy, remova os componentes de teste!
 
@@ -356,7 +356,7 @@ import BreakpointTester from "./components/BreakpointTester"; // ❌ DELETAR
 <BreakpointTester /> {/* ❌ DELETAR */}
 ```
 
-**Remover função handleTestDashboard (~linha 30-37):**
+**Remover funçéo handleTestDashboard (~linha 30-37):**
 ```typescript
 // ❌ DELETAR TUDO ISSO
 const handleTestDashboard = () => {
@@ -364,7 +364,7 @@ const handleTestDashboard = () => {
 };
 ```
 
-**Remover botão flutuante (~linha 210-245):**
+**Remover botéo flutuante (~linha 210-245):**
 ```typescript
 // ❌ DELETAR TODA ESSA DIV
 <div style={{ position: 'fixed', bottom: '20px', right: '20px' }}>
@@ -391,7 +391,7 @@ npm run build
 npm run preview
 
 # Testar em http://localhost:4173
-# Não deve haver componentes de teste
+# Néo deve haver componentes de teste
 ```
 
 ---
@@ -399,7 +399,7 @@ npm run preview
 ## 📞 SUPORTE
 
 **Encontrou algum problema?**
-1. Veja a documentação em `/TESTES_VISUAIS.md`
+1. Veja a documentaçéo em `/TESTES_VISUAIS.md`
 2. Consulte `/DESENVOLVIMENTO.md` para troubleshooting
 3. Abra uma issue no GitHub
 4. Contate: suporte@federalexpress.com.br
@@ -410,12 +410,12 @@ npm run preview
 
 **Dicas:**
 1. **Deixe o BreakpointTester sempre visível** durante desenvolvimento
-2. **Use o botão de teste** para economizar tempo ao testar o dashboard
+2. **Use o botéo de teste** para economizar tempo ao testar o dashboard
 3. **Redimensione a janela gradualmente** para ver todas as transições
 4. **Teste em navegadores diferentes** (Chrome, Firefox, Safari)
 5. **Use modo dispositivo do DevTools** para simular touch
 
 ---
 
-**Última atualização:** 2025-11-07  
-**Versão:** 1.0 - Ferramentas de Teste ✅
+**Última atualizaçéo:** 2025-11-07  
+**Verséo:** 1.0 - Ferramentas de Teste ✅

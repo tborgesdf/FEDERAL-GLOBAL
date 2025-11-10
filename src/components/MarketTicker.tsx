@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef } from "react";
 
 // Mock data structure para futura integração de API
 interface MarketIndex {
@@ -123,3 +123,5 @@ export default function MarketTicker() {
     </div>
   );
 }
+
+

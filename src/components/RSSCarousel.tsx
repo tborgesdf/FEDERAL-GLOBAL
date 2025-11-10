@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Briefcase, Plane, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface RSSItem {
@@ -161,7 +161,7 @@ export default function RSSCarousel({ title, icon, items, accentColor }: RSSCaro
                 >
                   {formatDate(currentItem.dateISO)}
                 </span>
-                <span className="text-[#555]" style={{ fontSize: "8px" }}>•</span>
+                <span className="text-[#555]" style={{ fontSize: "8px" }}>â€¢</span>
                 <span
                   style={{
                     fontFamily: "Inter, sans-serif",
@@ -247,3 +247,4 @@ export default function RSSCarousel({ title, icon, items, accentColor }: RSSCaro
     </section>
   );
 }
+

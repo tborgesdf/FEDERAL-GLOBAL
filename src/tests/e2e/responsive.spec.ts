@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 test.describe('Responsividade - Design System', () => {
   
@@ -37,7 +37,7 @@ test.describe('Responsividade - Design System', () => {
       }
     });
 
-    test('botões devem ocupar largura adequada', async ({ page }) => {
+    test('botéµes devem ocupar largura adequada', async ({ page }) => {
       await page.click('text=Login');
       
       const button = page.locator('button:has-text("Entrar")');
@@ -182,7 +182,7 @@ test.describe('Responsividade - Design System', () => {
       expect(width).toBeLessThan(500);
     });
 
-    test('botões devem ter padding adequado', async ({ page }) => {
+    test('botéµes devem ter padding adequado', async ({ page }) => {
       await page.click('text=Login');
       
       const button = page.locator('button:has-text("Entrar")');
@@ -195,7 +195,7 @@ test.describe('Responsividade - Design System', () => {
     });
   });
 
-  test.describe('Transições entre breakpoints', () => {
+  test.describe('Transiçéµes entre breakpoints', () => {
     test('deve escalar suavemente de mobile para desktop', async ({ page }) => {
       await page.goto('/');
       
@@ -286,7 +286,7 @@ test.describe('Responsividade - Design System', () => {
       await expect(logo).toBeVisible();
     });
 
-    test('botões devem ajustar (Hug contents)', async ({ page }) => {
+    test('botéµes devem ajustar (Hug contents)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
       
@@ -313,3 +313,5 @@ test.describe('Responsividade - Design System', () => {
     });
   });
 });
+
+

@@ -1,4 +1,4 @@
-# 👋 BEM-VINDO AO FEDERAL EXPRESS BRASIL!
+﻿# 👋 BEM-VINDO AO FEDERAL EXPRESS BRASIL!
 
 ```
 ╔═══════════════════════════════════════════════════════════════╗
@@ -29,7 +29,7 @@
 
 ## 🚀 INÍCIO RÁPIDO (5 MINUTOS)
 
-### 1️⃣ Instalação
+### 1️⃣ Instalaçéo
 ```bash
 # Clonar dependências
 npm install
@@ -49,7 +49,7 @@ npm run dev
 
 ### 3️⃣ Explorar
 
-**🟢 Botão Verde (Canto Inferior Direito)**  
+**🟢 Botéo Verde (Canto Inferior Direito)**  
 Clique para ir **direto ao Dashboard** sem fazer login!
 
 **🔵 Widget Azul (Canto Inferior Esquerdo)**  
@@ -57,7 +57,7 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
 
 ---
 
-## 📚 DOCUMENTAÇÃO (ONDE ENCONTRAR O QUÊ)
+## 📚 DOCUMENTAÇéO (ONDE ENCONTRAR O QUÊ)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -92,12 +92,12 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
 
 ### 📄 Páginas Públicas
 ✅ **Home** - Hero + Ticker + 2 Carrosséis RSS + Multimídia  
-✅ **Cadastro** - 7 campos validados + Integração Supabase  
+✅ **Cadastro** - 7 campos validados + Integraçéo Supabase  
 ✅ **Login** - 3 modos (Login, Recuperar, Redefinir)
 
 ### 🔐 Área do Cliente
 ✅ **TickerBar** - 10 moedas em tempo real (DKK, NOK, SEK, USD, AUD, CAD, EUR, CHF, JPY, GBP)  
-✅ **3 Cards de Ação** - Contratar, Acompanhar, Histórico  
+✅ **3 Cards de Açéo** - Contratar, Acompanhar, Histórico  
 ✅ **Calculadora PTAX** - Abas Receber/Enviar + Breakdown completo  
 ✅ **Card Dicas** - Resumo + Suporte 24/7
 
@@ -115,7 +115,7 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
 
 ---
 
-## 🎯 DEMONSTRAÇÃO VISUAL
+## 🎯 DEMONSTRAÇéO VISUAL
 
 ### Fluxo de Uso
 ```
@@ -169,7 +169,7 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
    - 🟣 Roxo = Laptop
    - 🔷 Azul escuro = Desktop
 
-### Botão "Ver Dashboard" (Botão Direito)
+### Botéo "Ver Dashboard" (Botéo Direito)
 ```
 ┌──────────────────────────┐
 │  🚀 TESTE: Ver Dashboard │  ← Clique aqui!
@@ -194,10 +194,10 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
 │  ✅ Responsividade   5 Breakpoints OK              │
 │  ✅ Acessibilidade   WCAG AA Compliant             │
 │  ✅ Performance      Lighthouse 90+                │
-│  ✅ Documentação     9 Docs Técnicos               │
+│  ✅ Documentaçéo     9 Docs Técnicos               │
 │  ✅ Testes           Ferramentas Incluídas         │
 │                                                    │
-│  🎉 PRONTO PARA PRODUÇÃO!                         │
+│  🎉 PRONTO PARA PRODUÇéO!                         │
 └────────────────────────────────────────────────────┘
 ```
 
@@ -210,7 +210,7 @@ Mostra o **breakpoint atual** e responsividade em tempo real!
 npm run dev              # Rodar servidor dev (localhost:5173)
 
 # Build
-npm run build            # Build de produção
+npm run build            # Build de produçéo
 npm run preview          # Preview do build
 
 # Linting
@@ -257,7 +257,7 @@ federal-express-brasil/
 1. npm install
 2. npm run dev
 3. Abra http://localhost:5173
-4. Clique no botão "🚀 TESTE: Ver Dashboard"
+4. Clique no botéo "🚀 TESTE: Ver Dashboard"
 5. Explore livremente!
 6. Leia DESENVOLVIMENTO.md para próximos passos
 ```
@@ -297,7 +297,7 @@ federal-express-brasil/
 ├───────────────────────────────────────────────┤
 │  [Ticker: USD 5.23 | EUR 5.67 | GBP 6.45...] │
 ├───────────────────────────────────────────────┤
-│  📰 Atualidades sobre Migração e Turismo      │
+│  📰 Atualidades sobre Migraçéo e Turismo      │
 │  [→ Carrossel com 6 notícias]                 │
 ├───────────────────────────────────────────────┤
 │  ✈️ Dicas de Viagem                           │
@@ -347,7 +347,7 @@ federal-express-brasil/
 
 ### ♿ Acessibilidade WCAG AA
 ✅ Contraste mínimo **4.5:1**  
-✅ Navegação por **teclado** completa  
+✅ Navegaçéo por **teclado** completa  
 ✅ **Screen reader** friendly  
 ✅ Touch targets **44×44px**
 
@@ -357,7 +357,7 @@ federal-express-brasil/
 ✅ FID **< 100ms**  
 ✅ CLS **< 0.1**
 
-### 📚 Documentação Profissional
+### 📚 Documentaçéo Profissional
 ✅ **9 documentos** técnicos  
 ✅ **~150 páginas** de conteúdo  
 ✅ **Guias passo a passo**  
@@ -367,9 +367,9 @@ federal-express-brasil/
 
 ## 🤝 PRECISA DE AJUDA?
 
-### Documentação
-- **Geral:** Leia [INDEX.md](./INDEX.md) para navegação completa
-- **FAQ:** Cada documento tem seção de perguntas frequentes
+### Documentaçéo
+- **Geral:** Leia [INDEX.md](./INDEX.md) para navegaçéo completa
+- **FAQ:** Cada documento tem seçéo de perguntas frequentes
 
 ### Suporte Técnico
 - **Email:** suporte@federalexpress.com.br
@@ -390,7 +390,7 @@ federal-express-brasil/
 │  1️⃣  npm install                            │
 │  2️⃣  npm run dev                            │
 │  3️⃣  Abra http://localhost:5173             │
-│  4️⃣  Clique no botão verde! 🚀              │
+│  4️⃣  Clique no botéo verde! 🚀              │
 │                                             │
 │  Divirta-se explorando! 🎊                  │
 │                                             │
@@ -402,9 +402,9 @@ federal-express-brasil/
 ## 📞 CONTATOS
 
 **Projeto:** Federal Express Brasil  
-**Versão:** 1.0.0  
+**Verséo:** 1.0.0  
 **Data:** 2025-11-07  
-**Status:** ✅ Produção Ready
+**Status:** ✅ Produçéo Ready
 
 **Equipe:**
 - **Tech Lead:** tech@federalexpress.com.br
@@ -427,7 +427,7 @@ federal-express-brasil/
 ║                  React • Vite • TypeScript                    ║
 ║                  Tailwind CSS • Supabase                      ║
 ║                                                               ║
-║                   Versão 1.0.0 - Novembro 2025                ║
+║                   Verséo 1.0.0 - Novembro 2025                ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
 ```

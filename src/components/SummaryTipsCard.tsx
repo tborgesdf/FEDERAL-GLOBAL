@@ -1,21 +1,21 @@
-import { Lightbulb, TrendingUp, Shield, Clock } from "lucide-react";
+﻿import { Lightbulb, TrendingUp, Shield, Clock } from "lucide-react";
 
 export default function SummaryTipsCard() {
   const tips = [
     {
       icon: <TrendingUp className="h-5 w-5" />,
       title: "Acompanhe a cotação",
-      description: "Monitore as variações do câmbio ao longo do dia para fazer operações no melhor momento"
+      description: "Monitore as variaçéµes do câmbio ao longo do dia para fazer operaçéµes no melhor momento"
     },
     {
       icon: <Shield className="h-5 w-5" />,
       title: "Segurança garantida",
-      description: "Todas as operações são protegidas por criptografia de ponta e regulamentadas pelo Banco Central"
+      description: "Todas as operaçéµes são protegidas por criptografia de ponta e regulamentadas pelo Banco Central"
     },
     {
       icon: <Clock className="h-5 w-5" />,
       title: "Agilidade nas remessas",
-      description: "Transferências internacionais processadas em até 2 dias úteis com rastreamento completo"
+      description: "Transferências internacionais processadas em atà2 dias úteis com rastreamento completo"
     }
   ];
 
@@ -110,7 +110,7 @@ export default function SummaryTipsCard() {
             color: "#0A4B9E"
           }}
         >
-          💰 Economia de até 40%
+          ’° Economia de atà40%
         </p>
         <p
           style={{
@@ -121,7 +121,7 @@ export default function SummaryTipsCard() {
             lineHeight: "1.5"
           }}
         >
-          Nossas taxas são até 40% menores que bancos tradicionais. Compare e comprove!
+          Nossas taxas são atà40% menores que bancos tradicionais. Compare e comprove!
         </p>
       </div>
 
@@ -143,3 +143,5 @@ export default function SummaryTipsCard() {
     </div>
   );
 }
+
+

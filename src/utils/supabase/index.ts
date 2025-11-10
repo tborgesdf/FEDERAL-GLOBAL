@@ -1,6 +1,6 @@
-/**
+﻿/**
  * SUPABASE CLIENT - React + Vite
- * Único ponto de inicialização do client.
+ * Único ponto de inicializaçéo do client.
  */
 import { createClient } from "@supabase/supabase-js"; // import oficial
 
@@ -17,3 +17,5 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
  *   await supabase.auth.signInWithPassword({ email, password })
  *   await supabase.from("tabela").select("*")
  */
+
+

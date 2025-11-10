@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 test.describe('Acessibilidade (WCAG AA+)', () => {
   
@@ -50,7 +50,7 @@ test.describe('Acessibilidade (WCAG AA+)', () => {
     }
   });
 
-  test('botões devem ter texto ou aria-label', async ({ page }) => {
+  test('botéµes devem ter texto ou aria-label', async ({ page }) => {
     await page.goto('/');
     
     const buttons = await page.locator('button').all();
@@ -183,7 +183,7 @@ test.describe('Acessibilidade (WCAG AA+)', () => {
     await page.goto('/');
     await page.click('text=Cadastro');
     
-    await expect(page.locator('text=Área do reCAPTCHA Google')).toBeVisible();
+    await expect(page.locator('text=érea do reCAPTCHA Google')).toBeVisible();
     await expect(page.locator('text=Proteção contra cadastros automáticos')).toBeVisible();
   });
 
@@ -200,3 +200,5 @@ test.describe('Acessibilidade (WCAG AA+)', () => {
     await expect(page.locator('button:has-text("Entrando...")')).toBeVisible({ timeout: 2000 });
   });
 });
+
+

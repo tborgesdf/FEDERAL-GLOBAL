@@ -1,4 +1,4 @@
-import Header from "./components/Header";
+﻿import Header from "./components/Header";
 import Hero from "./components/Hero";
 import MarketTicker from "./components/MarketTicker";
 import RSSCarousel from "./components/RSSCarousel";
@@ -9,7 +9,7 @@ import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
 import BreakpointTester from "./components/BreakpointTester"; // Componente de teste
 import { useState, useEffect } from "react";
-import { Toaster } from "sonner@2.0.3";
+import { Toaster } from "sonner";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard">("home");
@@ -27,7 +27,7 @@ export default function App() {
     }
   }, []);
 
-  // FUNÇÃO TEMPORÁRIA PARA TESTES - Simula login direto
+  // FUNÇÃO TEMPORéRIA PARA TESTES - Simula login direto
   const handleTestDashboard = () => {
     const testEmail = "teste@federalexpress.com.br";
     localStorage.setItem("access_token", "test-token-12345");
@@ -162,7 +162,7 @@ export default function App() {
       image: "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&q=80",
       category: "Dicas",
       title: "Melhores apps de viagem para usar em 2025",
-      excerpt: "Selecionamos os aplicativos indispensáveis para planejar, organizar e aproveitar ao máximo sua viagem. Desde tradutores até guias turísticos offline.",
+      excerpt: "Selecionamos os aplicativos indispensáveis para planejar, organizar e aproveitar ao máximo sua viagem. Desde tradutores atàguias turísticos offline.",
       dateISO: "2025-11-02T09:00:00Z",
       readMinutes: 7,
       href: "#"
@@ -195,7 +195,7 @@ export default function App() {
             currentPage="home"
           />
           
-          {/* BOTÃO TEMPORÁRIO PARA TESTE DO DASHBOARD */}
+          {/* BOTéƒO TEMPORéRIO PARA TESTE DO DASHBOARD */}
           <div style={{ 
             position: 'fixed', 
             bottom: '20px', 
@@ -226,7 +226,7 @@ export default function App() {
                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(43, 168, 74, 0.4)';
               }}
             >
-              🚀 TESTE: Ver Dashboard
+              š€ TESTE: Ver Dashboard
             </button>
           </div>
           
@@ -273,3 +273,4 @@ export default function App() {
     </>
   );
 }
+

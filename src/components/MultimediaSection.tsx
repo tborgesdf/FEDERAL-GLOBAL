@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Play } from "lucide-react";
 
 export default function MultimediaSection() {
@@ -47,7 +47,7 @@ export default function MultimediaSection() {
               }}
             >
               Acompanhe nosso programa ao vivo com especialistas em imigração,
-              entrevistas exclusivas e discussões sobre as últimas mudanças nas
+              entrevistas exclusivas e discusséµes sobre as últimas mudanças nas
               políticas migratórias globais. Confira nosso próximo episódio sobre
               as mudanças no sistema de vistos americano.
             </p>
@@ -89,7 +89,7 @@ export default function MultimediaSection() {
               {/* Placeholder para embed futuro (YouTube/Spotify) */}
               <div className="flex aspect-video items-center justify-center">
                 <div className="relative">
-                  {/* Ícone de play */}
+                  {/* écone de play */}
                   <div className="flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-transform hover:scale-110">
                     <Play className="h-10 w-10 fill-white text-white" />
                   </div>
@@ -127,7 +127,7 @@ export default function MultimediaSection() {
                 </div>
               </div>
 
-              {/* Informações de overlay */}
+              {/* Informaçéµes de overlay */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-5">
                 <p
                   style={{
@@ -171,3 +171,4 @@ export default function MultimediaSection() {
     </section>
   );
 }
+

@@ -139,7 +139,7 @@ fi
 # Resumo Final
 echo ""
 echo "================================================"
-echo "📊 RESUMO DA VALIDAÇÃO"
+echo "📊 RESUMO DA VALIDAÇÁO"
 echo "================================================"
 echo -e "${BLUE}Total de verificações: $TOTAL_TESTS${NC}"
 echo -e "${GREEN}Passaram: $PASSED_TESTS${NC}"

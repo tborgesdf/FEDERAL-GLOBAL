@@ -1,31 +1,31 @@
-# Federal Express Brasil - Guia de Integração de APIs
+﻿# Federal Express Brasil - Guia de Integraçéo de APIs
 
-## Visão Geral
+## Viséo Geral
 
-Este documento descreve os placeholders de dados e estruturas preparadas para integração com APIs externas. Todos os componentes foram desenvolvidos com bindings nomeados para facilitar a implementação no ambiente de produção.
+Este documento descreve os placeholders de dados e estruturas preparadas para integraçéo com APIs externas. Todos os componentes foram desenvolvidos com bindings nomeados para facilitar a implementaçéo no ambiente de produçéo.
 
 ---
 
 ## 1. WeatherWidget (Header.tsx)
 
-### Localização
+### Localizaçéo
 Componente: `/components/Header.tsx`
 
 ### Estrutura de Dados
 
 ```typescript
 interface WeatherData {
-  location: string;          // "São Paulo, Brasil"
+  location: string;          // "Séo Paulo, Brasil"
   tempC: number;            // Temperatura atual em Celsius
-  description: string;       // Descrição do clima atual
+  description: string;       // Descriçéo do clima atual
   icon: string;             // Ícone do clima (emoji ou código)
   forecast: Array<{
     dateISO: string;        // Data no formato ISO (YYYY-MM-DD)
     minC: number;           // Temperatura mínima
     maxC: number;           // Temperatura máxima
-    icon: string;           // Ícone da previsão
+    icon: string;           // Ícone da previséo
   }>;
-  fetchedAt: string;        // Timestamp da última atualização (ISO)
+  fetchedAt: string;        // Timestamp da última atualizaçéo (ISO)
 }
 ```
 
@@ -34,17 +34,17 @@ interface WeatherData {
 - WeatherAPI
 - Visual Crossing Weather API
 
-### Exemplo de Integração
+### Exemplo de Integraçéo
 ```typescript
 const fetchWeatherData = async (): Promise<WeatherData> => {
   const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=São Paulo&units=metric&appid=${API_KEY}`
+    `https://api.openweathermap.org/data/2.5/weather?q=Séo Paulo&units=metric&appid=${API_KEY}`
   );
   const data = await response.json();
   
   // Transformar resposta da API para nossa estrutura
   return {
-    location: "São Paulo, Brasil",
+    location: "Séo Paulo, Brasil",
     tempC: data.main.temp,
     description: data.weather[0].description,
     icon: mapWeatherIcon(data.weather[0].icon),
@@ -58,7 +58,7 @@ const fetchWeatherData = async (): Promise<WeatherData> => {
 
 ## 2. MarketTicker (MarketTicker.tsx)
 
-### Localização
+### Localizaçéo
 Componente: `/components/MarketTicker.tsx`
 
 ### Estrutura de Dados
@@ -67,7 +67,7 @@ Componente: `/components/MarketTicker.tsx`
 interface MarketIndex {
   symbol: 'NASDAQ' | 'SPX' | 'IBOV' | 'DAX' | 'NIKKEI';
   last: number;             // Último valor do índice
-  changePct: number;        // Variação percentual
+  changePct: number;        // Variaçéo percentual
   fetchedAt: string;        // Timestamp ISO
 }
 
@@ -75,7 +75,7 @@ interface FXRate {
   base: 'BRL';              // Moeda base (sempre BRL)
   quote: 'USD' | 'EUR' | 'GBP' | 'CAD';
   rate: number;             // Taxa de câmbio
-  changePct: number;        // Variação percentual
+  changePct: number;        // Variaçéo percentual
   fetchedAt: string;        // Timestamp ISO
 }
 
@@ -89,7 +89,7 @@ interface MarketTickerData {
 - **Índices**: Alpha Vantage, Yahoo Finance API, Twelve Data
 - **Câmbio**: Exchange Rates API, Fixer.io, Open Exchange Rates
 
-### Exemplo de Integração
+### Exemplo de Integraçéo
 ```typescript
 const fetchMarketData = async (): Promise<MarketTickerData> => {
   const [indexesData, fxData] = await Promise.all([
@@ -105,15 +105,15 @@ const fetchMarketData = async (): Promise<MarketTickerData> => {
 ```
 
 ### Nota Importante
-O ticker utiliza scroll infinito automático. A atualização dos dados deve ocorrer em intervalos regulares (recomendado: 60-120 segundos) sem interromper a animação.
+O ticker utiliza scroll infinito automático. A atualizaçéo dos dados deve ocorrer em intervalos regulares (recomendado: 60-120 segundos) sem interromper a animaçéo.
 
 ---
 
 ## 3. RSSCarousel_Migration (RSSCarousel.tsx)
 
-### Localização
+### Localizaçéo
 Componente: `/components/RSSCarousel.tsx`  
-Uso: Seção "Atualidades sobre Migração e Turismo"
+Uso: Seçéo "Atualidades sobre Migraçéo e Turismo"
 
 ### Estrutura de Dados
 
@@ -123,8 +123,8 @@ interface RSSItem {
   image: string;            // URL da imagem destacada
   category: string;         // Sempre "Atualidades" para Migration
   title: string;            // Título do artigo
-  excerpt: string;          // Resumo/descrição
-  dateISO: string;          // Data de publicação (ISO)
+  excerpt: string;          // Resumo/descriçéo
+  dateISO: string;          // Data de publicaçéo (ISO)
   readMinutes: number;      // Tempo estimado de leitura
   href: string;             // Link para o artigo completo
 }
@@ -139,7 +139,7 @@ interface RSSCarouselProps {
 - CMS (WordPress, Strapi, Contentful)
 - API personalizada de conteúdo
 
-### Exemplo de Integração
+### Exemplo de Integraçéo
 ```typescript
 const fetchMigrationArticles = async (): Promise<RSSItem[]> => {
   const response = await fetch('/api/blog/migration?limit=6');
@@ -162,17 +162,17 @@ const fetchMigrationArticles = async (): Promise<RSSItem[]> => {
 - Auto-slide: 5 segundos por item
 - Pausa ao hover/focus
 - 6 slides no total
-- Navegação por bullets clicáveis
-- Setas de navegação anterior/próximo
+- Navegaçéo por bullets clicáveis
+- Setas de navegaçéo anterior/próximo
 - Barra de progresso visual
 
 ---
 
 ## 4. RSSCarousel_Travel (RSSCarousel.tsx)
 
-### Localização
+### Localizaçéo
 Componente: `/components/RSSCarousel.tsx`  
-Uso: Seção "Dicas de Viagem"
+Uso: Seçéo "Dicas de Viagem"
 
 ### Estrutura de Dados
 Idêntica ao RSSCarousel_Migration, com a seguinte diferença:
@@ -185,7 +185,7 @@ interface RSSItem {
 ```
 
 ### Fonte de Dados
-- Feed RSS da seção de Dicas de Viagem
+- Feed RSS da seçéo de Dicas de Viagem
 - Mesmo CMS, categoria diferente
 - API filtrada por categoria
 
@@ -193,7 +193,7 @@ interface RSSItem {
 
 ## 5. Sistema de Data/Hora (Header.tsx)
 
-### Implementação Atual
+### Implementaçéo Atual
 O relógio é atualizado via `setInterval` no lado do cliente a cada 1 segundo.
 
 ### Formato Brasileiro
@@ -203,7 +203,7 @@ formatDate(new Date());
 ```
 
 ### Considerações
-- Usar `Intl.DateTimeFormat` para formatação robusta
+- Usar `Intl.DateTimeFormat` para formataçéo robusta
 - Considerar timezone do usuário ou fixo (America/Sao_Paulo)
 - Sincronizar com servidor periodicamente para evitar drift
 
@@ -211,13 +211,13 @@ formatDate(new Date());
 
 ## 6. Multimídia - Embed YouTube/Spotify
 
-### Localização
+### Localizaçéo
 Componente: `/components/MultimediaSection.tsx`
 
 ### Placeholder Atual
 Div com ícone de Play e informações do episódio.
 
-### Integração Futura
+### Integraçéo Futura
 
 #### YouTube
 ```typescript
@@ -252,7 +252,7 @@ interface MultimediaContent {
   type: 'youtube' | 'spotify';
   id: string;               // Video/Episode ID
   title: string;            // Título do episódio
-  description: string;      // Descrição
+  description: string;      // Descriçéo
   guest?: string;           // Nome do convidado
   isLive: boolean;          // Status ON AIR
 }
@@ -277,7 +277,7 @@ Adicionar skeletons/loading states para:
 ### Error Handling
 Implementar fallbacks para:
 - Falha de API (usar últimos dados em cache)
-- Timeout de requisição
+- Timeout de requisiçéo
 - Dados incompletos ou malformados
 
 ---
@@ -287,7 +287,7 @@ Implementar fallbacks para:
 ```env
 # Weather
 WEATHER_API_KEY=your_openweathermap_key
-WEATHER_LOCATION=São Paulo,BR
+WEATHER_LOCATION=Séo Paulo,BR
 
 # Market Data
 MARKET_API_KEY=your_alpha_vantage_key
@@ -307,7 +307,7 @@ REDIS_URL=your_redis_url (opcional)
 
 ---
 
-## 9. Checklist de Implementação
+## 9. Checklist de Implementaçéo
 
 - [ ] Configurar APIs de clima (OpenWeatherMap)
 - [ ] Configurar APIs de mercado (Alpha Vantage, Exchange Rates)
@@ -331,7 +331,7 @@ REDIS_URL=your_redis_url (opcional)
 360px  - Mobile pequeno
 768px  - Tablet
 1024px - Desktop pequeno
-1440px - Desktop padrão (design base)
+1440px - Desktop padréo (design base)
 ```
 
 ### Ajustes por Breakpoint
@@ -348,17 +348,17 @@ REDIS_URL=your_redis_url (opcional)
 - Ticker: reduzir tamanho da fonte
 
 #### Desktop (1024px+)
-- Layout conforme especificação original
+- Layout conforme especificaçéo original
 - Grid de 12 colunas com margens de 80px
 
 ---
 
 ## Contato para Suporte Técnico
 
-Para dúvidas sobre a integração, contate a equipe de desenvolvimento:
+Para dúvidas sobre a integraçéo, contate a equipe de desenvolvimento:
 - Email: dev@federalexpressbrasil.com.br
-- Documentação interna: [Link para wiki interna]
+- Documentaçéo interna: [Link para wiki interna]
 
 ---
 
-**Última atualização:** 7 de novembro de 2025
+**Última atualizaçéo:** 7 de novembro de 2025

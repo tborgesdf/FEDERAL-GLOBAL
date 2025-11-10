@@ -1,8 +1,8 @@
-# 📚 ÍNDICE DE DOCUMENTAÇÃO - Federal Express Brasil
+﻿# 📚 ÍNDICE DE DOCUMENTAÇéO - Federal Express Brasil
 
-## 🎯 NAVEGAÇÃO RÁPIDA
+## 🎯 NAVEGAÇéO RÁPIDA
 
-Bem-vindo à documentação completa do projeto Federal Express Brasil! Este índice te ajudará a encontrar rapidamente o que precisa.
+Bem-vindo à documentaçéo completa do projeto Federal Express Brasil! Este índice te ajudará a encontrar rapidamente o que precisa.
 
 ---
 
@@ -13,12 +13,12 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 **Leia primeiro se:** Você acabou de clonar o projeto
 
 **Conteúdo:**
-- Visão geral do projeto
+- Viséo geral do projeto
 - Funcionalidades principais
-- Instalação e setup
+- Instalaçéo e setup
 - Comandos básicos (`npm run dev`, `npm run build`)
 - Estrutura de pastas
-- Integração backend
+- Integraçéo backend
 - Roadmap
 
 **Tempo de leitura:** 5-7 minutos
@@ -32,7 +32,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 **Conteúdo:**
 - Checklist do que já foi implementado
 - Roadmap detalhado com código de exemplo:
-  - Integração API PTAX real
+  - Integraçéo API PTAX real
   - SSE (Server-Sent Events)
   - Páginas de serviços
   - Guarda de rota (ProtectedRoute)
@@ -69,7 +69,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
   - Hover, active, focus
   - Animações (200ms ease-out)
 - **Acessibilidade WCAG AA**
-- **Checklist de aprovação**
+- **Checklist de aprovaçéo**
 
 **Tempo de leitura:** 30-40 minutos
 
@@ -77,7 +77,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 
 ### 4. 🧪 [TESTES_VISUAIS.md](./TESTES_VISUAIS.md)
 **Para: QA e Designers**  
-**Leia se:** Você vai fazer testes visuais ou validação
+**Leia se:** Você vai fazer testes visuais ou validaçéo
 
 **Conteúdo:**
 - **Ferramentas de teste:**
@@ -96,7 +96,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
   - Hover, focus, animações
 - **Testes de acessibilidade:**
   - Teclado, screen readers, contraste
-- **Validação de hotspots**
+- **Validaçéo de hotspots**
 - **Performance (Core Web Vitals)**
 
 **Tempo de leitura:** 25-30 minutos
@@ -105,15 +105,15 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 
 ### 5. 🚀 [PRODUCAO.md](./PRODUCAO.md)
 **Para: DevOps e Tech Leads**  
-**Leia se:** Você vai fazer deploy em produção
+**Leia se:** Você vai fazer deploy em produçéo
 
 **Conteúdo:**
-- **Preparação:**
+- **Preparaçéo:**
   - Remover componentes de teste
   - Configurar variáveis de ambiente
 - **Build:**
   - Comandos de build
-  - Validação pré-deploy
+  - Validaçéo pré-deploy
 - **Deploy:**
   - Vercel (passo a passo)
   - Netlify (passo a passo)
@@ -134,7 +134,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 
 ### 6. 📊 [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md)
 **Para: Gestores e Stakeholders**  
-**Leia se:** Você quer uma visão geral de alto nível
+**Leia se:** Você quer uma viséo geral de alto nível
 
 **Conteúdo:**
 - **Status do projeto:** 100% completo ✅
@@ -145,7 +145,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 - **Design system implementado**
 - **Acessibilidade e performance**
 - **Testes realizados**
-- **Documentação entregue**
+- **Documentaçéo entregue**
 - **Próximos passos recomendados**
 - **Estimativa de custos mensais**
 - **Métricas de sucesso (KPIs)**
@@ -166,16 +166,16 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
   - Como redimensionar
   - Como minimizar/expandir
   - Cores dos breakpoints
-- **Botão "Ver Dashboard":**
+- **Botéo "Ver Dashboard":**
   - Como usar
   - O que esperar
 - **Testes visuais passo a passo:**
   - Teste 1: Responsividade do Dashboard
   - Teste 2: TickerBar Animation
   - Teste 3: Calculadora PTAX
-  - Teste 4: Cards de Ação
-  - Teste 5: Navegação Login ↔ Cadastro
-- **Checklist de validação visual**
+  - Teste 4: Cards de Açéo
+  - Teste 5: Navegaçéo Login ↔ Cadastro
+- **Checklist de validaçéo visual**
 - **Problemas comuns e soluções**
 - **Como remover ferramentas de teste**
 
@@ -183,7 +183,7 @@ Bem-vindo à documentação completa do projeto Federal Express Brasil! Este ín
 
 ---
 
-## 🗂️ ARQUIVOS DE CONFIGURAÇÃO
+## 🗂️ ARQUIVOS DE CONFIGURAÇéO
 
 ### 📝 [.env.example](./.env.example)
 Template de variáveis de ambiente. Copie para `.env` e preencha com seus valores.
@@ -215,14 +215,14 @@ Template de variáveis de ambiente. Copie para `.env` e preencha com seus valore
 2. Use [COMO_USAR_TESTES.md](./COMO_USAR_TESTES.md) para ferramentas
 3. Siga os checklists
 
-### 🚀 "Vou fazer deploy em produção"
+### 🚀 "Vou fazer deploy em produçéo"
 1. Leia [PRODUCAO.md](./PRODUCAO.md)
 2. Siga o checklist pré-deploy
 3. Configure variáveis de ambiente
 4. Faça build e valide
 5. Deploy seguindo os passos
 
-### 👔 "Sou gestor e quero uma visão geral"
+### 👔 "Sou gestor e quero uma viséo geral"
 1. Leia [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md)
 2. Opcionalmente, leia [README.md](./README.md) para detalhes
 
@@ -233,12 +233,12 @@ Template de variáveis de ambiente. Copie para `.env` e preencha com seus valore
 ```
 federal-express-brasil/
 │
-├── 📄 README.md                    ← Visão geral
+├── 📄 README.md                    ← Viséo geral
 ├── 📄 DESENVOLVIMENTO.md           ← Guia de desenvolvimento
 ├── 📄 HANDOFF.md                   ← Especificações técnicas
 ├── 📄 TESTES_VISUAIS.md            ← Protocolo de testes
 ├── 📄 PRODUCAO.md                  ← Guia de deploy
-├── 📄 RESUMO_EXECUTIVO.md          ← Visão de alto nível
+├── 📄 RESUMO_EXECUTIVO.md          ← Viséo de alto nível
 ├── 📄 COMO_USAR_TESTES.md          ← Tutorial de ferramentas
 ├── 📄 INDEX.md                     ← Este arquivo
 ├── 📄 .env.example                 ← Template de variáveis
@@ -271,7 +271,7 @@ federal-express-brasil/
 │
 ├── 📂 utils/
 │   └── supabase/
-│       └── info.tsx                ← Configuração Supabase
+│       └── info.tsx                ← Configuraçéo Supabase
 │
 ├── App.tsx                         ← Componente principal
 ├── main.tsx                        ← Entry point
@@ -288,24 +288,24 @@ federal-express-brasil/
 
 ### Por Palavra-Chave
 
-| Palavra-Chave | Documento | Seção |
+| Palavra-Chave | Documento | Seçéo |
 |---------------|-----------|-------|
 | **Cores** | HANDOFF.md | Design Tokens |
 | **Grid** | HANDOFF.md | Grid System & Breakpoints |
 | **Responsividade** | TESTES_VISUAIS.md | Testes de Breakpoints |
-| **API PTAX** | DESENVOLVIMENTO.md | Integração API PTAX Real |
+| **API PTAX** | DESENVOLVIMENTO.md | Integraçéo API PTAX Real |
 | **Deploy** | PRODUCAO.md | Deploy |
-| **Backend** | README.md | Integração Backend |
+| **Backend** | README.md | Integraçéo Backend |
 | **Testes** | TESTES_VISUAIS.md | Checklist Visual |
 | **Acessibilidade** | HANDOFF.md | Acessibilidade (WCAG AA) |
 | **Performance** | RESUMO_EXECUTIVO.md | Performance |
 | **Componentes** | HANDOFF.md | Componentes Implementados |
 
-### Por Tipo de Informação
+### Por Tipo de Informaçéo
 
 | Tipo | Documento |
 |------|-----------|
-| **Instalação** | README.md |
+| **Instalaçéo** | README.md |
 | **Comandos** | README.md, PRODUCAO.md |
 | **Especificações de design** | HANDOFF.md |
 | **Código de exemplo** | DESENVOLVIMENTO.md |
@@ -320,14 +320,14 @@ federal-express-brasil/
 
 ### Para Leitura Eficiente
 
-1. **Não leia tudo de uma vez** - Use este índice para ir direto ao que precisa
+1. **Néo leia tudo de uma vez** - Use este índice para ir direto ao que precisa
 2. **Marque os documentos** - Adicione aos favoritos do editor
 3. **Use Ctrl+F (Cmd+F)** - Para buscar dentro dos documentos
-4. **Imprima se necessário** - PDFs são gerados automaticamente pelo Markdown
+4. **Imprima se necessário** - PDFs séo gerados automaticamente pelo Markdown
 
 ### Para Manter Atualizado
 
-1. **Sempre consulte a versão mais recente** - Verifique a data no rodapé
+1. **Sempre consulte a verséo mais recente** - Verifique a data no rodapé
 2. **Contribua** - Encontrou algo desatualizado? Atualize o documento
 3. **Comunique mudanças** - Avise a equipe quando atualizar a doc
 
@@ -344,39 +344,39 @@ federal-express-brasil/
 - **DevOps:** PRODUCAO.md
 
 ### "Onde encontro as cores do design system?"
-**R:** [HANDOFF.md](./HANDOFF.md) → Seção "Design Tokens Implementados"
+**R:** [HANDOFF.md](./HANDOFF.md) → Seçéo "Design Tokens Implementados"
 
 ### "Como faço para testar a responsividade?"
 **R:** [COMO_USAR_TESTES.md](./COMO_USAR_TESTES.md) → "Como Usar o Breakpoint Tester"
 
 ### "Preciso fazer deploy. Por onde começo?"
-**R:** [PRODUCAO.md](./PRODUCAO.md) → Seção "Checklist Pré-Deploy"
+**R:** [PRODUCAO.md](./PRODUCAO.md) → Seçéo "Checklist Pré-Deploy"
 
 ### "Como integro a API PTAX real?"
-**R:** [DESENVOLVIMENTO.md](./DESENVOLVIMENTO.md) → Seção "1️⃣ Integração API PTAX Real"
+**R:** [DESENVOLVIMENTO.md](./DESENVOLVIMENTO.md) → Seçéo "1️⃣ Integraçéo API PTAX Real"
 
 ### "Quais componentes já foram implementados?"
-**R:** [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md) → Seção "Entregas Realizadas"
+**R:** [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md) → Seçéo "Entregas Realizadas"
 
-### "O projeto está pronto para produção?"
+### "O projeto está pronto para produçéo?"
 **R:** Sim! ✅ Veja [RESUMO_EXECUTIVO.md](./RESUMO_EXECUTIVO.md) → "Status Final"
 
 ---
 
 ## 📞 SUPORTE
 
-**Encontrou algum erro na documentação?**
+**Encontrou algum erro na documentaçéo?**
 - Abra uma issue no GitHub
 - Envie email: docs@federalexpress.com.br
 
 **Precisa de ajuda técnica?**
-- Consulte a seção de troubleshooting em cada documento
+- Consulte a seçéo de troubleshooting em cada documento
 - Veja [DESENVOLVIMENTO.md](./DESENVOLVIMENTO.md) → "Debug"
 - Contate: suporte@federalexpress.com.br
 
 ---
 
-## ✅ CHECKLIST: "Li a Documentação"
+## ✅ CHECKLIST: "Li a Documentaçéo"
 
 Use este checklist para garantir que você está pronto:
 
@@ -388,9 +388,9 @@ Use este checklist para garantir que você está pronto:
 
 ### Como Designer/QA
 - [ ] Li HANDOFF.md e conheço todos os tokens
-- [ ] Li TESTES_VISUAIS.md e sei fazer validação
+- [ ] Li TESTES_VISUAIS.md e sei fazer validaçéo
 - [ ] Aprendi a usar BreakpointTester (COMO_USAR_TESTES.md)
-- [ ] Sei quais são os 5 breakpoints
+- [ ] Sei quais séo os 5 breakpoints
 
 ### Como DevOps
 - [ ] Li PRODUCAO.md completamente
@@ -406,24 +406,24 @@ Use este checklist para garantir que você está pronto:
 
 ---
 
-## 🎉 CONCLUSÃO
+## 🎉 CONCLUSéO
 
 Você agora tem acesso a **7 documentos técnicos completos** que cobrem:
 
-✅ **Instalação e setup**  
+✅ **Instalaçéo e setup**  
 ✅ **Desenvolvimento de features**  
 ✅ **Especificações de design**  
 ✅ **Testes visuais e QA**  
-✅ **Deploy em produção**  
-✅ **Visão executiva**  
+✅ **Deploy em produçéo**  
+✅ **Viséo executiva**  
 ✅ **Tutoriais práticos**
 
-**Total de páginas:** ~150 páginas de documentação  
+**Total de páginas:** ~150 páginas de documentaçéo  
 **Tempo total de leitura:** ~2-3 horas  
 **Cobertura:** 100% do projeto
 
 ---
 
-**Última atualização:** 2025-11-07  
-**Versão:** 1.0 - Documentação Completa ✅  
+**Última atualizaçéo:** 2025-11-07  
+**Verséo:** 1.0 - Documentaçéo Completa ✅  
 **Mantido por:** Equipe Federal Express Brasil

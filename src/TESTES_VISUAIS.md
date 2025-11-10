@@ -1,6 +1,6 @@
-# 🧪 TESTES VISUAIS - Federal Express Brasil
+﻿# 🧪 TESTES VISUAIS - Federal Express Brasil
 
-## 📋 CHECKLIST DE VALIDAÇÃO VISUAL
+## 📋 CHECKLIST DE VALIDAÇéO VISUAL
 
 **Data:** 2025-11-07  
 **Responsável:** Equipe de QA + Design  
@@ -11,7 +11,7 @@
 ## 🛠️ FERRAMENTAS DE TESTE
 
 ### 1. BreakpointTester (Componente Interno)
-**Localização:** Canto inferior esquerdo da tela  
+**Localizaçéo:** Canto inferior esquerdo da tela  
 **Status:** ✅ Ativo
 
 **Funcionalidades:**
@@ -22,18 +22,18 @@
 - Alerta visual quando fora dos breakpoints
 
 **Como usar:**
-1. Abra a aplicação
+1. Abra a aplicaçéo
 2. Veja o widget no canto inferior esquerdo
 3. Redimensione a janela do navegador
 4. Observe as mudanças em tempo real
 5. Clique no "×" para minimizar (ícone reaparece)
 
-### 2. Botão "🚀 TESTE: Ver Dashboard"
-**Localização:** Canto inferior direito (apenas na home)  
-**Função:** Acesso rápido ao dashboard sem login
+### 2. Botéo "🚀 TESTE: Ver Dashboard"
+**Localizaçéo:** Canto inferior direito (apenas na home)  
+**Funçéo:** Acesso rápido ao dashboard sem login
 
 **Como usar:**
-1. Na home, clique no botão verde
+1. Na home, clique no botéo verde
 2. Será redirecionado automaticamente para o dashboard
 3. Token de teste será salvo no localStorage
 4. Email de teste: `teste@federalexpress.com.br`
@@ -49,7 +49,7 @@
 
 ### ✅ MOBILE (360px × 800px) - Galaxy S25
 
-**Configuração DevTools:**
+**Configuraçéo DevTools:**
 ```
 Device: Galaxy S25 Ultra
 Width: 360px
@@ -92,7 +92,7 @@ User Agent: Mobile
 
 ### ✅ PHABLET (430px × 932px) - iPhone 17 Pro Max
 
-**Configuração DevTools:**
+**Configuraçéo DevTools:**
 ```
 Device: iPhone 17 Pro Max
 Width: 430px
@@ -114,7 +114,7 @@ User Agent: Mobile
 
 ### ✅ TABLET (768px × 1024px) - iPad Air
 
-**Configuração DevTools:**
+**Configuraçéo DevTools:**
 ```
 Device: iPad Air
 Width: 768px
@@ -125,7 +125,7 @@ User Agent: Mobile
 
 **Checklist:**
 - [ ] Header:
-  - [ ] Logo + navegação completa visível
+  - [ ] Logo + navegaçéo completa visível
   - [ ] Botões lado a lado
   
 - [ ] Dashboard:
@@ -145,7 +145,7 @@ User Agent: Mobile
 
 ### ✅ LAPTOP (1024px × 768px) - MacBook Air
 
-**Configuração DevTools:**
+**Configuraçéo DevTools:**
 ```
 Device: Custom
 Width: 1024px
@@ -171,7 +171,7 @@ Pixel Ratio: 2
 
 ### ✅ DESKTOP (1440px × 900px) - Full HD
 
-**Configuração DevTools:**
+**Configuraçéo DevTools:**
 ```
 Device: Custom
 Width: 1440px
@@ -192,7 +192,7 @@ Pixel Ratio: 1
 - [ ] Gutter: 24px
 - [ ] Margin lateral: 80px
 - [ ] Todos os elementos bem espaçados
-- [ ] Imagens em alta resolução
+- [ ] Imagens em alta resoluçéo
 
 **Problemas conhecidos:** Nenhum
 
@@ -204,8 +204,8 @@ Pixel Ratio: 1
 ```css
 ✅ Primária #0A4B9E - Header, títulos principais
 ✅ Secundária #0058CC - Links, hover states
-✅ Ação #2BA84A - CTAs, botões de ação
-✅ Suporte #56B544 - Botão "Receber Online"
+✅ Açéo #2BA84A - CTAs, botões de açéo
+✅ Suporte #56B544 - Botéo "Receber Online"
 ✅ Destaque #7C6EE4 - Card "Histórico"
 ✅ Fundo Neutro #F5F6F8 - SummaryTipsCard
 ✅ Ticker Fundo #063E74 - TickerBar background
@@ -241,8 +241,8 @@ Pixel Ratio: 1
 ✅ Desktop: 80px vertical, 80px margin
 ```
 
-**Teste de Respiração:**
-- [ ] Elementos não colados uns nos outros
+**Teste de Respiraçéo:**
+- [ ] Elementos néo colados uns nos outros
 - [ ] Hierarquia visual clara
 - [ ] Whitespace adequado
 
@@ -269,12 +269,12 @@ Pixel Ratio: 1
 
 - [ ] **Botões:**
   - Normal → Hover: brightness(110%) + scale(1.03)
-  - Transição suave 300ms
+  - Transiçéo suave 300ms
   - Cursor: pointer
   
 - [ ] **Cards:**
   - Normal → Hover: translateY(-4px) + sombra maior
-  - Transição: 300ms ease-out
+  - Transiçéo: 300ms ease-out
   
 - [ ] **Links:**
   - Normal → Hover: cor muda para secundária
@@ -297,7 +297,7 @@ Pixel Ratio: 1
   1. Header → Logo, Links, Login
   2. TickerBar (skip)
   3. Dashboard Actions → Card 1, 2, 3
-  4. Calculator → Abas, Inputs, Botão
+  4. Calculator → Abas, Inputs, Botéo
   5. Footer → Links
   
 - [ ] **Indicador de foco visível:**
@@ -311,7 +311,7 @@ Pixel Ratio: 1
   - Moedas duplicadas 3× (seamless loop)
   
 - [ ] **Abas da Calculadora:**
-  - Transição cor: 200ms ease-out
+  - Transiçéo cor: 200ms ease-out
   - Background + color + border mudam juntos
   
 - [ ] **Carrosséis:**
@@ -322,11 +322,11 @@ Pixel Ratio: 1
 
 ## ♿ TESTES DE ACESSIBILIDADE
 
-### Navegação por Teclado
+### Navegaçéo por Teclado
 **Comandos:**
 - `Tab` - Próximo elemento
 - `Shift+Tab` - Elemento anterior
-- `Enter` - Ativar botão/link
+- `Enter` - Ativar botéo/link
 - `Space` - Ativar checkbox/toggle
 
 **Checklist:**
@@ -367,30 +367,30 @@ Pixel Ratio: 1
   
 - [ ] **Links:**
   - Área de clique confortável
-  - Não muito pequenos
+  - Néo muito pequenos
 
 ### Z-Index Hierarchy
 **Verificar sobreposições:**
 
 ```css
-z-index: 9999 - Botão flutuante de teste (temporário)
+z-index: 9999 - Botéo flutuante de teste (temporário)
 z-index: 9998 - BreakpointTester (temporário)
 z-index: 1000 - Header sticky
 z-index: 100 - Modais/Dialogs (futuro)
 z-index: 50 - TickerBar
 z-index: 10 - Cards com hover
-z-index: 1 - Conteúdo padrão
+z-index: 1 - Conteúdo padréo
 ```
 
 **Checklist:**
 - [ ] Nenhum elemento bloqueia botões
 - [ ] Header fica no topo ao scroll
-- [ ] TickerBar não sobrepõe conteúdo importante
+- [ ] TickerBar néo sobrepõe conteúdo importante
 - [ ] Botões sempre clicáveis
 
 ---
 
-## 🚫 VALIDAÇÃO: REMOÇÃO DE reCAPTCHA
+## 🚫 VALIDAÇéO: REMOÇéO DE reCAPTCHA
 
 ### Busca de Código
 **Comando:**
@@ -401,13 +401,13 @@ grep -r "RECAPTCHA" .env*
 
 **Resultados esperados:** Nenhum match ✅
 
-### Verificação Visual
+### Verificaçéo Visual
 - [ ] Formulário de Cadastro - Sem reCAPTCHA
 - [ ] Formulário de Login - Sem reCAPTCHA
-- [ ] Formulário de Recuperação - Sem reCAPTCHA
+- [ ] Formulário de Recuperaçéo - Sem reCAPTCHA
 
 ### Network Tab
-**Verificar:** Não deve haver requests para:
+**Verificar:** Néo deve haver requests para:
 - `https://www.google.com/recaptcha/*`
 - `https://www.gstatic.com/recaptcha/*`
 
@@ -434,28 +434,28 @@ grep -r "RECAPTCHA" .env*
 ### Otimizações Aplicadas
 - [ ] Imagens lazy load (Unsplash otimizado)
 - [ ] Animações com GPU (transform, opacity)
-- [ ] CSS minificado em produção
-- [ ] Tree-shaking de componentes não usados
+- [ ] CSS minificado em produçéo
+- [ ] Tree-shaking de componentes néo usados
 
 ---
 
 ## 🐛 BUGS CONHECIDOS & SOLUÇÕES
 
 ### Bug 1: TickerBar pode "pular" ao redimensionar
-**Status:** Não crítico  
-**Solução:** Adicionar `will-change: transform` ao CSS
+**Status:** Néo crítico  
+**Soluçéo:** Adicionar `will-change: transform` ao CSS
 
 ### Bug 2: Calculadora pode quebrar em telas < 320px
 **Status:** Edge case (fora do spec)  
-**Solução:** Min-width 360px já definido
+**Soluçéo:** Min-width 360px já definido
 
-### Bug 3: Hover não funciona em mobile
+### Bug 3: Hover néo funciona em mobile
 **Status:** Esperado (sem mouse)  
-**Solução:** Touch events já implementados
+**Soluçéo:** Touch events já implementados
 
 ---
 
-## ✅ APROVAÇÃO FINAL
+## ✅ APROVAÇéO FINAL
 
 ### Assinaturas
 
@@ -478,14 +478,14 @@ grep -r "RECAPTCHA" .env*
 
 ## 📝 PRÓXIMOS PASSOS
 
-1. [ ] Remover `BreakpointTester` e botão de teste antes de produção
+1. [ ] Remover `BreakpointTester` e botéo de teste antes de produçéo
 2. [ ] Rodar testes E2E com Playwright
 3. [ ] Deploy em ambiente de staging
 4. [ ] Teste de carga (stress test)
-5. [ ] Aprovação final do cliente
+5. [ ] Aprovaçéo final do cliente
 
 ---
 
 **Documento criado em:** 2025-11-07  
-**Última atualização:** 2025-11-07  
-**Versão:** 1.0 - Pronto para Produção ✅
+**Última atualizaçéo:** 2025-11-07  
+**Verséo:** 1.0 - Pronto para Produçéo ✅

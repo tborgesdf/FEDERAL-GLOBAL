@@ -1,19 +1,19 @@
-# Federal Express Brasil - Landing Page
+﻿# Federal Express Brasil - Landing Page
 
-Landing page completa para Federal Express Brasil com sistema de autenticação, área do cliente e calculadora PTAX.
+Landing page completa para Federal Express Brasil com sistema de autenticaçéo, área do cliente e calculadora PTAX.
 
 ## 🎯 Funcionalidades
 
 ### 📄 Páginas Públicas
-- **Home**: Hero, ticker de mercado, carrosséis RSS de notícias e seção multimídia
+- **Home**: Hero, ticker de mercado, carrosséis RSS de notícias e seçéo multimídia
 - **Cadastro**: Formulário de 7 campos integrado ao Supabase
 - **Login**: Sistema completo com 3 modos (login, recuperar senha, redefinir senha)
 
 ### 🔐 Área do Cliente (Dashboard)
 - **TickerBar**: Cotações em tempo real de 10 moedas (DKK, NOK, SEK, USD, AUD, CAD, EUR, CHF, JPY, GBP)
-- **3 Cards de Ação**:
+- **3 Cards de Açéo**:
   - Contratar Novo Serviço
-  - Acompanhar Solicitação em Andamento
+  - Acompanhar Solicitaçéo em Andamento
   - Histórico de Solicitações
 - **Calculadora PTAX**: Cálculo de câmbio com breakdown detalhado (IOF, VET, tarifas)
 - **Card Resumo & Dicas**: Informações auxiliares
@@ -23,7 +23,7 @@ Landing page completa para Federal Express Brasil com sistema de autenticação,
 ### Cores Institucionais
 - Primária: `#0A4B9E`
 - Secundária: `#0058CC`
-- Ação: `#2BA84A`
+- Açéo: `#2BA84A`
 - Suporte CTA: `#56B544`
 - Destaque: `#7C6EE4`
 - Fundo Neutro: `#F5F6F8`
@@ -43,17 +43,17 @@ Landing page completa para Federal Express Brasil com sistema de autenticação,
 ### Frontend (React + Vite)
 ```
 /components
-  ├── Header.tsx                  # Cabeçalho com clima/localização
-  ├── Hero.tsx                    # Seção hero com imagem
+  ├── Header.tsx                  # Cabeçalho com clima/localizaçéo
+  ├── Hero.tsx                    # Seçéo hero com imagem
   ├── MarketTicker.tsx            # Ticker de mercado financeiro
   ├── RSSCarousel.tsx             # Carrossel de notícias
-  ├── MultimediaSection.tsx       # Seção multimídia
+  ├── MultimediaSection.tsx       # Seçéo multimídia
   ├── Footer.tsx                  # Rodapé completo
   ├── RegisterPage.tsx            # Página de cadastro
   ├── LoginPage.tsx               # Página de login (3 modos)
   ├── Dashboard.tsx               # Área do cliente
   ├── TickerBar.tsx              # Carrossel de cotações
-  ├── DashboardActions.tsx        # Cards de ação
+  ├── DashboardActions.tsx        # Cards de açéo
   ├── CurrencyCalculator.tsx      # Calculadora PTAX
   └── SummaryTipsCard.tsx         # Card de dicas
 ```
@@ -65,7 +65,7 @@ Landing page completa para Federal Express Brasil com sistema de autenticação,
   └── kv_store.tsx               # Utilitário KV (protegido)
 ```
 
-## 🚀 Instalação
+## 🚀 Instalaçéo
 
 ```bash
 # Instalar dependências
@@ -74,16 +74,16 @@ npm install
 # Rodar em desenvolvimento
 npm run dev
 
-# Build de produção
+# Build de produçéo
 npm run build
 
 # Preview do build
 npm run preview
 ```
 
-## 🔌 Integração Backend
+## 🔌 Integraçéo Backend
 
-### Autenticação
+### Autenticaçéo
 O sistema usa Supabase Auth com os seguintes endpoints:
 
 **Login**
@@ -126,14 +126,14 @@ POST /make-server-d805caa8/reset-password
 }
 ```
 
-### Persistência de Sessão
-O token de autenticação é armazenado no `localStorage`:
+### Persistência de Sesséo
+O token de autenticaçéo é armazenado no `localStorage`:
 - `access_token`: Token JWT do Supabase
 - `user_email`: Email do usuário logado
 
 ## 📱 Responsividade
 
-Todos os componentes são totalmente responsivos seguindo os breakpoints definidos:
+Todos os componentes séo totalmente responsivos seguindo os breakpoints definidos:
 - Mobile-first approach
 - Grid system: 4/8/12 colunas
 - Auto Layout com Hug/Fill containers
@@ -143,31 +143,31 @@ Todos os componentes são totalmente responsivos seguindo os breakpoints definid
 
 ### Backend (Próximos Passos)
 - [ ] Implementar rotas `/login`, `/signup` no servidor Supabase
-- [ ] Integração com API PTAX oficial do Banco Central
-- [ ] SSE (Server-Sent Events) para atualização em tempo real
-- [ ] Middleware de autenticação para rotas protegidas
+- [ ] Integraçéo com API PTAX oficial do Banco Central
+- [ ] SSE (Server-Sent Events) para atualizaçéo em tempo real
+- [ ] Middleware de autenticaçéo para rotas protegidas
 
 ### Frontend
 - [ ] Páginas de serviços (Novo, Andamento, Histórico)
-- [ ] Integração com API de câmbio real
+- [ ] Integraçéo com API de câmbio real
 - [ ] Testes E2E com Playwright/Cypress
 - [ ] PWA (Progressive Web App)
 
 ## 📝 Notas Importantes
 
-### Arquivos Protegidos (NÃO MODIFICAR)
+### Arquivos Protegidos (NéO MODIFICAR)
 - `/supabase/functions/server/kv_store.tsx`
 - `/utils/supabase.tsx`
 - `/components/figma/ImageWithFallback.tsx`
 
 ### Tokens de Design
-Definidos em `/styles/globals.css` - não alterar sem solicitação específica
+Definidos em `/styles/globals.css` - néo alterar sem solicitaçéo específica
 
 ### reCAPTCHA
 Foi **completamente removido** de todos os formulários conforme solicitado
 
-### Navegação Login ↔ Cadastro
-Botões de navegação cruzada implementados e funcionais em todas as telas
+### Navegaçéo Login ↔ Cadastro
+Botões de navegaçéo cruzada implementados e funcionais em todas as telas
 
 ## 🧪 Testes
 

@@ -1,4 +1,4 @@
-
+﻿
 import { createClient } from '@supabase/supabase-js';
 
 const url = import.meta.env.VITE_SUPABASE_URL as string;
@@ -11,3 +11,5 @@ console.log('[ENV CHECK]', {
 });
 
 export const supabase = createClient(url, anon);
+
+

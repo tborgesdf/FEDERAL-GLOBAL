@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 test.describe('Home Page - Federal Express Brasil', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,11 +14,11 @@ test.describe('Home Page - Federal Express Brasil', () => {
     await expect(page.locator('text=Federal Express Brasil')).toBeVisible();
     
     // Verificar MarketTicker
-    await expect(page.locator('text=/Cotações.*Tempo Real/i')).toBeVisible();
+    await expect(page.locator('text=/Cotaçéµes.*Tempo Real/i')).toBeVisible();
     
     // Verificar Footer
     await expect(page.locator('footer')).toBeVisible();
-    await expect(page.locator('text=/© 2025 Federal Express Brasil/i')).toBeVisible();
+    await expect(page.locator('text=/Â© 2025 Federal Express Brasil/i')).toBeVisible();
   });
 
   test('deve ter responsividade mobile (360px)', async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('Home Page - Federal Express Brasil', () => {
     // Header deve estar visível
     await expect(page.locator('header')).toBeVisible();
     
-    // Botões devem estar empilhados ou em menu
+    // Botéµes devem estar empilhados ou em menu
     const buttons = page.locator('button:visible');
     await expect(buttons).toBeTruthy();
   });
@@ -38,7 +38,7 @@ test.describe('Home Page - Federal Express Brasil', () => {
     // Logo deve estar visível
     await expect(page.getByAltText('Federal Express Brasil')).toBeVisible();
     
-    // Botões de navegação devem estar visíveis
+    // Botéµes de navegação devem estar visíveis
     await expect(page.locator('text=Cadastro')).toBeVisible();
     await expect(page.locator('text=Login')).toBeVisible();
   });
@@ -68,7 +68,7 @@ test.describe('Home Page - Federal Express Brasil', () => {
     await page.click('img[alt="Federal Express Brasil"]');
     
     // Deve voltar para home
-    await expect(page.locator('text=/Cotações.*Tempo Real/i')).toBeVisible();
+    await expect(page.locator('text=/Cotaçéµes.*Tempo Real/i')).toBeVisible();
   });
 
   test('deve ter contraste adequado (AA+)', async ({ page }) => {
@@ -128,3 +128,5 @@ test.describe('Home Page - Federal Express Brasil', () => {
     expect(position).toBe('sticky');
   });
 });
+
+

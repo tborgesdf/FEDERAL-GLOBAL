@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 test.describe('Autenticação - Cadastro e Login', () => {
   
@@ -67,7 +67,7 @@ test.describe('Autenticação - Cadastro e Login', () => {
     });
 
     test('deve mostrar reCAPTCHA placeholder', async ({ page }) => {
-      await expect(page.locator('text=Área do reCAPTCHA Google')).toBeVisible();
+      await expect(page.locator('text=érea do reCAPTCHA Google')).toBeVisible();
       await expect(page.locator('text=Proteção contra cadastros automáticos')).toBeVisible();
     });
 
@@ -157,11 +157,11 @@ test.describe('Autenticação - Cadastro e Login', () => {
 
     test('deve ter reCAPTCHA em todas as telas', async ({ page }) => {
       // Tela de login
-      await expect(page.locator('text=Área do reCAPTCHA Google')).toBeVisible();
+      await expect(page.locator('text=érea do reCAPTCHA Google')).toBeVisible();
       
       // Tela de recuperação
       await page.click('text=Esqueci minha senha');
-      await expect(page.locator('text=Área do reCAPTCHA Google')).toBeVisible();
+      await expect(page.locator('text=érea do reCAPTCHA Google')).toBeVisible();
     });
   });
 
@@ -206,7 +206,7 @@ test.describe('Autenticação - Cadastro e Login', () => {
     });
   });
 
-  test.describe('Validações de design system', () => {
+  test.describe('Validaçéµes de design system', () => {
     test('inputs devem ter altura correta (52px)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
@@ -217,7 +217,7 @@ test.describe('Autenticação - Cadastro e Login', () => {
       expect(height).toBe(52);
     });
 
-    test('botões devem ter altura correta (56px)', async ({ page }) => {
+    test('botéµes devem ter altura correta (56px)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
       
@@ -252,3 +252,5 @@ test.describe('Autenticação - Cadastro e Login', () => {
     });
   });
 });
+
+

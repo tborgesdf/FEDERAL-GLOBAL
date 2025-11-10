@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot@1.1.2";
+﻿import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
 import { ChevronRight, MoreHorizontal } from "lucide-react@0.487.0";
 
 import { cn } from "./utils";
@@ -107,3 +107,5 @@ export {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 };
+
+

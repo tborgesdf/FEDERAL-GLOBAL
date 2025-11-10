@@ -1,10 +1,10 @@
-# 🧪 Guia de Testes E2E - Federal Express Brasil
+﻿# 🧪 Guia de Testes E2E - Federal Express Brasil
 
-## Sistema de Design Responsivo - Validação Completa
+## Sistema de Design Responsivo - Validaçéo Completa
 
 ---
 
-## 📋 Preparação do Ambiente
+## 📋 Preparaçéo do Ambiente
 
 ### 1️⃣ Instalar Dependências
 
@@ -24,7 +24,7 @@ Isso instalará os navegadores (Chromium, Firefox, WebKit) necessários para os 
 
 ## 🚀 Executando os Testes
 
-### Modo Padrão (Headless)
+### Modo Padréo (Headless)
 
 ```bash
 npm run test:e2e
@@ -46,7 +46,7 @@ Abre a interface gráfica do Playwright para executar e debugar testes interativ
 npm run test:e2e:headed
 ```
 
-Executa os testes mostrando o navegador em ação.
+Executa os testes mostrando o navegador em açéo.
 
 ### Ver Relatório Anterior
 
@@ -63,7 +63,7 @@ Abre o relatório HTML do último teste executado.
 ```
 tests/e2e/
 ├── home.spec.ts           # Testes da página inicial (11 testes)
-├── auth.spec.ts           # Testes de autenticação (24 testes)
+├── auth.spec.ts           # Testes de autenticaçéo (24 testes)
 ├── accessibility.spec.ts  # Testes de acessibilidade (13 testes)
 └── responsive.spec.ts     # Testes de responsividade (18 testes)
 ```
@@ -79,8 +79,8 @@ tests/e2e/
 - [x] Todos os componentes principais carregam (Header, Hero, Ticker, Footer)
 - [x] Responsividade 360px (mobile)
 - [x] Responsividade 1440px (desktop)
-- [x] Navegação para Cadastro
-- [x] Navegação para Login
+- [x] Navegaçéo para Cadastro
+- [x] Navegaçéo para Login
 - [x] Logo redireciona para home
 - [x] Contraste adequado (AA+)
 - [x] Carrosséis RSS visíveis
@@ -96,28 +96,28 @@ tests/e2e/
 
 #### Cadastro (8 testes)
 - [x] Exibe todos os campos do formulário
-- [x] Botão desabilitado sem aceitar termos
-- [x] Botão habilita ao aceitar termos
+- [x] Botéo desabilitado sem aceitar termos
+- [x] Botéo habilita ao aceitar termos
 - [x] Máscara de CPF aplicada
 - [x] Máscara de telefone aplicada
-- [x] Validação de senhas diferentes
+- [x] Validaçéo de senhas diferentes
 - [x] reCAPTCHA placeholder visível
 - [x] Links para termos de uso
 - [x] Design responsivo mobile
 
 #### Login (8 testes)
 - [x] Campos de login visíveis
-- [x] Botão mostrar/ocultar senha
+- [x] Botéo mostrar/ocultar senha
 - [x] Link "Esqueci minha senha"
 - [x] Link "Criar conta"
-- [x] Navegação para recuperação
-- [x] Navegação para cadastro
-- [x] Voltar do modo recuperação
-- [x] Validação de campos vazios
+- [x] Navegaçéo para recuperaçéo
+- [x] Navegaçéo para cadastro
+- [x] Voltar do modo recuperaçéo
+- [x] Validaçéo de campos vazios
 - [x] reCAPTCHA em todas as telas
 
 #### Fluxo Completo (2 testes)
-- [x] Simulação de cadastro completo
+- [x] Simulaçéo de cadastro completo
 - [x] Cores institucionais aplicadas
 
 #### Validações Design System (6 testes)
@@ -136,14 +136,14 @@ tests/e2e/
 - [x] Imagens com alt text
 - [x] Formulários com labels associados
 - [x] Botões com texto ou aria-label
-- [x] Navegação por teclado funciona
+- [x] Navegaçéo por teclado funciona
 - [x] Focus visible aplicado
 - [x] Contraste de cores adequado (AA)
 - [x] Links identificáveis
 - [x] Mensagens de erro anunciadas
 - [x] Estados de hover visíveis
 - [x] Checkboxes acessíveis
-- [x] reCAPTCHA com descrição
+- [x] reCAPTCHA com descriçéo
 - [x] Loading states anunciados
 
 **Esperado:** ✅ 13/13 passando
@@ -154,7 +154,7 @@ tests/e2e/
 
 #### Mobile 360px (6 testes)
 - [x] Layout se adapta ao mobile
-- [x] Textos não quebram
+- [x] Textos néo quebram
 - [x] Botões com largura adequada
 - [x] Inputs ocupam largura total
 - [x] Carrosséis permitem scroll horizontal
@@ -215,7 +215,7 @@ Total: 66/66 testes passando (100%)
    ```bash
    ls test-results/
    ```
-   Screenshots são salvos automaticamente em falhas.
+   Screenshots séo salvos automaticamente em falhas.
 
 2. **Ver trace:**
    ```bash
@@ -252,7 +252,7 @@ npx playwright test --reporter=html
 
 ## 🌐 Navegadores Testados
 
-Os testes são executados em:
+Os testes séo executados em:
 
 - ✅ **Chromium** (Chrome/Edge)
 - ✅ **Firefox**
@@ -262,7 +262,7 @@ Os testes são executados em:
 
 ---
 
-## 🛠️ Configuração Avançada
+## 🛠️ Configuraçéo Avançada
 
 ### Executar apenas em um navegador:
 
@@ -286,7 +286,7 @@ npx playwright test --debug
 
 ## 📚 Arquivos de Referência
 
-- **Configuração:** `/playwright.config.ts`
+- **Configuraçéo:** `/playwright.config.ts`
 - **Design Tokens:** `/design-tokens.json`
 - **Sistema de Design:** `/DESIGN_SYSTEM.md`
 - **CSS Tokens:** `/styles/globals.css`
@@ -297,21 +297,21 @@ npx playwright test --debug
 
 ### Erro: "Timeout waiting for locator"
 
-**Solução:** Aumentar timeout ou verificar se elemento existe:
+**Soluçéo:** Aumentar timeout ou verificar se elemento existe:
 ```typescript
 await expect(element).toBeVisible({ timeout: 10000 });
 ```
 
 ### Erro: "Browser not found"
 
-**Solução:** Reinstalar browsers:
+**Soluçéo:** Reinstalar browsers:
 ```bash
 npx playwright install --with-deps
 ```
 
 ### Erro: "Port 5173 is already in use"
 
-**Solução:** Matar processo ou mudar porta:
+**Soluçéo:** Matar processo ou mudar porta:
 ```bash
 kill -9 $(lsof -ti:5173)
 # ou
@@ -320,7 +320,7 @@ PORT=5174 npm run dev
 
 ### Testes lentos
 
-**Solução:** Desabilitar projetos mobile temporariamente:
+**Soluçéo:** Desabilitar projetos mobile temporariamente:
 ```typescript
 // playwright.config.ts
 // Comentar projetos Mobile Chrome e Mobile Safari
@@ -341,8 +341,8 @@ O relatório mostra:
 - ✅ Testes que passaram
 - ❌ Testes que falharam
 - 📸 Screenshots de falhas
-- 🎬 Traces de execução
-- ⏱️ Tempo de execução
+- 🎬 Traces de execuçéo
+- ⏱️ Tempo de execuçéo
 - 📊 Estatísticas por navegador
 
 ---
@@ -360,7 +360,7 @@ O relatório mostra:
    ```
 
 3. **Mantenha testes independentes:**
-   - Não dependem de ordem de execução
+   - Néo dependem de ordem de execuçéo
    - Cada teste limpa seu estado
 
 4. **Use seletores semânticos:**
@@ -387,12 +387,12 @@ O relatório mostra:
 Em caso de dúvidas ou problemas:
 
 1. Verificar logs de erro
-2. Consultar documentação do Playwright
+2. Consultar documentaçéo do Playwright
 3. Revisar `/DESIGN_SYSTEM.md`
 4. Verificar `/design-tokens.json`
 
 ---
 
-**Versão:** 2.0.0  
-**Última atualização:** 2025-11-07  
+**Verséo:** 2.0.0  
+**Última atualizaçéo:** 2025-11-07  
 **Mantido por:** Federal Express Brasil - QA Team

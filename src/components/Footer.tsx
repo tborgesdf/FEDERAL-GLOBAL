@@ -1,4 +1,4 @@
-import { Linkedin, Youtube, Instagram, MessageCircle } from "lucide-react";
+﻿import { Linkedin, Youtube, Instagram, MessageCircle } from "lucide-react";
 import logoImage from "figma:asset/fdb4ef494a99e771ad2534fa1ee70561858f6471.png";
 
 export default function Footer() {
@@ -28,7 +28,7 @@ export default function Footer() {
                 lineHeight: "1.6"
               }}
             >
-              Soluções migratórias completas para você e sua família. Unindo
+              Soluçéµes migratórias completas para você e sua família. Unindo
               pessoas, culturas e oportunidades desde 2010.
             </p>
           </div>
@@ -44,7 +44,7 @@ export default function Footer() {
                 color: "white"
               }}
             >
-              Links Úteis
+              Links éšteis
             </h3>
             <nav>
               <ul className="flex flex-col gap-3">
@@ -196,7 +196,7 @@ export default function Footer() {
             color: "rgba(255, 255, 255, 0.8)"
           }}
         >
-          © 2025 Federal Express Brasil — Soluções Migratórias. Todos os direitos
+          Â© 2025 Federal Express Brasil â€” Soluçéµes Migratórias. Todos os direitos
           reservados.
         </p>
 
@@ -226,3 +226,4 @@ export default function Footer() {
     </footer>
   );
 }
+

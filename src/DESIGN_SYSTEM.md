@@ -1,4 +1,4 @@
-# 🎨 Federal Express Brasil - Design System
+﻿# 🎨 Federal Express Brasil - Design System
 
 ## Sistema de Design Responsivo v2.0
 **Equivalência 100% Figma ↔️ Cursor/Tailwind CSS**
@@ -27,7 +27,7 @@
 | Laptop   | 1024px | `lg:`          | 12           | 24px   | 80px   |
 | Desktop  | 1440px | `xl:`          | 12           | 24px   | 80px   |
 
-### Implementação no Figma:
+### Implementaçéo no Figma:
 ```
 Frame: Federal_Express_Site_Responsive
 ├── Mobile_360px
@@ -36,7 +36,7 @@ Frame: Federal_Express_Site_Responsive
 └── Desktop_1440px
 ```
 
-### Implementação no Tailwind:
+### Implementaçéo no Tailwind:
 ```tsx
 <div className="
   px-4        // Mobile: 16px margin
@@ -86,7 +86,7 @@ Containers principais → "Fill container" com max-width
 |-------------|------------|--------|-----------|-------|------------------------------|
 | `--text-xs` | text-xs    | 12px   | 1.5vw     | 14px  | Disclaimers, notas de rodapé |
 | `--text-sm` | text-sm    | 14px   | 1.75vw    | 16px  | Labels, captions             |
-| `--text-base` | text-base | 16px | 2vw       | 18px  | Corpo de texto padrão        |
+| `--text-base` | text-base | 16px | 2vw       | 18px  | Corpo de texto padréo        |
 | `--text-lg` | text-lg    | 18px   | 2.25vw    | 20px  | Subtítulos                   |
 | `--text-xl` | text-xl    | 20px   | 2.5vw     | 24px  | Heading 4                    |
 | `--text-2xl` | text-2xl  | 24px   | 3vw       | 30px  | Heading 3                    |
@@ -101,7 +101,7 @@ Federal_Express/Body/Large → Inter Regular 18px → clamp(18px, 2.25vw, 20px)
 Federal_Express/Body/Base → Inter Regular 16px → clamp(16px, 2vw, 18px)
 ```
 
-### Implementação CSS:
+### Implementaçéo CSS:
 ```css
 h1 {
   font-family: 'Poppins', sans-serif;
@@ -120,7 +120,7 @@ h1 {
 |--------------------|-----------|----------------------------------------|
 | Brand Blue         | `#0A4B9E` | Títulos, CTAs primários, links         |
 | Brand Blue Light   | `#0058CC` | Hover states, elementos secundários    |
-| Brand Green        | `#2BA84A` | Botões de ação, confirmações, sucesso  |
+| Brand Green        | `#2BA84A` | Botões de açéo, confirmações, sucesso  |
 | Brand Purple       | `#7C6EE4` | Destaques especiais, badges            |
 
 ### Cores Neutras:
@@ -148,13 +148,13 @@ Federal_Express/Background/Light → #F5F6F8
 |---------------|-------|------------|---------------|----------------------------------|
 | `--space-xs`  | 8px   | Space/XS   | `p-2`, `gap-2` | Padding interno pequeno         |
 | `--space-sm`  | 12px  | Space/SM   | `p-3`, `gap-3` | Gap entre elementos relacionados |
-| `--space-md`  | 24px  | Space/MD   | `p-6`, `gap-6` | Espaçamento padrão entre seções  |
-| `--space-lg`  | 48px  | Space/LG   | `p-12`, `gap-12` | Separação entre blocos         |
+| `--space-md`  | 24px  | Space/MD   | `p-6`, `gap-6` | Espaçamento padréo entre seções  |
+| `--space-lg`  | 48px  | Space/LG   | `p-12`, `gap-12` | Separaçéo entre blocos         |
 | `--space-xl`  | 80px  | Space/XL   | `p-20`, `gap-20` | Margens principais desktop     |
 
 ### Responsividade de Espaçamentos:
 ```tsx
-// Seção com espaçamento responsivo
+// Seçéo com espaçamento responsivo
 <section className="
   mt-8        // Mobile: 32px
   md:mt-12    // Tablet: 48px
@@ -333,7 +333,7 @@ Federal_Express/Background/Light → #F5F6F8
 
 ## 🔄 Auto Layout Guidelines
 
-### Regras de Componentização:
+### Regras de Componentizaçéo:
 
 1. **Todos os componentes devem ter Auto Layout ativo**
 2. **Nomenclatura padronizada:**
@@ -388,7 +388,7 @@ Federal_Express/Background/Light → #F5F6F8
 - [ ] Contraste WCAG AA+ (mínimo 4.5:1)
 - [ ] Nenhuma cor hardcoded sem token
 
-### ✔️ Exportação:
+### ✔️ Exportaçéo:
 - [ ] Design tokens exportáveis como JSON
 - [ ] Componentes reutilizáveis
 - [ ] Equivalência perfeita Figma ↔️ Tailwind
@@ -412,6 +412,6 @@ Federal_Express/Background/Light → #F5F6F8
 
 ---
 
-**Versão:** 2.0.0  
-**Última atualização:** 2025-11-07  
+**Verséo:** 2.0.0  
+**Última atualizaçéo:** 2025-11-07  
 **Mantido por:** Federal Express Brasil - Equipe de Design

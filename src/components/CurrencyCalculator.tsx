@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { ArrowDownUp, DollarSign } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -165,7 +165,7 @@ export default function CurrencyCalculator() {
         </div>
       </div>
 
-      {/* Ícone de conversão */}
+      {/* écone de conversão */}
       <div className="flex justify-center mb-6">
         <div className="bg-white/10 rounded-full p-2">
           <ArrowDownUp className="h-5 w-5 text-[#8CD000]" />
@@ -187,7 +187,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            • {result.conversionLine}
+            â€¢ {result.conversionLine}
           </li>
           <li
             style={{
@@ -196,7 +196,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            • {result.iofLine}
+            â€¢ {result.iofLine}
           </li>
           <li
             style={{
@@ -205,7 +205,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            • {result.costLine}
+            â€¢ {result.costLine}
           </li>
           <li
             style={{
@@ -214,7 +214,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            • {result.feesLine}
+            â€¢ {result.feesLine}
           </li>
           <li
             style={{
@@ -223,7 +223,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            • {result.vetLine}
+            â€¢ {result.vetLine}
           </li>
         </ul>
       </div>
@@ -269,7 +269,7 @@ export default function CurrencyCalculator() {
         </div>
       </div>
 
-      {/* Rodapé de aviso */}
+      {/* Rodapàde aviso */}
       <p
         className="mb-6 text-center"
         style={{
@@ -299,3 +299,5 @@ export default function CurrencyCalculator() {
     </div>
   );
 }
+
+

@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+﻿import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -47,3 +47,5 @@ export default defineConfig({
     timeout: 120000,
   },
 });
+
+

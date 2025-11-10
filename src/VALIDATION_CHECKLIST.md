@@ -1,10 +1,10 @@
-# ✅ Checklist de Validação - Federal Express Brasil
+﻿# ✅ Checklist de Validaçéo - Federal Express Brasil
 
 ## Sistema de Design Responsivo v2.0
 
 ---
 
-## 🎯 Validação Completa (Colar no Figma Make)
+## 🎯 Validaçéo Completa (Colar no Figma Make)
 
 ### Prompt Figma Curto:
 
@@ -30,7 +30,7 @@ Usar nomes de componentes idênticos aos do Cursor (Header, Hero, CurrencyCarous
 
 ## 🚀 Como Validar (Passo a Passo)
 
-### 1️⃣ Instalação
+### 1️⃣ Instalaçéo
 
 ```bash
 # Instalar dependências
@@ -40,11 +40,11 @@ npm install
 npm run test:install
 ```
 
-**Esperado:** ✅ Instalação sem erros
+**Esperado:** ✅ Instalaçéo sem erros
 
 ---
 
-### 2️⃣ Build da Aplicação
+### 2️⃣ Build da Aplicaçéo
 
 ```bash
 npm run build
@@ -111,8 +111,8 @@ start playwright-report/index.html
 ✅ Componentes principais carregam
 ✅ Responsividade 360px
 ✅ Responsividade 1440px
-✅ Navegação Cadastro
-✅ Navegação Login
+✅ Navegaçéo Cadastro
+✅ Navegaçéo Login
 ✅ Logo → Home
 ✅ Contraste AA+
 ✅ Carrosséis RSS
@@ -128,11 +128,11 @@ start playwright-report/index.html
 #### Cadastro (9 testes)
 ```
 ✅ Todos os campos visíveis
-✅ Botão desabilitado sem termos
-✅ Botão habilitado com termos
+✅ Botéo desabilitado sem termos
+✅ Botéo habilitado com termos
 ✅ Máscara CPF
 ✅ Máscara telefone
-✅ Validação senhas diferentes
+✅ Validaçéo senhas diferentes
 ✅ reCAPTCHA presente
 ✅ Links termos de uso
 ✅ Responsivo mobile
@@ -144,10 +144,10 @@ start playwright-report/index.html
 ✅ Mostrar/ocultar senha
 ✅ Link esqueci senha
 ✅ Link criar conta
-✅ Navegação recuperação
-✅ Navegação cadastro
+✅ Navegaçéo recuperaçéo
+✅ Navegaçéo cadastro
 ✅ Voltar ao login
-✅ Validação campos vazios
+✅ Validaçéo campos vazios
 ```
 
 #### Fluxo (2 testes)
@@ -174,7 +174,7 @@ start playwright-report/index.html
 ✅ Alt text em imagens
 ✅ Labels em formulários
 ✅ Botões com texto/aria-label
-✅ Navegação por teclado
+✅ Navegaçéo por teclado
 ✅ Focus visible
 ✅ Contraste AA
 ✅ Links identificáveis
@@ -192,7 +192,7 @@ start playwright-report/index.html
 #### Mobile 360px (6 testes)
 ```
 ✅ Layout adaptado
-✅ Textos não quebram
+✅ Textos néo quebram
 ✅ Botões largura adequada
 ✅ Inputs largura total
 ✅ Scroll horizontal carrosséis
@@ -302,17 +302,17 @@ start playwright-report/index.html
 │   ├── accessibility.spec.ts       ✅ 13 testes
 │   └── responsive.spec.ts          ✅ 18 testes
 ├── design-tokens.json              ✅ Tokens exportáveis
-├── DESIGN_SYSTEM.md                ✅ Documentação
+├── DESIGN_SYSTEM.md                ✅ Documentaçéo
 ├── TEST_GUIDE.md                   ✅ Guia de testes
 ├── VALIDATION_CHECKLIST.md         ✅ Este arquivo
 ├── playwright.config.ts            ✅ Config Playwright
 ├── package.json                    ✅ Scripts NPM
-└── validate.sh                     ✅ Script validação
+└── validate.sh                     ✅ Script validaçéo
 ```
 
 ---
 
-## 🔍 Validação Rápida (Script Automático)
+## 🔍 Validaçéo Rápida (Script Automático)
 
 ```bash
 chmod +x validate.sh
@@ -326,7 +326,7 @@ chmod +x validate.sh
 ✅ JSON de design tokens válido
 ✅ Todos os componentes principais presentes (8)
 ✅ Todas as suites de teste presentes (4 arquivos)
-✅ Configuração do Playwright presente
+✅ Configuraçéo do Playwright presente
 ✅ Scripts de teste configurados
 
 ✨ Sistema validado com sucesso!
@@ -338,7 +338,7 @@ chmod +x validate.sh
 
 ### Erro: "Port 5173 already in use"
 
-**Solução:**
+**Soluçéo:**
 ```bash
 kill -9 $(lsof -ti:5173)
 npm run dev
@@ -348,7 +348,7 @@ npm run dev
 
 ### Erro: "Browser not found"
 
-**Solução:**
+**Soluçéo:**
 ```bash
 npx playwright install --with-deps
 ```
@@ -357,7 +357,7 @@ npx playwright install --with-deps
 
 ### Erro: Testes falhando no CI
 
-**Solução:** Adicionar ao GitHub Actions:
+**Soluçéo:** Adicionar ao GitHub Actions:
 ```yaml
 - name: Install Playwright
   run: npx playwright install --with-deps
@@ -369,7 +369,7 @@ npx playwright install --with-deps
 
 ### Erro: "Cannot find module"
 
-**Solução:**
+**Soluçéo:**
 ```bash
 npm install
 npm run build
@@ -422,7 +422,7 @@ npm run build
 - [ ] Contraste WCAG AA+
 - [ ] Alt text em imagens
 - [ ] Labels em formulários
-- [ ] Navegação por teclado
+- [ ] Navegaçéo por teclado
 - [ ] Focus visible
 
 ### ✅ Responsividade
@@ -434,7 +434,7 @@ npm run build
 
 ---
 
-## 🎓 Documentação Adicional
+## 🎓 Documentaçéo Adicional
 
 - **Design System:** `/DESIGN_SYSTEM.md`
 - **Guia de Testes:** `/TEST_GUIDE.md`
@@ -445,11 +445,11 @@ npm run build
 
 ## 📞 Próximos Passos
 
-1. ✅ Validação estrutural (este checklist)
+1. ✅ Validaçéo estrutural (este checklist)
 2. ✅ Testes E2E (npm run test:e2e)
-3. ✅ Revisão de acessibilidade
+3. ✅ Reviséo de acessibilidade
 4. ✅ Testes de responsividade
-5. 🚀 Deploy em produção
+5. 🚀 Deploy em produçéo
 
 ---
 
@@ -458,18 +458,18 @@ npm run build
 Quando todos os itens acima estiverem ✅:
 
 ```
-🎉 SISTEMA 100% VALIDADO E PRONTO PARA PRODUÇÃO! 🎉
+🎉 SISTEMA 100% VALIDADO E PRONTO PARA PRODUÇéO! 🎉
 
 ✅ Design System implementado
 ✅ 66 testes E2E passando
 ✅ Responsividade perfeita
 ✅ Acessibilidade AA+
-✅ Documentação completa
+✅ Documentaçéo completa
 ```
 
 ---
 
-**Versão:** 2.0.0  
+**Verséo:** 2.0.0  
 **Data:** 2025-11-07  
-**Status:** ✅ Pronto para Validação  
+**Status:** ✅ Pronto para Validaçéo  
 **Mantido por:** Federal Express Brasil

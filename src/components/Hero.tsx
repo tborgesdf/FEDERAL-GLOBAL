@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import familyImage from "figma:asset/8d6a7ac840cd502128aee5ff530de943ed079f42.png";
 
 export default function Hero() {
@@ -69,3 +69,4 @@ export default function Hero() {
     </section>
   );
 }
+
