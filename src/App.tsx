@@ -7,7 +7,6 @@ import Footer from "./components/Footer";
 import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
-import BreakpointTester from "./components/BreakpointTester"; // Componente de teste
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 
@@ -182,9 +181,6 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" richColors />
-      
-      {/* COMPONENTE DE TESTE VISUAL - Remover em produção */}
-      <BreakpointTester />
       
       {currentPage === "home" ? (
         <div className="min-h-screen bg-white">
