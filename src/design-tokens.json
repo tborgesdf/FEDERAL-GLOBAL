@@ -1,0 +1,377 @@
+{
+  "$schema": "https://tr.designtokens.org/format/v0.1/schema.json",
+  "name": "Federal Express Brasil Design System",
+  "version": "2.0.0",
+  "description": "Sistema de Design Responsivo 100% alinhado com Figma e Tailwind CSS",
+  
+  "colors": {
+    "brand": {
+      "blue": {
+        "$type": "color",
+        "$value": "#0A4B9E",
+        "$description": "Azul institucional principal - usado em títulos, CTAs primários"
+      },
+      "blue-light": {
+        "$type": "color",
+        "$value": "#0058CC",
+        "$description": "Azul claro - hover states e elementos secundários"
+      },
+      "green": {
+        "$type": "color",
+        "$value": "#2BA84A",
+        "$description": "Verde ação - botões de confirmação, status positivo"
+      },
+      "purple": {
+        "$type": "color",
+        "$value": "#7C6EE4",
+        "$description": "Roxo - destaques, badges, elementos especiais"
+      }
+    },
+    "neutral": {
+      "background-light": {
+        "$type": "color",
+        "$value": "#F5F6F8",
+        "$description": "Fundo cinza claro para cards e containers"
+      },
+      "text-primary": {
+        "$type": "color",
+        "$value": "#111111",
+        "$description": "Texto principal de alta hierarquia"
+      },
+      "text-secondary": {
+        "$type": "color",
+        "$value": "#666666",
+        "$description": "Texto secundário e descrições"
+      },
+      "text-muted": {
+        "$type": "color",
+        "$value": "#999999",
+        "$description": "Texto esmaecido, placeholders"
+      },
+      "white": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "Branco puro para backgrounds e textos sobre dark"
+      }
+    }
+  },
+  
+  "spacing": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$description": "Extra small - padding interno de componentes pequenos"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "12px",
+      "$description": "Small - gaps entre elementos relacionados"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "24px",
+      "$description": "Medium - espaçamento padrão entre seções"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "48px",
+      "$description": "Large - separação entre blocos de conteúdo"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "80px",
+      "$description": "Extra large - margens principais desktop"
+    }
+  },
+  
+  "breakpoints": {
+    "mobile": {
+      "$type": "dimension",
+      "$value": "360px",
+      "$description": "Viewport mínimo mobile"
+    },
+    "tablet": {
+      "$type": "dimension",
+      "$value": "768px",
+      "$description": "Breakpoint tablet/iPad"
+    },
+    "laptop": {
+      "$type": "dimension",
+      "$value": "1024px",
+      "$description": "Breakpoint laptop padrão"
+    },
+    "desktop": {
+      "$type": "dimension",
+      "$value": "1440px",
+      "$description": "Breakpoint desktop full HD"
+    }
+  },
+  
+  "typography": {
+    "fontFamilies": {
+      "heading": {
+        "$type": "fontFamily",
+        "$value": "Poppins, sans-serif",
+        "$description": "Fonte para títulos e headings"
+      },
+      "body": {
+        "$type": "fontFamily",
+        "$value": "Inter, sans-serif",
+        "$description": "Fonte para texto corpo e labels"
+      }
+    },
+    "fontSize": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "clamp(12px, 1.5vw, 14px)",
+        "$description": "Texto extra pequeno - disclaimers, notas de rodapé"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "clamp(14px, 1.75vw, 16px)",
+        "$description": "Texto pequeno - labels, captions"
+      },
+      "base": {
+        "$type": "dimension",
+        "$value": "clamp(16px, 2vw, 18px)",
+        "$description": "Texto base padrão - corpo de texto"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "clamp(18px, 2.25vw, 20px)",
+        "$description": "Texto grande - subtítulos"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "clamp(20px, 2.5vw, 24px)",
+        "$description": "Texto extra grande - heading 4"
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$value": "clamp(24px, 3vw, 30px)",
+        "$description": "Heading 3"
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$value": "clamp(30px, 3.75vw, 36px)",
+        "$description": "Heading 2"
+      },
+      "4xl": {
+        "$type": "dimension",
+        "$value": "clamp(36px, 4.5vw, 48px)",
+        "$description": "Heading 1 - títulos principais"
+      }
+    },
+    "fontWeight": {
+      "normal": {
+        "$type": "fontWeight",
+        "$value": "400",
+        "$description": "Peso normal para texto corpo"
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": "500",
+        "$description": "Peso médio para labels"
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": "600",
+        "$description": "Semi-bold para botões e ênfases"
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": "700",
+        "$description": "Bold para títulos"
+      },
+      "extrabold": {
+        "$type": "fontWeight",
+        "$value": "800",
+        "$description": "Extra bold para headings principais"
+      }
+    }
+  },
+  
+  "shadow": {
+    "card": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "8px",
+        "blur": "24px",
+        "color": "rgba(0, 0, 0, 0.08)"
+      },
+      "$description": "Sombra padrão para cards e containers"
+    },
+    "button": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "6px",
+        "blur": "12px",
+        "color": "rgba(0, 0, 0, 0.25)"
+      },
+      "$description": "Sombra para botões e CTAs"
+    },
+    "hover": {
+      "$type": "shadow",
+      "$value": {
+        "offsetX": "0px",
+        "offsetY": "12px",
+        "blur": "32px",
+        "color": "rgba(0, 0, 0, 0.12)"
+      },
+      "$description": "Sombra expandida no hover"
+    }
+  },
+  
+  "borderRadius": {
+    "sm": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$description": "Raio pequeno para badges e tags"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12px",
+      "$description": "Raio médio para inputs e botões"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "16px",
+      "$description": "Raio grande para cards"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "20px",
+      "$description": "Raio extra grande para containers principais"
+    }
+  },
+  
+  "grid": {
+    "mobile": {
+      "columns": {
+        "$type": "number",
+        "$value": 4,
+        "$description": "4 colunas no mobile"
+      },
+      "gutter": {
+        "$type": "dimension",
+        "$value": "12px",
+        "$description": "Espaçamento entre colunas mobile"
+      },
+      "margin": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "Margem lateral mobile"
+      }
+    },
+    "tablet": {
+      "columns": {
+        "$type": "number",
+        "$value": 8,
+        "$description": "8 colunas no tablet"
+      },
+      "gutter": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "Espaçamento entre colunas tablet"
+      },
+      "margin": {
+        "$type": "dimension",
+        "$value": "32px",
+        "$description": "Margem lateral tablet"
+      }
+    },
+    "desktop": {
+      "columns": {
+        "$type": "number",
+        "$value": 12,
+        "$description": "12 colunas no desktop"
+      },
+      "gutter": {
+        "$type": "dimension",
+        "$value": "24px",
+        "$description": "Espaçamento entre colunas desktop"
+      },
+      "margin": {
+        "$type": "dimension",
+        "$value": "80px",
+        "$description": "Margem lateral desktop"
+      }
+    }
+  },
+  
+  "components": {
+    "Header": {
+      "height": {
+        "mobile": "auto",
+        "desktop": "auto"
+      },
+      "backgroundColor": "#0A4B9E",
+      "textColor": "#FFFFFF"
+    },
+    "Hero": {
+      "height": {
+        "mobile": "400px",
+        "desktop": "600px"
+      },
+      "paddingY": {
+        "mobile": "48px",
+        "desktop": "80px"
+      }
+    },
+    "Button": {
+      "primary": {
+        "backgroundColor": "#2BA84A",
+        "textColor": "#FFFFFF",
+        "height": "56px",
+        "borderRadius": "12px",
+        "shadow": "0 6px 12px rgba(0,0,0,0.25)"
+      },
+      "secondary": {
+        "backgroundColor": "#0A4B9E",
+        "textColor": "#FFFFFF",
+        "height": "56px",
+        "borderRadius": "12px"
+      }
+    },
+    "Input": {
+      "height": "52px",
+      "borderRadius": "8px",
+      "borderColor": "rgba(0,0,0,0.1)",
+      "focusBorderColor": "#0A4B9E",
+      "backgroundColor": "#FFFFFF"
+    },
+    "Card": {
+      "borderRadius": "16px",
+      "padding": {
+        "mobile": "24px",
+        "desktop": "48px"
+      },
+      "shadow": "0 8px 24px rgba(0,0,0,0.08)",
+      "backgroundColor": "#FFFFFF"
+    }
+  },
+  
+  "tailwindEquivalents": {
+    "$description": "Mapeamento direto para classes Tailwind CSS",
+    "spacing": {
+      "space-xs": "p-2 / gap-2",
+      "space-sm": "p-3 / gap-3",
+      "space-md": "p-6 / gap-6",
+      "space-lg": "p-12 / gap-12",
+      "space-xl": "p-20 / gap-20"
+    },
+    "colors": {
+      "brand-blue": "text-[#0A4B9E] / bg-[#0A4B9E]",
+      "brand-green": "text-[#2BA84A] / bg-[#2BA84A]",
+      "brand-purple": "text-[#7C6EE4] / bg-[#7C6EE4]"
+    },
+    "breakpoints": {
+      "mobile": "default (sem prefixo)",
+      "tablet": "md:",
+      "laptop": "lg:",
+      "desktop": "xl:"
+    }
+  }
+}
