@@ -119,129 +119,136 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
 
   return (
     <>
-    <header
-      className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${
-        isSticky ? "shadow-lg" : "shadow-md"
-      }`}
-    >
+      <header
+        className={`sticky top-0 z-50 bg-white transition-shadow duration-300 ${
+          isSticky ? "shadow-lg" : "shadow-md"
+        }`}
+      >
         <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-12 xl:px-20">
-          <div className="flex items-center justify-between py-3 md:py-4">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <div
-                className="inline-block rounded-lg md:rounded-xl bg-white/60 p-2 md:p-3 shadow-[0_4px_12px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:scale-105 active:scale-95"
-              style={{ backdropFilter: "blur(8px)" }}
-              onClick={onNavigateToHome}
-            >
-              <img
-                src={logoImage}
+          <div className="flex items-center justify-between py-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div
+                className="inline-block rounded-xl bg-white p-3 shadow-[0_4px_12px_rgba(0,0,0,0.25)] cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                onClick={onNavigateToHome}
+              >
+                <img
+                  src={logoImage}
                   alt="Federal Express Brasil - Soluções Migratórias"
-                  className="h-12 sm:h-16 md:h-20 lg:h-24 w-auto"
-              />
+                  className="h-20 lg:h-24 w-auto"
+                />
+              </div>
             </div>
-          </div>
 
-            {/* Desktop: Informações à direita */}
-            <div className="hidden lg:flex flex-col gap-3 flex-shrink-0">
-              {/* Botões Login e Cadastrar-se / User Info */}
-              <div className="flex items-center justify-end gap-2 lg:gap-3">
-              {isLoggedIn ? (
-                <>
-                    <div className="flex items-center gap-2 rounded-lg bg-[#F5F6F8] px-3 py-1.5 border border-[#0A4B9E20]">
-                      <div className="h-7 w-7 rounded-full bg-[#0A4B9E] flex items-center justify-center">
-                        <span className="text-xs font-bold text-white">
-                        {userEmail?.charAt(0).toUpperCase() || "U"}
-                      </span>
-                    </div>
-                      <span className="text-xs font-medium text-[#0A4B9E] max-w-[100px] xl:max-w-[150px] truncate">
-                      {userEmail || "Usuário"}
+            {/* Desktop: Layout horizontal completo */}
+            <div className="hidden lg:flex items-center gap-6 flex-1 justify-between ml-8">
+              {/* Centro: Localização + Data/Hora + Clima Atual */}
+              <div className="flex items-center gap-6">
+                {/* Localização */}
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-[#0A4B9E] flex-shrink-0" />
+                  <span className="text-sm text-[#555] whitespace-nowrap">{mockWeatherData.location}</span>
+                </div>
+
+                {/* Data e hora */}
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-[#0A4B9E] flex-shrink-0" />
+                  <span className="text-sm text-[#555] whitespace-nowrap">{formatDate(currentTime)}</span>
+                </div>
+
+                {/* Clima atual */}
+                <div className="flex items-center gap-2 rounded-lg bg-[#F7F8FA] px-3 py-2">
+                  <span className="text-2xl">{mockWeatherData.icon}</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-[#111] leading-tight">{mockWeatherData.tempC}°C</span>
+                    <span className="text-xs text-[#555] leading-tight">
+                      {mockWeatherData.description}
                     </span>
                   </div>
-                  <button
-                    onClick={onNavigateToLogin}
-                    onMouseEnter={() => setHoveredButton("logout")}
-                    onMouseLeave={() => setHoveredButton(null)}
-                      className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200"
-                    style={{
-                      backgroundColor: "#FF4444",
-                      color: "white",
-                      opacity: hoveredButton === "logout" ? 0.9 : 1,
-                      transform: hoveredButton === "logout" ? "scale(1.03)" : "scale(1)"
-                    }}
-                  >
-                    Sair
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={onNavigateToLogin}
-                    onMouseEnter={() => setHoveredButton("login")}
-                    onMouseLeave={() => setHoveredButton(null)}
-                      className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200"
-                    style={{
-                      backgroundColor: "#0058CC",
-                      color: "white",
-                      opacity: hoveredButton === "login" ? 0.9 : 1,
-                      transform: hoveredButton === "login" ? "scale(1.03)" : "scale(1)"
-                    }}
-                  >
-                    Login
-                  </button>
-
-                  <button
-                    onClick={currentPage === "home" ? onNavigateToRegister : undefined}
-                    onMouseEnter={() => setHoveredButton("signup")}
-                    onMouseLeave={() => setHoveredButton(null)}
-                      className="rounded-lg px-4 lg:px-5 py-1.5 text-sm font-semibold shadow-md transition-all duration-200 whitespace-nowrap"
-                    style={{
-                      backgroundColor: "#0058CC",
-                      color: "white",
-                      opacity: hoveredButton === "signup" ? 0.9 : 1,
-                      transform: hoveredButton === "signup" ? "scale(1.03)" : "scale(1)"
-                    }}
-                  >
-                      Cadastrar
-                  </button>
-                </>
-              )}
-            </div>
-            
-              <div className="flex items-center gap-2 lg:gap-3 xl:gap-4 flex-wrap justify-end">
-              {/* Data e hora */}
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-[#0A4B9E] flex-shrink-0" />
-                  <span className="text-xs text-[#555] whitespace-nowrap">{formatDateShort(currentTime)}</span>
-              </div>
-
-              {/* Clima atual */}
-                <div className="flex items-center gap-1.5 rounded-lg bg-[#F7F8FA] px-2.5 py-1.5">
-                  <span className="text-lg">{mockWeatherData.icon}</span>
-                <div className="flex flex-col">
-                    <span className="text-xs font-medium text-[#111]">{mockWeatherData.tempC}°C</span>
-                    <span className="text-[10px] text-[#555] leading-tight">
-                    {mockWeatherData.description}
-                  </span>
                 </div>
               </div>
 
-                {/* Previsão - apenas em telas muito grandes */}
-                <div className="hidden 2xl:flex gap-1.5">
-                  {mockWeatherData.forecast.slice(0, 3).map((day, index) => (
-                  <div
-                    key={index}
-                      className="flex flex-col items-center rounded-lg bg-[#F7F8FA] px-1.5 py-1.5"
-                  >
-                      <span className="text-[10px] text-[#555]">
-                      {getDayName(day.dateISO)}
-                    </span>
-                      <span className="text-sm">{day.icon}</span>
-                      <span className="text-[10px] text-[#111]">
-                        {day.maxC}°/{day.minC}°
+              {/* Direita: Previsão 5 dias + Botões */}
+              <div className="flex items-center gap-4">
+                {/* Previsão 5 dias */}
+                <div className="flex gap-2">
+                  {mockWeatherData.forecast.map((day, index) => (
+                    <div
+                      key={index}
+                      className="flex flex-col items-center rounded-lg bg-[#F7F8FA] px-2 py-2 min-w-[50px]"
+                    >
+                      <span className="text-xs text-[#555] mb-1">
+                        {getDayName(day.dateISO)}
+                      </span>
+                      <span className="text-lg mb-1">{day.icon}</span>
+                      <span className="text-xs text-[#111] font-medium">
+                        {day.maxC}° / {day.minC}°
                       </span>
                     </div>
                   ))}
                 </div>
+
+                {/* Botões Login e Cadastrar-se */}
+                {isLoggedIn ? (
+                  <>
+                    <div className="flex items-center gap-2 rounded-lg bg-[#F5F6F8] px-3 py-2 border border-[#0A4B9E20]">
+                      <div className="h-8 w-8 rounded-full bg-[#0A4B9E] flex items-center justify-center">
+                        <span className="text-sm font-bold text-white">
+                          {userEmail?.charAt(0).toUpperCase() || "U"}
+                        </span>
+                      </div>
+                      <span className="text-sm font-medium text-[#0A4B9E] max-w-[150px] truncate">
+                        {userEmail || "Usuário"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={onNavigateToLogin}
+                      onMouseEnter={() => setHoveredButton("logout")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      className="rounded-lg px-6 py-2 text-sm font-semibold shadow-md transition-all duration-200"
+                      style={{
+                        backgroundColor: "#FF4444",
+                        color: "white",
+                        opacity: hoveredButton === "logout" ? 0.9 : 1,
+                        transform: hoveredButton === "logout" ? "scale(1.03)" : "scale(1)"
+                      }}
+                    >
+                      Sair
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={onNavigateToLogin}
+                      onMouseEnter={() => setHoveredButton("login")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      className="rounded-lg px-6 py-2 text-sm font-semibold shadow-md transition-all duration-200 whitespace-nowrap"
+                      style={{
+                        backgroundColor: "#0058CC",
+                        color: "white",
+                        opacity: hoveredButton === "login" ? 0.9 : 1,
+                        transform: hoveredButton === "login" ? "scale(1.03)" : "scale(1)"
+                      }}
+                    >
+                      Login
+                    </button>
+
+                    <button
+                      onClick={currentPage === "home" ? onNavigateToRegister : undefined}
+                      onMouseEnter={() => setHoveredButton("signup")}
+                      onMouseLeave={() => setHoveredButton(null)}
+                      className="rounded-lg px-6 py-2 text-sm font-semibold shadow-md transition-all duration-200 whitespace-nowrap"
+                      style={{
+                        backgroundColor: "#0058CC",
+                        color: "white",
+                        opacity: hoveredButton === "signup" ? 0.9 : 1,
+                        transform: hoveredButton === "signup" ? "scale(1.03)" : "scale(1)"
+                      }}
+                    >
+                      Cadastrar-se
+                    </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -397,9 +404,9 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                       <span className="text-2xl my-1">{day.icon}</span>
                       <span className="text-xs text-gray-700 font-medium">
                         {day.maxC}° / {day.minC}°
-                    </span>
-                  </div>
-                ))}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
