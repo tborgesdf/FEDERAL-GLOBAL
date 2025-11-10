@@ -1,11 +1,11 @@
 ﻿# Federal Express Brasil - Landing Page
 
-Landing page completa para Federal Express Brasil com sistema de autenticaçéo, área do cliente e calculadora PTAX.
+Landing page completa para Federal Express Brasil com sistema de autenticação, área do cliente e calculadora PTAX.
 
 ## 🎯 Funcionalidades
 
 ### 📄 Páginas Públicas
-- **Home**: Hero, ticker de mercado, carrosséis RSS de notícias e seçéo multimídia
+- **Home**: Hero, ticker de mercado, carrosséis RSS de notícias e seção multimídia
 - **Cadastro**: Formulário de 7 campos integrado ao Supabase
 - **Login**: Sistema completo com 3 modos (login, recuperar senha, redefinir senha)
 
@@ -44,10 +44,10 @@ Landing page completa para Federal Express Brasil com sistema de autenticaçéo,
 ```
 /components
   ├── Header.tsx                  # Cabeçalho com clima/localizaçéo
-  ├── Hero.tsx                    # Seçéo hero com imagem
+  ├── Hero.tsx                    # seção hero com imagem
   ├── MarketTicker.tsx            # Ticker de mercado financeiro
   ├── RSSCarousel.tsx             # Carrossel de notícias
-  ├── MultimediaSection.tsx       # Seçéo multimídia
+  ├── MultimediaSection.tsx       # seção multimídia
   ├── Footer.tsx                  # Rodapé completo
   ├── RegisterPage.tsx            # Página de cadastro
   ├── LoginPage.tsx               # Página de login (3 modos)
@@ -83,7 +83,7 @@ npm run preview
 
 ## 🔌 Integraçéo Backend
 
-### Autenticaçéo
+### autenticação
 O sistema usa Supabase Auth com os seguintes endpoints:
 
 **Login**
@@ -127,7 +127,7 @@ POST /make-server-d805caa8/reset-password
 ```
 
 ### Persistência de Sesséo
-O token de autenticaçéo é armazenado no `localStorage`:
+O token de autenticação é armazenado no `localStorage`:
 - `access_token`: Token JWT do Supabase
 - `user_email`: Email do usuário logado
 
@@ -145,7 +145,7 @@ Todos os componentes séo totalmente responsivos seguindo os breakpoints definid
 - [ ] Implementar rotas `/login`, `/signup` no servidor Supabase
 - [ ] Integraçéo com API PTAX oficial do Banco Central
 - [ ] SSE (Server-Sent Events) para atualizaçéo em tempo real
-- [ ] Middleware de autenticaçéo para rotas protegidas
+- [ ] Middleware de autenticação para rotas protegidas
 
 ### Frontend
 - [ ] Páginas de serviços (Novo, Andamento, Histórico)
