@@ -26,16 +26,6 @@ export default function App() {
     }
   }, []);
 
-  // FUNÇÃO TEMPORéRIA PARA TESTES - Simula login direto
-  const handleTestDashboard = () => {
-    const testEmail = "teste@federalexpress.com.br";
-    localStorage.setItem("access_token", "test-token-12345");
-    localStorage.setItem("user_email", testEmail);
-    setIsLoggedIn(true);
-    setUserEmail(testEmail);
-    setCurrentPage("dashboard");
-  };
-
   const handleLoginSuccess = (email: string) => {
     setIsLoggedIn(true);
     setUserEmail(email);
@@ -161,7 +151,7 @@ export default function App() {
       image: "https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=800&q=80",
       category: "Dicas",
       title: "Melhores apps de viagem para usar em 2025",
-      excerpt: "Selecionamos os aplicativos indispensáveis para planejar, organizar e aproveitar ao máximo sua viagem. Desde tradutores atàguias turísticos offline.",
+      excerpt: "Selecionamos os aplicativos indispensáveis para planejar, organizar e aproveitar ao máximo sua viagem. Desde tradutores até guias turísticos offline.",
       dateISO: "2025-11-02T09:00:00Z",
       readMinutes: 7,
       href: "#"
@@ -190,41 +180,6 @@ export default function App() {
             onNavigateToHome={() => setCurrentPage("home")}
             currentPage="home"
           />
-          
-          {/* BOTéƒO TEMPORéRIO PARA TESTE DO DASHBOARD */}
-          <div style={{ 
-            position: 'fixed', 
-            bottom: '20px', 
-            right: '20px', 
-            zIndex: 9999 
-          }}>
-            <button
-              onClick={handleTestDashboard}
-              style={{
-                backgroundColor: '#2BA84A',
-                color: 'white',
-                padding: '16px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                cursor: 'pointer',
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: '16px',
-                fontWeight: 600,
-                boxShadow: '0 8px 24px rgba(43, 168, 74, 0.4)',
-                transition: 'all 0.3s'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 32px rgba(43, 168, 74, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(43, 168, 74, 0.4)';
-              }}
-            >
-              š€ TESTE: Ver Dashboard
-            </button>
-          </div>
           
           <main>
             <Hero />
@@ -269,4 +224,3 @@ export default function App() {
     </>
   );
 }
-
