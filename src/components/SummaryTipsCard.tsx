@@ -15,7 +15,7 @@ export default function SummaryTipsCard() {
     {
       icon: <Clock className="h-5 w-5" />,
       title: "Agilidade nas remessas",
-      description: "Transferências internacionais processadas em atà2 dias úteis com rastreamento completo"
+      description: "Transferências internacionais processadas em até2 dias úteis com rastreamento completo"
     }
   ];
 
@@ -110,7 +110,7 @@ export default function SummaryTipsCard() {
             color: "#0A4B9E"
           }}
         >
-          ’° Economia de atà40%
+          ’° Economia de até40%
         </p>
         <p
           style={{
@@ -121,7 +121,7 @@ export default function SummaryTipsCard() {
             lineHeight: "1.5"
           }}
         >
-          Nossas taxas são atà40% menores que bancos tradicionais. Compare e comprove!
+          Nossas taxas são até40% menores que bancos tradicionais. Compare e comprove!
         </p>
       </div>
 

@@ -179,7 +179,7 @@ export default function BreakpointTester() {
             e.currentTarget.style.backgroundColor = "#F3F4F6";
           }}
         >
-          é—
+          —
         </button>
       </div>
 
@@ -192,7 +192,7 @@ export default function BreakpointTester() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ color: "#6B7280", fontSize: "13px" }}>Dimensões:</span>
           <span style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600, color: "#111827" }}>
-            {windowSize.width} é— {windowSize.height}px
+            {windowSize.width} — {windowSize.height}px
           </span>
         </div>
 

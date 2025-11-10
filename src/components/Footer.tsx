@@ -44,7 +44,7 @@ export default function Footer() {
                 color: "white"
               }}
             >
-              Links éšteis
+              Links Úteis
             </h3>
             <nav>
               <ul className="flex flex-col gap-3">
