@@ -1,5 +1,5 @@
 // src/utils/supabase/index.ts
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/utils/supabase'
 
 export const projectUrl = import.meta.env.VITE_SUPABASE_URL as string;
 export const publicAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;

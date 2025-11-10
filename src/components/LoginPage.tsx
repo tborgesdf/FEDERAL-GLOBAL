@@ -1,76 +1,104 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "./Header";
 import Hero from "./Hero";
 import MultimediaSection from "./MultimediaSection";
 import Footer from "./Footer";
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { toast } from "sonner@2.0.3";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
-import { 
-  Mail, 
-  Lock,
-  Eye,
-  EyeOff,
-  ArrowLeft
-} from "lucide-react";
 
+// toast de feedback visual
+import { toast } from "sonner";
+
+// client central do Supabase (sempre importar daqui)
+import { supabase } from "@/utils/supabase";
+
+// ícones
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
+
+/* -------------------------------------------------------------------------------------------------
+   Tipagens simples dos props e do modo de tela
+--------------------------------------------------------------------------------------------------*/
 interface LoginPageProps {
   onBackToHome: () => void;
   onNavigateToRegister: () => void;
   onLoginSuccess?: (email: string) => void;
 }
-
 type PageMode = "login" | "recover" | "reset";
 
-export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginSuccess }: LoginPageProps) {
+/* -------------------------------------------------------------------------------------------------
+   Componente principal
+--------------------------------------------------------------------------------------------------*/
+export default function LoginPage({
+  onBackToHome,
+  onNavigateToRegister,
+  onLoginSuccess,
+}: LoginPageProps) {
+  /* -----------------------------
+     Estados locais dos formulários
+  ------------------------------*/
   const [mode, setMode] = useState<PageMode>("login");
   const [isLoading, setIsLoading] = useState(false);
+
+  // toggles para mostrar/ocultar senha nos inputs
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [resetToken, setResetToken] = useState("");
 
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: ""
-  });
+  // quando voltamos do link de recuperação do Supabase, teremos sessão ativa
+  // (hash na URL com access_token). Guardamos um flag simples para UX.
+  const [recoveryReady, setRecoveryReady] = useState(false);
 
-  const [recoverData, setRecoverData] = useState({
-    email: ""
-  });
+  // dados de cada formulário
+  const [loginData, setLoginData] = useState({ email: "", password: "" });
+  const [recoverData, setRecoverData] = useState({ email: "" });
+  const [resetData, setResetData] = useState({ newPassword: "", confirmPassword: "" });
 
-  const [resetData, setResetData] = useState({
-    newPassword: "",
-    confirmPassword: ""
-  });
+  /* -------------------------------------------------------------------------------------------------
+     Efeito 1 — Detecta o fluxo de recuperação ao entrar pela URL do e-mail
 
-  // Verificar se há um token de reset na URL
+     - No "resetPasswordForEmail", definimos redirectTo = `${origin}?type=recovery`
+     - O Supabase redireciona de volta com hash (#access_token...) e type=recovery.
+     - Aqui fazemos duas coisas:
+        1) Entramos em modo "reset"
+        2) Conferimos se já existe sessão (getSession): se existir, podemos chamar updateUser
+  --------------------------------------------------------------------------------------------------*/
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token");
-    if (token) {
-      setResetToken(token);
+    const url = new URL(window.location.href);
+    const type = url.searchParams.get("type");
+    if (type === "recovery") {
       setMode("reset");
+      // tenta obter a sessão que o Supabase injeta a partir do hash da URL
+      supabase.auth.getSession().then(({ data }) => {
+        setRecoveryReady(!!data.session);
+      });
     }
   }, []);
 
+  /* -------------------------------------------------------------------------------------------------
+     Handlers de alteração dos formulários
+  --------------------------------------------------------------------------------------------------*/
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setLoginData(prev => ({ ...prev, [name]: value }));
+    setLoginData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleRecoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRecoverData({ email: e.target.value });
   };
-
   const handleResetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setResetData(prev => ({ ...prev, [name]: value }));
+    setResetData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Login
+  /* -------------------------------------------------------------------------------------------------
+     AÇÃO: Login
+
+     Usa supabase.auth.signInWithPassword.
+     Em caso de sucesso:
+       - opcionalmente dispara callback onLoginSuccess
+       - senão, volta para a Home após breve delay
+  --------------------------------------------------------------------------------------------------*/
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -80,59 +108,39 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
     }
 
     setIsLoading(true);
-
     try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-d805caa8/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${publicAnonKey}`
-          },
-          body: JSON.stringify({
-            email: loginData.email,
-            password: loginData.password
-          })
-        }
-      );
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
+      if (error) throw error;
 
-      const data = await response.json();
+      toast.success("Login realizado com sucesso!");
 
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao fazer login");
-      }
-
-      // Armazenar token de sessão
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("user_email", loginData.email);
-
-      toast.success("Login realizado com sucesso! Redirecionando...");
-
-      // Limpar formulário
+      // limpa formulário
       setLoginData({ email: "", password: "" });
 
-      // Chamar callback de sucesso
-      if (onLoginSuccess) {
-        setTimeout(() => {
-          onLoginSuccess(loginData.email);
-        }, 1500);
-      } else {
-        // Fallback: Redirecionar para home
-        setTimeout(() => {
-          onBackToHome();
-        }, 1500);
-      }
-
-    } catch (error) {
-      console.error("Erro no login:", error);
-      toast.error(error instanceof Error ? error.message : "Email ou senha incorretos. Tente novamente.");
+      // redirecionamento
+      setTimeout(() => {
+        if (onLoginSuccess) onLoginSuccess(loginData.email);
+        else onBackToHome();
+      }, 1200);
+    } catch (err) {
+      console.error("Erro no login:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Email ou senha incorretos. Tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Recuperar senha
+  /* -------------------------------------------------------------------------------------------------
+     AÇÃO: Enviar e-mail de recuperação de senha
+
+     Usa supabase.auth.resetPasswordForEmail com redirect para esta mesma origem,
+     marcando `?type=recovery` para entrarmos no modo "reset" ao voltar.
+  --------------------------------------------------------------------------------------------------*/
   const handleRecover = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -142,47 +150,36 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
     }
 
     setIsLoading(true);
-
     try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-d805caa8/recover-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${publicAnonKey}`
-          },
-          body: JSON.stringify({
-            email: recoverData.email
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao enviar e-mail de recuperação");
-      }
+      const { error } = await supabase.auth.resetPasswordForEmail(recoverData.email, {
+        redirectTo: `${window.location.origin}?type=recovery`,
+      });
+      if (error) throw error;
 
       toast.success("Link de recuperação enviado. Verifique seu e-mail.");
-      
-      // Limpar formulário
       setRecoverData({ email: "" });
 
-      // Voltar para login após 3 segundos
-      setTimeout(() => {
-        setMode("login");
-      }, 3000);
-
-    } catch (error) {
-      console.error("Erro na recuperação:", error);
-      toast.error(error instanceof Error ? error.message : "Erro ao enviar e-mail. Tente novamente.");
+      // volta para login após alguns segundos
+      setTimeout(() => setMode("login"), 3000);
+    } catch (err) {
+      console.error("Erro na recuperação:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Erro ao enviar e-mail. Tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Redefinir senha
+  /* -------------------------------------------------------------------------------------------------
+     AÇÃO: Redefinir senha
+
+     Pré-condições:
+       - O usuário deve ter acessado esta tela pelo link do Supabase (type=recovery)
+       - Isso cria uma sessão temporária (getSession() !== null)
+     Implementação:
+       - Chama supabase.auth.updateUser({ password: novaSenha })
+  --------------------------------------------------------------------------------------------------*/
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -190,87 +187,76 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
       toast.error("Por favor, preencha todos os campos");
       return;
     }
-
     if (resetData.newPassword !== resetData.confirmPassword) {
       toast.error("As senhas não coincidem");
       return;
     }
-
     if (resetData.newPassword.length < 6) {
       toast.error("A senha deve ter no mínimo 6 caracteres");
       return;
     }
 
     setIsLoading(true);
-
     try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-d805caa8/reset-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${publicAnonKey}`
-          },
-          body: JSON.stringify({
-            token: resetToken,
-            newPassword: resetData.newPassword
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao redefinir senha");
+      // garante que temos sessão de recuperação válida
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        toast.error(
+          "Sessão de recuperação inválida. Abra o link enviado por e-mail e tente novamente."
+        );
+        return;
       }
 
-      toast.success("Senha redefinida com sucesso! Faça login com sua nova senha.");
+      const { error } = await supabase.auth.updateUser({
+        password: resetData.newPassword,
+      });
+      if (error) throw error;
 
-      // Limpar formulário e token
+      toast.success("Senha redefinida com sucesso!");
+
+      // limpa formulário
       setResetData({ newPassword: "", confirmPassword: "" });
-      setResetToken("");
 
-      // Voltar para login
-      setTimeout(() => {
-        setMode("login");
-      }, 2000);
-
-    } catch (error) {
-      console.error("Erro ao redefinir senha:", error);
-      toast.error(error instanceof Error ? error.message : "Erro ao redefinir senha. Tente novamente.");
+      // volta para login
+      setTimeout(() => setMode("login"), 1500);
+    } catch (err) {
+      console.error("Erro ao redefinir senha:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Erro ao redefinir senha. Tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  /* -------------------------------------------------------------------------------------------------
+     Renderização
+  --------------------------------------------------------------------------------------------------*/
   return (
     <div className="min-h-screen bg-white">
-      <Header 
+      <Header
         onNavigateToRegister={onNavigateToRegister}
         onNavigateToHome={onBackToHome}
-        currentPage="login" 
+        currentPage="login"
       />
+
       <main>
         <Hero />
-        
-        {/* Login Form Container */}
-        <section 
+
+        {/* Container do formulário */}
+        <section
           className="px-4 sm:px-6 md:px-8 lg:px-20"
-          style={{
-            marginTop: "64px",
-            marginBottom: "96px"
-          }}
+          style={{ marginTop: "64px", marginBottom: "96px" }}
         >
           <div className="mx-auto max-w-[720px]">
-            <div 
+            <div
               className="bg-white rounded-2xl px-6 py-6 sm:px-8 sm:py-8 md:px-12 md:py-12"
               style={{
                 boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(10, 75, 158, 0.1)"
+                border: "1px solid rgba(10, 75, 158, 0.1)",
               }}
             >
-              {/* Título */}
+              {/* Título dinâmico */}
               <h2
                 className="text-center mb-6"
                 style={{
@@ -278,7 +264,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                   fontSize: "clamp(24px, 5vw, 32px)",
                   fontWeight: 700,
                   color: "#0A4B9E",
-                  textShadow: "0 2px 4px rgba(0,0,0,0.15)"
+                  textShadow: "0 2px 4px rgba(0,0,0,0.15)",
                 }}
               >
                 {mode === "login" && "Acesse sua conta"}
@@ -286,40 +272,40 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                 {mode === "reset" && "Redefinir senha"}
               </h2>
 
-              {/* Subtítulo (apenas modo recuperação) */}
+              {/* Subtítulo do modo de recuperação */}
               {mode === "recover" && (
                 <p
                   className="text-center mb-8"
                   style={{
                     fontFamily: "Inter, sans-serif",
                     fontSize: "14px",
-                    color: "#666666"
+                    color: "#666666",
                   }}
                 >
                   Enviaremos um link para redefinir sua senha.
                 </p>
               )}
 
-              {/* MODO: LOGIN */}
+              {/* =======================
+                  MODO: LOGIN
+              ======================== */}
               {mode === "login" && (
                 <form onSubmit={handleLogin} className="space-y-6">
                   {/* E-mail */}
                   <div className="space-y-2">
-                    <Label 
+                    <Label
                       htmlFor="email"
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#0A4B9E"
+                        color: "#0A4B9E",
                       }}
                     >
                       E-mail *
                     </Label>
                     <div className="relative">
-                      <Mail 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                      />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" />
                       <Input
                         id="email"
                         name="email"
@@ -332,7 +318,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         style={{
                           fontFamily: "Inter, sans-serif",
                           fontSize: "16px",
-                          color: "#0A4B9E"
+                          color: "#0A4B9E",
                         }}
                       />
                     </div>
@@ -340,21 +326,19 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
 
                   {/* Senha */}
                   <div className="space-y-2">
-                    <Label 
+                    <Label
                       htmlFor="password"
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#0A4B9E"
+                        color: "#0A4B9E",
                       }}
                     >
                       Senha *
                     </Label>
                     <div className="relative">
-                      <Lock 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" />
                       <Input
                         id="password"
                         name="password"
@@ -365,10 +349,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         required
                         minLength={6}
                         className="peer h-[52px] pl-12 pr-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                        style={{
-                          fontFamily: "Inter, sans-serif",
-                          fontSize: "16px"
-                        }}
+                        style={{ fontFamily: "Inter, sans-serif", fontSize: "16px" }}
                       />
                       <button
                         type="button"
@@ -385,11 +366,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                     type="submit"
                     disabled={isLoading}
                     className="w-full h-[56px] bg-[#0A4B9E] hover:brightness-110 active:scale-[0.97] text-white transition-all duration-300 rounded-xl shadow-[0_6px_12px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "18px",
-                      fontWeight: 600
-                    }}
+                    style={{ fontFamily: "Poppins, sans-serif", fontSize: "18px", fontWeight: 600 }}
                   >
                     {isLoading ? "Entrando..." : "Entrar"}
                   </Button>
@@ -400,11 +377,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                       type="button"
                       onClick={() => setMode("recover")}
                       className="text-[#0A4B9E] hover:underline transition-all"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 500
-                      }}
+                      style={{ fontFamily: "Inter, sans-serif", fontSize: "14px", fontWeight: 500 }}
                     >
                       Esqueci minha senha
                     </button>
@@ -416,7 +389,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
-                        color: "#666666"
+                        color: "#666666",
                       }}
                     >
                       Ainda não tem conta?{" "}
@@ -424,9 +397,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         type="button"
                         onClick={onNavigateToRegister}
                         className="text-[#2BA84A] hover:underline transition-all"
-                        style={{
-                          fontWeight: 600
-                        }}
+                        style={{ fontWeight: 600 }}
                       >
                         Criar conta
                       </button>
@@ -435,26 +406,26 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                 </form>
               )}
 
-              {/* MODO: RECUPERAR SENHA */}
+              {/* =======================
+                  MODO: RECUPERAR SENHA
+              ======================== */}
               {mode === "recover" && (
                 <form onSubmit={handleRecover} className="space-y-6">
                   {/* E-mail */}
                   <div className="space-y-2">
-                    <Label 
+                    <Label
                       htmlFor="recover-email"
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#0A4B9E"
+                        color: "#0A4B9E",
                       }}
                     >
                       E-mail *
                     </Label>
                     <div className="relative">
-                      <Mail 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                      />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" />
                       <Input
                         id="recover-email"
                         name="email"
@@ -467,7 +438,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         style={{
                           fontFamily: "Inter, sans-serif",
                           fontSize: "16px",
-                          color: "#0A4B9E"
+                          color: "#0A4B9E",
                         }}
                       />
                     </div>
@@ -488,11 +459,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                       type="button"
                       onClick={() => setMode("login")}
                       className="flex items-center justify-center gap-2 mx-auto text-[#0A4B9E] hover:underline transition-all"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "14px",
-                        fontWeight: 500
-                      }}
+                      style={{ fontFamily: "Inter, sans-serif", fontSize: "14px", fontWeight: 500 }}
                     >
                       <ArrowLeft className="h-4 w-4" />
                       Voltar ao login
@@ -501,26 +468,34 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                 </form>
               )}
 
-              {/* MODO: REDEFINIR SENHA */}
+              {/* =======================
+                  MODO: REDEFINIR SENHA
+              ======================== */}
               {mode === "reset" && (
                 <form onSubmit={handleReset} className="space-y-6">
-                  {/* Nova Senha */}
+                  {/* Aviso caso a página não tenha sido aberta pelo link válido */}
+                  {!recoveryReady && (
+                    <div className="text-center text-sm text-red-600">
+                      Abra esta página através do link recebido por e-mail para concluir a
+                      redefinição de senha.
+                    </div>
+                  )}
+
+                  {/* Nova senha */}
                   <div className="space-y-2">
-                    <Label 
+                    <Label
                       htmlFor="newPassword"
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#0A4B9E"
+                        color: "#0A4B9E",
                       }}
                     >
                       Nova Senha *
                     </Label>
                     <div className="relative">
-                      <Lock 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" />
                       <Input
                         id="newPassword"
                         name="newPassword"
@@ -531,10 +506,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         required
                         minLength={6}
                         className="peer h-[52px] pl-12 pr-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                        style={{
-                          fontFamily: "Inter, sans-serif",
-                          fontSize: "16px"
-                        }}
+                        style={{ fontFamily: "Inter, sans-serif", fontSize: "16px" }}
                       />
                       <button
                         type="button"
@@ -546,23 +518,21 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                     </div>
                   </div>
 
-                  {/* Confirmar Nova Senha */}
+                  {/* Confirmar nova senha */}
                   <div className="space-y-2">
-                    <Label 
+                    <Label
                       htmlFor="confirmPassword"
                       style={{
                         fontFamily: "Inter, sans-serif",
                         fontSize: "14px",
                         fontWeight: 500,
-                        color: "#0A4B9E"
+                        color: "#0A4B9E",
                       }}
                     >
                       Confirmar Nova Senha *
                     </Label>
                     <div className="relative">
-                      <Lock 
-                        className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                      />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" />
                       <Input
                         id="confirmPassword"
                         name="confirmPassword"
@@ -573,10 +543,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                         required
                         minLength={6}
                         className="peer h-[52px] pl-12 pr-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                        style={{
-                          fontFamily: "Inter, sans-serif",
-                          fontSize: "16px"
-                        }}
+                        style={{ fontFamily: "Inter, sans-serif", fontSize: "16px" }}
                       />
                       <button
                         type="button"
@@ -591,13 +558,9 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
                   {/* Botão Redefinir Senha */}
                   <Button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || !recoveryReady}
                     className="w-full h-[56px] bg-[#2BA84A] hover:brightness-110 active:scale-[0.97] text-white transition-all duration-300 rounded-xl shadow-[0_6px_12px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: "18px",
-                      fontWeight: 600
-                    }}
+                    style={{ fontFamily: "Poppins, sans-serif", fontSize: "18px", fontWeight: 600 }}
                   >
                     {isLoading ? "Redefinindo..." : "Redefinir Senha"}
                   </Button>
@@ -610,6 +573,7 @@ export default function LoginPage({ onBackToHome, onNavigateToRegister, onLoginS
         {/* Canal Migratório Federal Express */}
         <MultimediaSection />
       </main>
+
       <Footer />
     </div>
   );

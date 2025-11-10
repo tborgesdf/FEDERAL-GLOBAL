@@ -186,7 +186,7 @@ useEffect(() => {
 ```typescript
 // /components/ProtectedRoute.tsx
 import { useEffect, useState } from "react";
-import { projectId, publicAnonKey } from "../utils/supabase/info";
+import { projectId, publicAnonKey } from "../utils/supabase";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

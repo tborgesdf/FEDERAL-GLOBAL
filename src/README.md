@@ -157,7 +157,7 @@ Todos os componentes são totalmente responsivos seguindo os breakpoints definid
 
 ### Arquivos Protegidos (NÃO MODIFICAR)
 - `/supabase/functions/server/kv_store.tsx`
-- `/utils/supabase/info.tsx`
+- `/utils/supabase.tsx`
 - `/components/figma/ImageWithFallback.tsx`
 
 ### Tokens de Design
