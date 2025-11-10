@@ -206,7 +206,7 @@ test.describe('Autenticação - Cadastro e Login', () => {
     });
   });
 
-  test.describe('Validaçéµes de design system', () => {
+  test.describe('Validações de design system', () => {
     test('inputs devem ter altura correta (52px)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
@@ -217,7 +217,7 @@ test.describe('Autenticação - Cadastro e Login', () => {
       expect(height).toBe(52);
     });
 
-    test('botéµes devem ter altura correta (56px)', async ({ page }) => {
+    test('botões devem ter altura correta (56px)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
       

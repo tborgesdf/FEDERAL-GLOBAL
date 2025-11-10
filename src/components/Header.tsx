@@ -33,10 +33,10 @@ const mockWeatherData: WeatherData = {
   icon: "⛅",
   forecast: [
     { dateISO: "2025-11-07", minC: 18, maxC: 26, icon: "⛅" },
-    { dateISO: "2025-11-08", minC: 19, maxC: 27, icon: "☀️" },
-    { dateISO: "2025-11-09", minC: 17, maxC: 25, icon: "🌧️" },
-    { dateISO: "2025-11-10", minC: 16, maxC: 23, icon: "⛈️" },
-    { dateISO: "2025-11-11", minC: 18, maxC: 26, icon: "☀️" }
+    { dateISO: "2025-11-08", minC: 19, maxC: 27, icon: "☀️" },
+    { dateISO: "2025-11-09", minC: 17, maxC: 25, icon: "🌧️" },
+    { dateISO: "2025-11-10", minC: 16, maxC: 23, icon: "⛈️" },
+    { dateISO: "2025-11-11", minC: 18, maxC: 26, icon: "☀️" }
   ],
   fetchedAt: "2025-11-06T20:21:00Z"
 };

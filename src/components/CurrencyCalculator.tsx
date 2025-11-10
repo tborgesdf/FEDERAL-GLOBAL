@@ -187,7 +187,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            â€¢ {result.conversionLine}
+            "¢ {result.conversionLine}
           </li>
           <li
             style={{
@@ -196,7 +196,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            â€¢ {result.iofLine}
+            "¢ {result.iofLine}
           </li>
           <li
             style={{
@@ -205,7 +205,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            â€¢ {result.costLine}
+            "¢ {result.costLine}
           </li>
           <li
             style={{
@@ -214,7 +214,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            â€¢ {result.feesLine}
+            "¢ {result.feesLine}
           </li>
           <li
             style={{
@@ -223,7 +223,7 @@ export default function CurrencyCalculator() {
               color: "rgba(255,255,255,0.9)"
             }}
           >
-            â€¢ {result.vetLine}
+            "¢ {result.vetLine}
           </li>
         </ul>
       </div>

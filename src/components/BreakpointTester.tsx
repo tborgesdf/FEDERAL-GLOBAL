@@ -1,9 +1,9 @@
 ﻿/**
  * BreakpointTester - Componente para teste visual de responsividade
  * 
- * Exibe informaçéµes em tempo real sobre:
+ * Exibe informações em tempo real sobre:
  * - Breakpoint atual
- * - Dimenséµes da tela
+ * - Dimensões da tela
  * - Grid ativo
  * - Margins/Gutters
  * 
@@ -186,11 +186,11 @@ export default function BreakpointTester() {
       {/* Divisor */}
       <div style={{ height: "1px", backgroundColor: "#E5E7EB", margin: "16px 0" }} />
 
-      {/* Informaçéµes */}
+      {/* Informações */}
       <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {/* Dimenséµes */}
+        {/* Dimensões */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <span style={{ color: "#6B7280", fontSize: "13px" }}>Dimenséµes:</span>
+          <span style={{ color: "#6B7280", fontSize: "13px" }}>Dimensões:</span>
           <span style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600, color: "#111827" }}>
             {windowSize.width} é— {windowSize.height}px
           </span>
@@ -253,7 +253,7 @@ export default function BreakpointTester() {
 
       {/* Footer */}
       <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #E5E7EB", fontSize: "11px", color: "#9CA3AF", textAlign: "center" }}>
-        Federal Express Brasil â€¢ Design System v1.0
+        Federal Express Brasil "¢ Design System v1.0
       </div>
     </div>
   );

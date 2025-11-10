@@ -47,7 +47,7 @@ export default function MultimediaSection() {
               }}
             >
               Acompanhe nosso programa ao vivo com especialistas em imigração,
-              entrevistas exclusivas e discusséµes sobre as últimas mudanças nas
+              entrevistas exclusivas e discussões sobre as últimas mudanças nas
               políticas migratórias globais. Confira nosso próximo episódio sobre
               as mudanças no sistema de vistos americano.
             </p>
@@ -127,7 +127,7 @@ export default function MultimediaSection() {
                 </div>
               </div>
 
-              {/* Informaçéµes de overlay */}
+              {/* Informações de overlay */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-5">
                 <p
                   style={{

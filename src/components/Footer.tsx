@@ -196,7 +196,7 @@ export default function Footer() {
             color: "rgba(255, 255, 255, 0.8)"
           }}
         >
-          © 2025 Federal Express Brasil â€” Soluções Migratórias. Todos os direitos
+          © 2025 Federal Express Brasil "” Soluções Migratórias. Todos os direitos
           reservados.
         </p>
 

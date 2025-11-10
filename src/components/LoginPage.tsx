@@ -56,7 +56,7 @@ export default function LoginPage({
   const [resetData, setResetData] = useState({ newPassword: "", confirmPassword: "" });
 
   /* -------------------------------------------------------------------------------------------------
-     Efeito 1 â€” Detecta o fluxo de recuperação ao entrar pela URL do e-mail
+     Efeito 1 "” Detecta o fluxo de recuperação ao entrar pela URL do e-mail
 
      - No "resetPasswordForEmail", definimos redirectTo = `${origin}?type=recovery`
      - O Supabase redireciona de volta com hash (#access_token...) e type=recovery.
@@ -174,7 +174,7 @@ export default function LoginPage({
   /* -------------------------------------------------------------------------------------------------
      Aé‡éƒO: Redefinir senha
 
-     Pré-condiçéµes:
+     Pré-condições:
        - O usuário deve ter acessado esta tela pelo link do Supabase (type=recovery)
        - Isso cria uma sessão temporária (getSession() !== null)
      Implementação:

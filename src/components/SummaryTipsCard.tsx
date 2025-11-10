@@ -5,12 +5,12 @@ export default function SummaryTipsCard() {
     {
       icon: <TrendingUp className="h-5 w-5" />,
       title: "Acompanhe a cotação",
-      description: "Monitore as variaçéµes do câmbio ao longo do dia para fazer operaçéµes no melhor momento"
+      description: "Monitore as variações do câmbio ao longo do dia para fazer operações no melhor momento"
     },
     {
       icon: <Shield className="h-5 w-5" />,
       title: "Segurança garantida",
-      description: "Todas as operaçéµes são protegidas por criptografia de ponta e regulamentadas pelo Banco Central"
+      description: "Todas as operações são protegidas por criptografia de ponta e regulamentadas pelo Banco Central"
     },
     {
       icon: <Clock className="h-5 w-5" />,

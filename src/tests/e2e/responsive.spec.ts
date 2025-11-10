@@ -37,7 +37,7 @@ test.describe('Responsividade - Design System', () => {
       }
     });
 
-    test('botéµes devem ocupar largura adequada', async ({ page }) => {
+    test('botões devem ocupar largura adequada', async ({ page }) => {
       await page.click('text=Login');
       
       const button = page.locator('button:has-text("Entrar")');
@@ -182,7 +182,7 @@ test.describe('Responsividade - Design System', () => {
       expect(width).toBeLessThan(500);
     });
 
-    test('botéµes devem ter padding adequado', async ({ page }) => {
+    test('botões devem ter padding adequado', async ({ page }) => {
       await page.click('text=Login');
       
       const button = page.locator('button:has-text("Entrar")');
@@ -195,7 +195,7 @@ test.describe('Responsividade - Design System', () => {
     });
   });
 
-  test.describe('Transiçéµes entre breakpoints', () => {
+  test.describe('Transições entre breakpoints', () => {
     test('deve escalar suavemente de mobile para desktop', async ({ page }) => {
       await page.goto('/');
       
@@ -286,7 +286,7 @@ test.describe('Responsividade - Design System', () => {
       await expect(logo).toBeVisible();
     });
 
-    test('botéµes devem ajustar (Hug contents)', async ({ page }) => {
+    test('botões devem ajustar (Hug contents)', async ({ page }) => {
       await page.goto('/');
       await page.click('text=Login');
       

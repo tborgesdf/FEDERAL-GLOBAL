@@ -161,7 +161,7 @@ export default function RSSCarousel({ title, icon, items, accentColor }: RSSCaro
                 >
                   {formatDate(currentItem.dateISO)}
                 </span>
-                <span className="text-[#555]" style={{ fontSize: "8px" }}>â€¢</span>
+                <span className="text-[#555]" style={{ fontSize: "8px" }}>"¢</span>
                 <span
                   style={{
                     fontFamily: "Inter, sans-serif",

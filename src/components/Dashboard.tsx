@@ -21,10 +21,10 @@ export default function Dashboard({ onLogout, userEmail }: DashboardProps) {
         toast.info("Contratar Novo Serviço - Em desenvolvimento");
         break;
       case "in-progress":
-        toast.info("Acompanhar Solicitaçéµes - Em desenvolvimento");
+        toast.info("Acompanhar Solicitações - Em desenvolvimento");
         break;
       case "history":
-        toast.info("Histórico de Solicitaçéµes - Em desenvolvimento");
+        toast.info("Histórico de Solicitações - Em desenvolvimento");
         break;
       default:
         break;

@@ -19,14 +19,14 @@ const actionCards: ActionCard[] = [
   {
     id: "in-progress",
     title: "Acompanhar Solicitação em Andamento",
-    description: "Visualize o status das suas operaçéµes em processamento",
+    description: "Visualize o status das suas operações em processamento",
     icon: "clock",
     color: "#2BA84A"
   },
   {
     id: "history",
-    title: "Histórico de Solicitaçéµes",
-    description: "Acesse todas as suas transaçéµes e operaçéµes anteriores",
+    title: "Histórico de Solicitações",
+    description: "Acesse todas as suas transações e operações anteriores",
     icon: "history",
     color: "#7C6EE4"
   }

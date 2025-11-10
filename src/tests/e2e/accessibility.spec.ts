@@ -50,7 +50,7 @@ test.describe('Acessibilidade (WCAG AA+)', () => {
     }
   });
 
-  test('botéµes devem ter texto ou aria-label', async ({ page }) => {
+  test('botões devem ter texto ou aria-label', async ({ page }) => {
     await page.goto('/');
     
     const buttons = await page.locator('button').all();
