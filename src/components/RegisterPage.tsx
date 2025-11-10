@@ -3,155 +3,84 @@ import Header from "./Header";
 import Hero from "./Hero";
 import MultimediaSection from "./MultimediaSection";
 import Footer from "./Footer";
+
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { toast } from "sonner@2.0.3";
-import { projectId, publicAnonKey } from "../utils/supabase";
-import { 
-  FileText, 
-  User, 
-  Phone, 
-  Mail, 
-  Lock, 
-  LockKeyhole
-} from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/utils/supabase";
+import { Mail, Lock, Eye, EyeOff, ArrowLeft, User } from "lucide-react";
 
 interface RegisterPageProps {
   onBackToHome: () => void;
+  onNavigateToLogin: () => void;
 }
 
-export default function RegisterPage({ onBackToHome }: RegisterPageProps) {
+export default function RegisterPage({
+  onBackToHome,
+  onNavigateToLogin,
+}: RegisterPageProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
-  const [formData, setFormData] = useState({
-    cpf: "",
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [form, setForm] = useState({
     name: "",
-    phone: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Máscara para CPF
-  const formatCPF = (value: string) => {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d{1,2})/, "$1-$2")
-      .replace(/(-\d{2})\d+?$/, "$1");
-  };
-
-  // Máscara para telefone
-  const formatPhone = (value: string) => {
-    return value
-      .replace(/\D/g, "")
-      .replace(/(\d{2})(\d)/, "($1) $2")
-      .replace(/(\d{5})(\d)/, "$1-$2")
-      .replace(/(-\d{4})\d+?$/, "$1");
-  };
-
-  const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatCPF(e.target.value);
-    setFormData(prev => ({ ...prev, cpf: formatted }));
-  };
-
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatPhone(e.target.value);
-    setFormData(prev => ({ ...prev, phone: formatted }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validações
-    if (!formData.cpf || !formData.name || !formData.phone || !formData.email || !formData.password) {
-      toast.error("Por favor, preencha todos os campos obrigatórios");
+
+    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
+      toast.error("Por favor, preencha todos os campos");
       return;
     }
-
-    // Validar CPF (11 dígitos)
-    const cpfClean = formData.cpf.replace(/\D/g, "");
-    if (cpfClean.length !== 11) {
-      toast.error("CPF inválido. Digite 11 dígitos.");
+    if (form.password.length < 6) {
+      toast.error("A senha deve ter no mínimo 6 caracteres");
       return;
     }
-
-    // Validar telefone (11 dígitos)
-    const phoneClean = formData.phone.replace(/\D/g, "");
-    if (phoneClean.length !== 11) {
-      toast.error("Telefone inválido. Use o formato (00) 00000-0000");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
+    if (form.password !== form.confirmPassword) {
       toast.error("As senhas não coincidem");
       return;
     }
 
-    if (formData.password.length < 6) {
-      toast.error("A senha deve ter no mínimo 6 caracteres");
-      return;
-    }
-
-    if (!acceptedTerms) {
-      toast.error("Você deve aceitar os termos de uso e política de privacidade");
-      return;
-    }
-
     setIsLoading(true);
-
     try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-d805caa8/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${publicAnonKey}`
-          },
-          body: JSON.stringify({
-            cpf: cpfClean,
-            email: formData.email,
-            password: formData.password,
-            name: formData.name,
-            phone: phoneClean
-          })
-        }
+      // Cadastro via Supabase Auth (sem Edge Functions)
+      const { error } = await supabase.auth.signUp({
+        email: form.email,
+        password: form.password,
+        // dados opcionais para o user (metadata)
+        options: {
+          data: { full_name: form.name },
+          // se quiser forçar o link de confirmação a voltar para o seu site:
+          emailRedirectTo: `${window.location.origin}?type=signup`,
+        },
+      });
+      if (error) throw error;
+
+      toast.success(
+        "Conta criada! Verifique seu e-mail para confirmar (se a confirmação estiver habilitada)."
       );
 
-      const data = await response.json();
+      // limpa formulário
+      setForm({ name: "", email: "", password: "", confirmPassword: "" });
 
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao criar conta");
-      }
-
-      toast.success("Conta criada com sucesso! Redirecionando...");
-      
-      // Limpar formulário
-      setFormData({
-        cpf: "",
-        name: "",
-        phone: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
-      });
-
-      // Redirecionar para home após 2 segundos
-      setTimeout(() => {
-        onBackToHome();
-      }, 2000);
-
-    } catch (error) {
-      console.error("Erro no cadastro:", error);
-      toast.error(error instanceof Error ? error.message : "Erro ao criar conta. Tente novamente.");
+      // direciona para login
+      setTimeout(() => onNavigateToLogin(), 1500);
+    } catch (err) {
+      console.error("Erro no cadastro:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Erro ao criar a conta. Tente novamente."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -159,31 +88,26 @@ export default function RegisterPage({ onBackToHome }: RegisterPageProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        onNavigateToRegister={() => {}} 
+      <Header
+        onNavigateToRegister={() => {}}
         onNavigateToHome={onBackToHome}
-        currentPage="register" 
+        currentPage="register"
       />
       <main>
         <Hero />
-        
-        {/* Register Form Container */}
-        <section 
+
+        <section
           className="px-4 sm:px-6 md:px-8 lg:px-20"
-          style={{
-            marginTop: "64px",
-            marginBottom: "96px"
-          }}
+          style={{ marginTop: "64px", marginBottom: "96px" }}
         >
           <div className="mx-auto max-w-[720px]">
-            <div 
+            <div
               className="bg-white rounded-2xl px-6 py-6 sm:px-8 sm:py-8 md:px-12 md:py-12"
               style={{
                 boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
-                border: "1px solid rgba(10, 75, 158, 0.1)"
+                border: "1px solid rgba(10, 75, 158, 0.1)",
               }}
             >
-              {/* Título */}
               <h2
                 className="text-center mb-6"
                 style={{
@@ -191,318 +115,167 @@ export default function RegisterPage({ onBackToHome }: RegisterPageProps) {
                   fontSize: "clamp(24px, 5vw, 32px)",
                   fontWeight: 700,
                   color: "#0A4B9E",
-                  textShadow: "0 2px 4px rgba(0,0,0,0.15)"
+                  textShadow: "0 2px 4px rgba(0,0,0,0.15)",
                 }}
               >
                 Crie sua conta
               </h2>
 
-              {/* Formulário */}
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* CPF */}
+                {/* Nome */}
                 <div className="space-y-2">
-                  <Label 
-                    htmlFor="cpf"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      color: "#0A4B9E"
-                    }}
-                  >
-                    CPF *
-                  </Label>
-                  <div className="relative">
-                    <FileText 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
-                    <Input
-                      id="cpf"
-                      name="cpf"
-                      type="text"
-                      placeholder="000.000.000-00"
-                      value={formData.cpf}
-                      onChange={handleCPFChange}
-                      maxLength={14}
-                      required
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px",
-                        color: "#0A4B9E"
-                      }}
-                    />
-                  </div>
-                  <p 
-                    className="text-sm"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      color: "#888888"
-                    }}
-                  >
-                    Digite apenas números
-                  </p>
-                </div>
-
-                {/* Nome Completo */}
-                <div className="space-y-2">
-                  <Label 
+                  <Label
                     htmlFor="name"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontSize: "14px",
                       fontWeight: 500,
-                      color: "#0A4B9E"
+                      color: "#0A4B9E",
                     }}
                   >
-                    Nome Completo *
+                    Nome *
                   </Label>
                   <div className="relative">
-                    <User 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="name"
                       name="name"
                       type="text"
-                      placeholder="Digite seu nome completo"
-                      value={formData.name}
-                      onChange={handleInputChange}
+                      placeholder="Seu nome"
+                      value={form.name}
+                      onChange={handleChange}
                       required
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px",
-                        color: "#0A4B9E"
-                      }}
+                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
                     />
                   </div>
-                </div>
-
-                {/* Telefone Celular */}
-                <div className="space-y-2">
-                  <Label 
-                    htmlFor="phone"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 500,
-                      color: "#0A4B9E"
-                    }}
-                  >
-                    Telefone Celular *
-                  </Label>
-                  <div className="relative">
-                    <Phone 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="(00) 00000-0000"
-                      value={formData.phone}
-                      onChange={handlePhoneChange}
-                      maxLength={15}
-                      required
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px",
-                        color: "#0A4B9E"
-                      }}
-                    />
-                  </div>
-                  <p 
-                    className="text-sm"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      color: "#888888"
-                    }}
-                  >
-                    Formato: (00) 00000-0000
-                  </p>
                 </div>
 
                 {/* E-mail */}
                 <div className="space-y-2">
-                  <Label 
+                  <Label
                     htmlFor="email"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontSize: "14px",
                       fontWeight: 500,
-                      color: "#0A4B9E"
+                      color: "#0A4B9E",
                     }}
                   >
                     E-mail *
                   </Label>
                   <div className="relative">
-                    <Mail 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       placeholder="seu@email.com"
-                      value={formData.email}
-                      onChange={handleInputChange}
+                      value={form.email}
+                      onChange={handleChange}
                       required
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px",
-                        color: "#0A4B9E"
-                      }}
+                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
                     />
                   </div>
                 </div>
 
                 {/* Senha */}
                 <div className="space-y-2">
-                  <Label 
+                  <Label
                     htmlFor="password"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontSize: "14px",
                       fontWeight: 500,
-                      color: "#0A4B9E"
+                      color: "#0A4B9E",
                     }}
                   >
                     Senha *
                   </Label>
                   <div className="relative">
-                    <Lock 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="password"
                       name="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="Mínimo 6 caracteres"
-                      value={formData.password}
-                      onChange={handleInputChange}
+                      value={form.password}
+                      onChange={handleChange}
                       required
                       minLength={6}
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px"
-                      }}
+                      className="peer h-[52px] pl-12 pr-12 border-gray-300 rounded-lg focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0A4B9E]"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
-                  <p 
-                    className="text-sm"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      color: "#888888"
-                    }}
-                  >
-                    Mínimo de 6 caracteres
-                  </p>
                 </div>
 
-                {/* Confirmar Senha */}
+                {/* Confirmar senha */}
                 <div className="space-y-2">
-                  <Label 
+                  <Label
                     htmlFor="confirmPassword"
                     style={{
                       fontFamily: "Inter, sans-serif",
                       fontSize: "14px",
                       fontWeight: 500,
-                      color: "#0A4B9E"
+                      color: "#0A4B9E",
                     }}
                   >
-                    Confirmar Senha *
+                    Confirmar senha *
                   </Label>
                   <div className="relative">
-                    <LockKeyhole 
-                      className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 transition-colors peer-focus:text-[#0A4B9E]" 
-                    />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       placeholder="Digite a senha novamente"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
+                      value={form.confirmPassword}
+                      onChange={handleChange}
                       required
                       minLength={6}
-                      className="peer h-[52px] pl-12 border-gray-300 rounded-lg transition-all focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
-                      style={{
-                        fontFamily: "Inter, sans-serif",
-                        fontSize: "16px"
-                      }}
+                      className="peer h-[52px] pl-12 pr-12 border-gray-300 rounded-lg focus:border-[#0A4B9E] focus:ring-2 focus:ring-[rgba(10,75,158,0.25)]"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0A4B9E]"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
                 </div>
 
-                {/* Checkbox Termos de Uso */}
-                <div className="flex items-start gap-3 p-4 bg-[#F5F6F8] rounded-lg border border-gray-200">
-                  <input
-                    type="checkbox"
-                    id="acceptTerms"
-                    checked={acceptedTerms}
-                    onChange={(e) => setAcceptedTerms(e.target.checked)}
-                    className="mt-1 h-5 w-5 cursor-pointer accent-[#0A4B9E] border-2 border-gray-300 rounded transition-all"
-                    required
-                  />
-                  <label
-                    htmlFor="acceptTerms"
-                    className="cursor-pointer select-none"
-                    style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 400,
-                      color: "#111111",
-                      lineHeight: "1.6"
-                    }}
-                  >
-                    Li e aceito os{" "}
-                    <a 
-                      href="#" 
-                      className="text-[#0A4B9E] hover:underline"
-                      style={{ fontWeight: 600 }}
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Termos de Uso
-                    </a>
-                    {" "}e a{" "}
-                    <a 
-                      href="#" 
-                      className="text-[#0A4B9E] hover:underline"
-                      style={{ fontWeight: 600 }}
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      Política de Privacidade
-                    </a>
-                    {" "}*
-                  </label>
-                </div>
-
-                {/* Botão Finalizar Cadastro */}
+                {/* Botão Cadastrar */}
                 <Button
                   type="submit"
-                  disabled={isLoading || !acceptedTerms}
-                  className="w-full h-[56px] bg-[#2BA84A] hover:brightness-110 active:scale-[0.97] text-white transition-all duration-300 rounded-xl shadow-[0_6px_12px_rgba(0,0,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100"
-                  style={{
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "18px",
-                    fontWeight: 600
-                  }}
+                  disabled={isLoading}
+                  className="w-full h-[56px] bg-[#2BA84A] hover:brightness-110 active:scale-[0.97] text-white rounded-xl shadow-[0_6px_12px_rgba(0,0,0,0.25)] disabled:opacity-50"
                 >
-                  {isLoading ? "Processando..." : "Finalizar Cadastro"}
+                  {isLoading ? "Cadastrando..." : "Criar conta"}
                 </Button>
+
+                {/* Link para login */}
+                <div className="text-center pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={onNavigateToLogin}
+                    className="flex items-center justify-center gap-2 mx-auto text-[#0A4B9E] hover:underline transition-all"
+                    style={{ fontFamily: "Inter, sans-serif", fontSize: "14px", fontWeight: 500 }}
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Já tenho conta (entrar)
+                  </button>
+                </div>
               </form>
             </div>
           </div>
         </section>
 
-        {/* Canal Migratório Federal Express */}
         <MultimediaSection />
       </main>
       <Footer />
