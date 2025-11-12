@@ -1,0 +1,573 @@
+OCR-READY (JSON universal) - Passaporte Brasileiro
+
+{
+  "doc_type": "passport",
+  "standard": "ICAO9303-TD3",
+  "source_image_filename": "Foto Passaport.jpg",
+  "issuing_country": "BRA",
+  "issuing_authority": "SR/PF/SP",
+
+  "document": {
+    "passport_number": "GM283081",
+    "passport_number_check_digit": "4",
+    "type": "P",
+    "nationality": "BRA",
+    "date_of_issue": "2025-08-21",
+    "date_of_expiry": "2035-08-20"
+  },
+
+  "holder": {
+    "surname": "DOS SANTOS KENNEDY",
+    "given_names": "HARYANNE",
+    "full_name": "HARYANNE DOS SANTOS KENNEDY",
+    "sex": "F",
+    "date_of_birth": "1988-10-10",
+    "cpf": "02271329124",
+    "place_of_birth": "GOIÂNIA/GO",
+    "father_name": "HUMBERTO KENNEDY DE SOUSA",
+    "mother_name": "ELISANGELA TEIXEIRA DOS SANTOS KENNEDY",
+    "signature_present": true
+  },
+
+  "images": {
+    "photo_primary_position": "bottom_left",
+    "photo_secondary_position": "top_right"
+  },
+
+  "mrz": {
+    "raw": "P<BRADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<\nGM283081<4BRA8810104F350820822713291244<14",
+    "line1": "P<BRADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<",
+    "line2": "GM283081<4BRA8810104F350820822713291244<14",
+    "parsed": {
+      "document_type": "P",
+      "issuing_country": "BRA",
+      "names": {
+        "primary": "DOS SANTOS KENNEDY",
+        "secondary": "HARYANNE"
+      },
+      "passport_number": "GM283081",
+      "passport_number_check_digit": "4",
+      "nationality": "BRA",
+      "birth_date": "1988-10-10",
+      "birth_date_raw": "881010",
+      "birth_date_check_digit": "4",
+      "sex": "F",
+      "expiry_date": "2035-08-20",
+      "expiry_date_raw": "350820",
+      "expiry_date_check_digit": "8",
+      "personal_number": "022713291244",
+      "personal_number_raw": "22713291244<",
+      "personal_number_check_digit": "1",
+      "composite_check_digit": "4"
+    }
+  },
+
+  "security_features": [
+    "paper_security_fibers_uv",
+    "hologram_brasil",
+    "microprint_portrait",
+    "perforated_passport_number",
+    "mrz_icao"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Dados transcritos visualmente do exemplar fotográfico."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+
+___  
+
+OCR-READY (JSON universal) - Visto Americano
+
+{
+  "doc_type": "visa",
+  "standard": "ICAO9303-TD2",
+  "source_image_filename": "Foto Visto.jpg",
+  "issuing_country": "USA",
+  "issuing_post_name": "SAO PAULO",
+
+  "document": {
+    "visa_number": "W2100630",
+    "control_number": "20252693210006",
+    "visa_type": "R",
+    "class": "B1/B2",
+    "entries": "M",
+    "issue_date": "2025-10-10",
+    "expiration_date": "2035-09-25",
+    "annotation": null
+  },
+
+  "holder": {
+    "surname": "DOS SANTOS KENNEDY",
+    "given_names": "HARYANNE",
+    "full_name": "HARYANNE DOS SANTOS KENNEDY",
+    "sex": "F",
+    "date_of_birth": "1988-10-10",
+    "nationality": "BRZL",
+    "passport_number": "GM283081"
+  },
+
+  "mrz": {
+    "raw": "VNUSADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<\nGM283081<4BRA8810104F3509250B3SPL49F7L973298",
+    "line1": "VNUSADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<",
+    "line2": "GM283081<4BRA8810104F3509250B3SPL49F7L973298",
+    "parsed": {
+      "document_code": "VN",
+      "issuing_country": "USA",
+      "surname": "DOS SANTOS KENNEDY",
+      "given_names": "HARYANNE",
+      "passport_number": "GM283081",
+      "passport_number_check_digit": "4",
+      "nationality": "BRA",
+      "birth_date": "1988-10-10",
+      "birth_date_raw": "881010",
+      "birth_date_check_digit": "4",
+      "sex": "F",
+      "expiration_date": "2035-09-25",
+      "expiration_date_raw": "350925",
+      "expiration_date_check_digit": "0",
+      "optional_data": "B3SPL49F7L973298"
+    }
+  },
+
+  "security_features": [
+    "hologram_visa",
+    "microtext_background",
+    "red_embossed_visa_number",
+    "star_stripe_motif",
+    "mrz_icao"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Dados transcritos visualmente do exemplar fotográfico de visto EUA."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+------
+
+OCR-READY (JSON universal) - CNH - Carteira Nacional de habilitação
+
+{
+  "doc_type": "driver_license",
+  "standard": "BR-CNH-2021",
+  "source_images": ["cnh_frente.jpg", "cnh_verso.jpg"],
+  "issuing_country": "BRA",
+  "issuing_authority": "DETRAN/GO",
+  "issuing_state": "GO",
+
+  "document": {
+    "license_number": "27790671399",
+    "registration_number": "04087618760",
+    "category": ["A", "B", "C", "D"],
+    "first_issue_date": "2007-04-26",
+    "issue_date": "2014-02-13",
+    "expiry_date": "2034-02-13",
+    "valid_in_territory": "Nacional",
+    "issuer_codes": ["1468658762", "GO172845386"]
+  },
+
+  "holder": {
+    "full_name": "HARYANNE DOS SANTOS KENNEDY",
+    "cpf": "02271329124",
+    "date_of_birth": "1988-10-10",
+    "nationality": "BRASILEIRA",
+    "place_of_birth": "GOIÂNIA/GO",
+    "father_name": "HUMBERTO KENNEDY DE SOUSA",
+    "mother_name": "ELISANGELA TEIXEIRA DOS SANTOS KENNEDY",
+    "signature_present": true,
+    "photo_present": true
+  },
+
+  "license_classes": {
+    "A": { "issue_date": "2014-02-13", "expiry_date": "2034-02-13", "valid": true },
+    "B": { "issue_date": "2014-02-13", "expiry_date": "2034-02-13", "valid": true },
+    "C": { "issue_date": "2014-02-13", "expiry_date": "2034-02-13", "valid": true },
+    "D": { "issue_date": "2014-02-13", "expiry_date": "2034-02-13", "valid": true },
+    "E": { "issue_date": null, "expiry_date": null, "valid": false }
+  },
+
+  "security_features": [
+    "microtext_background",
+    "laser_photo_impression",
+    "holographic_map_brazil",
+    "optically_variable_ink",
+    "mrz_absent_pre_qr_model"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Extração completa das faces frontal e traseira da CNH padrão SENATRAN."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+
+-----
+
+
+OCR-READY (JSON universal) - RG - Registro Geral
+
+{
+  "doc_type": "id_card",
+  "standard": "BR-RG-2007",
+  "source_images": ["rg_frente.jpeg", "rg_verso.jpeg"],
+  "issuing_country": "BRA",
+  "issuing_authority": "IIRGD/SSP-SP",
+  "issuing_state": "SP",
+
+  "document": {
+    "rg_number": "22948040-8",
+    "issue_date": "2007-07-06",
+    "valid_in_territory": "Nacional",
+    "issuing_city": "JUIZ DE FORA/MG",
+    "registry_office": "1º Ofício de Registro Civil",
+    "book": "B001",
+    "page": "0204",
+    "record_number": "000407"
+  },
+
+  "holder": {
+    "full_name": "SOLANGE FERREIRA ALVES E BORGES",
+    "cpf": "1577255649",
+    "date_of_birth": "1952-10-11",
+    "nationality": "BRASILEIRA",
+    "place_of_birth": "VACARIA/RS",
+    "father_name": "EQUICIO ALVES",
+    "mother_name": "CLAUDINA FERREIRA ALVES",
+    "signature_present": true,
+    "fingerprint_present": true,
+    "photo_present": true
+  },
+
+  "security_features": [
+    "microtext_green_border",
+    "republic_seal_embossed",
+    "monetary_paper_fiber",
+    "holographic_text_prohibited_plastificar"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.97,
+    "notes": "Documento físico antigo (pré-modelo RIC), dupla face legível com todos os campos principais preservados."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+------
+
+
+OCR-READY (JSON universal) - CIN - Carteira de Identidade Nacional
+
+{
+  "doc_type": "id_card",
+  "standard": "BR-CIN-2022",
+  "source_images": ["cin_frente.png", "cin_verso.png"],
+  "issuing_country": "BRA",
+  "issuing_authority": "Governo Federal / Secretaria de Segurança da Unidade da Federação",
+
+  "document": {
+    "cin_number": null,
+    "cpf": "00000000000",
+    "issue_date": null,
+    "expiry_date": null,
+    "valid_in_territory": "Nacional",
+    "icao_compliant": true,
+    "qr_code_present": true
+  },
+
+  "holder": {
+    "full_name": "NOME EXEMPLO",
+    "social_name": "NOME SOCIAL EXEMPLO",
+    "sex": "N",
+    "date_of_birth": "0000-00-00",
+    "nationality": "BRASILEIRA",
+    "place_of_birth": "CIDADE / UF",
+    "father_name": "NOME PAI",
+    "mother_name": "NOME MÃE",
+    "signature_present": true,
+    "photo_present": true
+  },
+
+  "security_features": [
+    "qr_code_authenticable",
+    "holographic_guilloche_pattern",
+    "microtext_background",
+    "mrz_icao_zone",
+    "optically_variable_ink",
+    "mapa_brasil_security_holo"
+  ],
+
+  "machine_readable_zone": {
+    "standard": "ICAO",
+    "lines": 3,
+    "presence": true
+  },
+
+  "extraction": {
+    "method": "manual-template",
+    "confidence_overall": 1.0,
+    "notes": "Modelo ilustrativo do CIN (Carteira de Identidade Nacional) conforme padrão federal 2022."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+------
+
+
+OCR-READY (JSON universal) - Certidao de Casamento
+
+{
+  "doc_type": "marriage_certificate",
+  "standard": "BR-RCPN-2022",
+  "source_image_filename": "996a07a9-4885-4a90-bcd7-55275e825676.png",
+  "issuing_country": "BRA",
+  "issuing_authority": "Registro Civil das Pessoas Naturais - Poder Judiciário do Estado do Paraná",
+  "issuing_city": "Paranavaí",
+  "issuing_state": "PR",
+
+  "document": {
+    "registry_office": "Registro Civil das Pessoas Naturais de Paranavaí - PR",
+    "official": "Renato Ramos Júnior",
+    "registration_number": "1299800155197920000609000078705",
+    "book": "C-285",
+    "page": "213",
+    "term": "7479",
+    "issue_date": "2022-09-01",
+    "validation_hash": "9F437AD25A9CA52D9FBB5B39AF26E5CA",
+    "validation_url": "https://www.registrocivil.org.br/validacao",
+    "digital_signature": true
+  },
+
+  "spouses": [
+    {
+      "full_name": "ARMANDO HENRIQUE DE LIMA",
+      "birth_date": "1953-06-20",
+      "place_of_birth": "PLANALTINA DO PARANÁ/PR",
+      "nationality": "BRASILEIRA",
+      "civil_status_before": "SOLTEIRO",
+      "profession": "ECONOMIÁRIO",
+      "residence": "PARANAVAÍ/PR",
+      "father_name": "ANTÔNIO HENRIQUE DE LIMA",
+      "mother_name": "MARIA DE NASCIMENTO"
+    },
+    {
+      "full_name": "IZABEL CRISTINA SILVA DE LIMA",
+      "birth_date": "1954-08-14",
+      "place_of_birth": "DRACENA/SP",
+      "nationality": "BRASILEIRA",
+      "civil_status_before": "SOLTEIRA",
+      "residence": "PARANAVAÍ/PR",
+      "father_name": "SEBASTIÃO SILVA",
+      "mother_name": "CARMELIA SILVA"
+    }
+  ],
+
+  "marriage_details": {
+    "marriage_date": "1979-12-22",
+    "celebrant": "RICARDO DEANTONI",
+    "regime_of_property": "Comunhão universal de bens",
+    "witnesses": [],
+    "notes": "Certidão eletrônica ICP-Brasil, formato digital válido conforme MP 2.200-2/2001."
+  },
+
+  "security_features": [
+    "qr_code_icp_brasil",
+    "digital_signature_icp_brasil",
+    "watermark_brazilian_arms",
+    "background_security_pattern"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Documento eletrônico autenticado ICP-Brasil com assinatura digital e hash verificado."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+-------
+
+OCR-READY (JSON universal) - Declaração de União Estável
+
+
+{
+  "doc_type": "civil_union_certificate",
+  "standard": "BR-NOTARIAL-UNIAO-ESTAVEL-2021",
+  "source_image_filename": "declaracao_uniao_estavel.png",
+  "issuing_country": "BRA",
+  "issuing_authority": "28º Tabelião de Notas da Comarca da Capital - São Paulo/SP",
+  "tabeliao_substitute": "Marcos Rodrigues Xavier",
+  "tabeliao_owner": "Carla Watanabe",
+
+  "document": {
+    "book": "1766",
+    "page": "376",
+    "document_type": "Escritura Pública de Declaração de União Estável",
+    "issue_date": "2021-02-09",
+    "notary_office_address": "Rua Coelho Lisboa, 233 - Tatuapé - São Paulo/SP",
+    "digital_seal": "1082960203943.0002437x79",
+    "authentication_protocol": "1132871170000001320512021-3",
+    "validation_site": "https://www.centralderegistrocivil.org.br",
+    "digital_signature_valid": true
+  },
+
+  "partners": [
+    {
+      "full_name": "RODRIGO APARECIDO OLIVEIRA DO NASCIMENTO",
+      "nationality": "BRASILEIRA",
+      "civil_status": "SOLTEIRO",
+      "id_number": "43837847-3",
+      "issuing_authority": "SSP-SP",
+      "cpf": "37170771899",
+      "residence": "Rua Coelho Lisboa, 233 - Tatuapé - São Paulo/SP"
+    },
+    {
+      "full_name": "SHIZUE NAKAMURA HAMANAKA",
+      "nationality": "BRASILEIRA",
+      "civil_status": "SEPARADA JUDICIALMENTE",
+      "id_number": "82804524-5",
+      "issuing_authority": "SSP-SP",
+      "cpf": "05983404857",
+      "residence": "Rua Coelho Lisboa, 233 - Tatuapé - São Paulo/SP"
+    }
+  ],
+
+  "union_details": {
+    "relationship_type": "União Estável",
+    "start_date": "2021-02-09",
+    "property_regime": "Comunhão parcial de bens",
+    "joint_residence": true,
+    "children": null,
+    "notes": "União estável declarada publicamente perante tabelião, com convivência contínua e duradoura."
+  },
+
+  "fees": {
+    "notary": 104.45,
+    "iss": 5.22,
+    "total": 109.67,
+    "icp_validation": 9.00,
+    "total_with_icp": 118.67
+  },
+
+  "security_features": [
+    "watermark_brazilian_arms",
+    "microtext_border",
+    "qr_code_icp_brasil",
+    "digital_signature_icp_brasil"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Documento físico autenticado ICP-Brasil, assinado digitalmente e lavrado por tabelião substituto."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}
+
+
+
+-----
+
+
+
+OCR-READY (JSON universal) - Certidao de Nascimento
+
+
+{
+  "doc_type": "birth_certificate",
+  "standard": "BR-RCPN-2021",
+  "source_image_filename": "certidao_nascimento.png",
+  "issuing_country": "BRA",
+  "issuing_authority": "Registro Civil das Pessoas Naturais - Estado do Rio de Janeiro",
+  "issuing_city": "Rio de Janeiro",
+  "issuing_state": "RJ",
+
+  "document": {
+    "registry_office": "Registro Civil das Pessoas Naturais de Rio de Janeiro",
+    "registration_type": "Nascido Vivo",
+    "registration_date": "1988-06-12",
+    "matricula": "07989701551988100240043010745337",
+    "issue_date": "2021-08-24",
+    "digital_signature": true,
+    "qr_code_present": true,
+    "validation_url": "https://www.registrocivil.org.br/validacao",
+    "official_name": "Julia Helen Bergello",
+    "official_role": "Escrevente Autorizada",
+    "crc_code": "74376"
+  },
+
+  "holder": {
+    "full_name": "JOÃO PEDRO MISSIAS SANTOS E SANTOS",
+    "cpf": "08222463970",
+    "sex": "M",
+    "birth_date": "1988-06-12",
+    "nationality": "BRASILEIRA",
+    "place_of_birth": "Rio de Janeiro/RJ",
+    "birth_location_detail": "Hospital Itaguaí, Rua Vila Residencial YJ, Rio de Janeiro",
+    "father_name": "AUGUS MISSIAS DOS SANTOS",
+    "mother_name": "LAURIENE DA FÁTIMA DOS SANTOS E SANTOS",
+    "paternal_grandparents": ["FRANCISCA SANTIAGO DOS SANTOS", "VICENTE ANASTÁCIO DOS SANTOS"],
+    "maternal_grandparents": ["ELIJOURDES VIANA DOS SANTOS"]
+  },
+
+  "security_features": [
+    "qr_code_icp_brasil",
+    "digital_signature_icp_brasil",
+    "watermark_brazilian_arms",
+    "microtext_security_border"
+  ],
+
+  "extraction": {
+    "method": "manual-verified",
+    "confidence_overall": 0.99,
+    "notes": "Documento digital ICP-Brasil válido, certidão de nascimento com CPF integrado e QR Code autenticável."
+  },
+
+  "compliance": {
+    "lgpd_basis": "study_example_non_personal_use",
+    "redactions": []
+  }
+}

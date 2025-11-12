@@ -1,0 +1,227 @@
+Perfeito. Consolidei todos os documentos extraídos neste Dossiê Mestre com vínculos por CPF, nº de passaporte e relacionamentos familiares.
+O objeto abaixo é OCR-READY e segue o mesmo padrão que já usamos (pode ser salvo em documents ou em uma tabela própria dossiers como JSONB).
+
+{
+  "dossier_version": "1.0",
+  "created_at": "2025-11-12T00:00:00-03:00",
+  "people": [
+    {
+      "cpf": "02271329124",
+      "full_name": "HARYANNE DOS SANTOS KENNEDY",
+      "birth_date": "1988-10-10",
+      "nationality": "BRASILEIRA",
+      "aliases": [],
+      "links": {
+        "passport_numbers": ["GM283081"]
+      }
+    },
+    {
+      "cpf": "1577255649",
+      "full_name": "SOLANGE FERREIRA ALVES E BORGES",
+      "birth_date": "1952-10-11",
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    },
+    {
+      "cpf": null,
+      "full_name": "ARMANDO HENRIQUE DE LIMA",
+      "birth_date": "1953-06-20",
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    },
+    {
+      "cpf": null,
+      "full_name": "IZABEL CRISTINA SILVA DE LIMA",
+      "birth_date": "1954-08-14",
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    },
+    {
+      "cpf": "37170771899",
+      "full_name": "RODRIGO APARECIDO OLIVEIRA DO NASCIMENTO",
+      "birth_date": null,
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    },
+    {
+      "cpf": "05983404857",
+      "full_name": "SHIZUE NAKAMURA HAMANAKA",
+      "birth_date": null,
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    },
+    {
+      "cpf": "08222463970",
+      "full_name": "JOÃO PEDRO MISSIAS SANTOS E SANTOS",
+      "birth_date": "1988-06-12",
+      "nationality": "BRASILEIRA",
+      "aliases": []
+    }
+  ],
+  "relationships": [
+    { "type": "parent_of", "from": "AUGUS MISSIAS DOS SANTOS", "to_cpf": "08222463970" },
+    { "type": "parent_of", "from": "LAURIENE DA FÁTIMA DOS SANTOS E SANTOS", "to_cpf": "08222463970" },
+    { "type": "spouse_of", "name_a": "ARMANDO HENRIQUE DE LIMA", "name_b": "IZABEL CRISTINA SILVA DE LIMA", "since": "1979-12-22", "source_doc": "marriage_certificate" },
+    { "type": "civil_union_with", "cpf_a": "37170771899", "cpf_b": "05983404857", "since": "2021-02-09", "source_doc": "civil_union_certificate" }
+  ],
+  "documents": [
+    {
+      "doc_id": "DOC_PASSPORT_GM283081",
+      "doc_type": "passport",
+      "holder_cpf": "02271329124",
+      "holder_name": "HARYANNE DOS SANTOS KENNEDY",
+      "document": {
+        "passport_number": "GM283081",
+        "type": "P",
+        "nationality": "BRA",
+        "issue_date": "2025-08-21",
+        "expiry_date": "2035-08-20",
+        "issuing_authority": "SR/PF/SP"
+      },
+      "mrz": {
+        "raw": "P<BRADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<\nGM283081<4BRA8810104F350820822713291244<14"
+      },
+      "payload_ref": "passport_gm283081.json"
+    },
+    {
+      "doc_id": "DOC_VISA_US_W2100630",
+      "doc_type": "visa",
+      "holder_cpf": "02271329124",
+      "holder_name": "HARYANNE DOS SANTOS KENNEDY",
+      "document": {
+        "visa_number": "W2100630",
+        "control_number": "20252693210006",
+        "class": "B1/B2",
+        "type": "R",
+        "issuing_post": "SAO PAULO",
+        "issue_date": "2025-10-10",
+        "expiration_date": "2035-09-25",
+        "entries": "M",
+        "passport_number": "GM283081"
+      },
+      "mrz": {
+        "raw": "VNUSADOS<SANTOS<KENNEDY<<HARYANNE<<<<<<<<<<<<<<\nGM283081<4BRA8810104F3509250B3SPL49F7L973298"
+      },
+      "payload_ref": "visa_w2100630.json",
+      "related_to_passport_number": "GM283081"
+    },
+    {
+      "doc_id": "DOC_CNH_HARYANNE",
+      "doc_type": "driver_license",
+      "holder_cpf": "02271329124",
+      "holder_name": "HARYANNE DOS SANTOS KENNEDY",
+      "document": {
+        "license_number": "27790671399",
+        "registration_number": "04087618760",
+        "category": ["A", "B", "C", "D"],
+        "first_issue_date": "2007-04-26",
+        "issue_date": "2014-02-13",
+        "expiry_date": "2034-02-13",
+        "issuing_state": "GO",
+        "issuing_authority": "DETRAN/GO"
+      },
+      "payload_ref": "cnh_haryanne_full.json"
+    },
+    {
+      "doc_id": "DOC_RG_SOLANGE",
+      "doc_type": "id_card",
+      "holder_cpf": "1577255649",
+      "holder_name": "SOLANGE FERREIRA ALVES E BORGES",
+      "document": {
+        "rg_number": "22948040-8",
+        "issue_date": "2007-07-06",
+        "issuing_state": "SP",
+        "issuing_authority": "IIRGD/SSP-SP",
+        "issuing_city": "JUIZ DE FORA/MG"
+      },
+      "payload_ref": "rg_solange_full.json"
+    },
+    {
+      "doc_id": "DOC_CIN_TEMPLATE",
+      "doc_type": "id_card",
+      "holder_cpf": "00000000000",
+      "holder_name": "NOME EXEMPLO",
+      "document": {
+        "standard": "BR-CIN-2022",
+        "qr_code_present": true,
+        "icao_compliant": true
+      },
+      "note": "Modelo de referência do CIN com campos exemplo/placeholder.",
+      "payload_ref": "cin_modelo.json"
+    },
+    {
+      "doc_id": "DOC_MARRIAGE_ARMANDO_IZABEL",
+      "doc_type": "marriage_certificate",
+      "spouses": ["ARMANDO HENRIQUE DE LIMA", "IZABEL CRISTINA SILVA DE LIMA"],
+      "document": {
+        "matricula": "1299800155197920000609000078705",
+        "marriage_date": "1979-12-22",
+        "property_regime": "Comunhão universal de bens",
+        "book": "C-285",
+        "page": "213",
+        "term": "7479",
+        "issue_date": "2022-09-01",
+        "registry_office": "RCPN de Paranavaí/PR",
+        "validation_hash": "9F437AD25A9CA52D9FBB5B39AF26E5CA"
+      },
+      "payload_ref": "certidao_casamento.json"
+    },
+    {
+      "doc_id": "DOC_UNIAO_ESTAVEL",
+      "doc_type": "civil_union_certificate",
+      "partners": [
+        { "full_name": "RODRIGO APARECIDO OLIVEIRA DO NASCIMENTO", "cpf": "37170771899" },
+        { "full_name": "SHIZUE NAKAMURA HAMANAKA", "cpf": "05983404857" }
+      ],
+      "document": {
+        "book": "1766",
+        "page": "376",
+        "issue_date": "2021-02-09",
+        "notary": "28º Tabelião de Notas - São Paulo/SP",
+        "digital_seal": "1082960203943.0002437x79",
+        "fees_total": 118.67
+      },
+      "payload_ref": "declaracao_uniao_estavel.json"
+    },
+    {
+      "doc_id": "DOC_BIRTH_JOAO_PEDRO",
+      "doc_type": "birth_certificate",
+      "holder_cpf": "08222463970",
+      "holder_name": "JOÃO PEDRO MISSIAS SANTOS E SANTOS",
+      "document": {
+        "matricula": "07989701551988100240043010745337",
+        "registration_date": "1988-06-12",
+        "issue_date": "2021-08-24",
+        "registry_office": "RCPN - Rio de Janeiro/RJ"
+      },
+      "payload_ref": "certidao_nascimento_joao_pedro.json"
+    }
+  ]
+}
+
+Como usar no Supabase
+
+Salve esse JSON em uma tabela dossiers:
+
+create table if not exists public.dossiers (
+  id uuid primary key default gen_random_uuid(),
+  title text,
+  payload jsonb not null,
+  created_at timestamptz default now()
+);
+
+
+Inserção:
+
+insert into public.dossiers (title, payload)
+values ('Dossiê – Conjunto de Documentos', '<COLE_AQUI_O_JSON>');
+
+Observações-chave
+
+Mantive links fortes: holder_cpf, passport_number e related_to_passport_number.
+
+O CIN é um modelo (placeholders). Quando houver um CIN real, substituímos e vinculamos ao respectivo CPF.
+
+A CNH usa o conjunto frente+verso (estado emissor GO, conforme verso).
+
+Todos os payloads completos já gerados continuam válidos; os campos payload_ref indicam o arquivo JSON correspondente no seu repositório.

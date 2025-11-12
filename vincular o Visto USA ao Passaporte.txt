@@ -1,0 +1,145 @@
+vincular o Visto USA ao Passaporte GM283081 via campo relacional na tabela documents. Abaixo estão migration SQL, índices, políticas RLS e código TS para upsert dos dois JSONs (passaporte + visto) já com a relação.
+
+1) Migration SQL (Supabase)
+
+Cria/ajusta tabela documents, adiciona relação related_to_passport_number, índices e política RLS.
+
+-- 1. Tabela (se ainda não existir)
+create table if not exists public.documents (
+  id uuid primary key default gen_random_uuid(),
+  doc_type text not null check (doc_type in ('passport','visa','id','other')),
+  payload jsonb not null,
+  related_to_passport_number text,                      -- vínculo lógico
+  passport_number text generated always as
+    (nullif(payload #>> '{document,passport_number}', '')) stored,
+  visa_number text generated always as
+    (nullif(payload #>> '{document,visa_number}', '')) stored,
+  created_at timestamptz not null default now()
+);
+
+-- 2. Índices para performance
+create index if not exists idx_documents_doc_type on public.documents (doc_type);
+create index if not exists idx_documents_passport_number on public.documents (passport_number);
+create index if not exists idx_documents_related_to_passport on public.documents (related_to_passport_number);
+create index if not exists idx_documents_visa_number on public.documents (visa_number);
+create index if not exists idx_documents_created_at on public.documents (created_at desc);
+
+-- 3. RLS
+alter table public.documents enable row level security;
+
+-- Política simples: leitura/insert por usuário anônimo (ajuste se houver auth)
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies where schemaname='public' and tablename='documents' and policyname='documents_select_all'
+  ) then
+    create policy documents_select_all on public.documents
+      for select using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies where schemaname='public' and tablename='documents' and policyname='documents_insert_all'
+  ) then
+    create policy documents_insert_all on public.documents
+      for insert with check (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies where schemaname='public' and tablename='documents' and policyname='documents_update_all'
+  ) then
+    create policy documents_update_all on public.documents
+      for update using (true) with check (true);
+  end if;
+end$$;
+
+
+Observação: se já tiver RLS por usuário/tenant, ajuste as políticas conforme seu user_id/org_id.
+
+2) Upsert dos documentos (TypeScript)
+
+Salva o passaporte e o visto; o visto já entra com related_to_passport_number: "GM283081".
+
+// src/lib/supa.ts
+import { createClient } from "@supabase/supabase-js";
+
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
+);
+
+// src/lib/saveDocuments.ts
+import { supabase } from "./supa";
+
+// Cole aqui os JSONs já gerados anteriormente:
+import passportPayload from "../data/passport_gm283081.json"; // JSON do passaporte (OCR-READY)
+import visaPayload from "../data/visa_w2100630.json";         // JSON do visto (OCR-READY)
+
+export async function upsertTravelDocs() {
+  // 1) Upsert Passaporte
+  const { data: pass, error: e1 } = await supabase
+    .from("documents")
+    .insert({
+      doc_type: "passport",
+      payload: passportPayload,
+      related_to_passport_number: passportPayload.document.passport_number // opcional
+    })
+    .select("id, passport_number")
+    .single();
+
+  if (e1) throw e1;
+
+  // 2) Upsert Visto vinculado ao passaporte
+  const passportNo = passportPayload.document.passport_number; // "GM283081"
+
+  const { data: visa, error: e2 } = await supabase
+    .from("documents")
+    .insert({
+      doc_type: "visa",
+      payload: visaPayload,
+      related_to_passport_number: passportNo
+    })
+    .select("id, visa_number, related_to_passport_number")
+    .single();
+
+  if (e2) throw e2;
+
+  return { passport: pass, visa };
+}
+
+
+Se preferir Edge Function para validar/padronizar antes de salvar, eu te entrego o handler save_travel_docs pronto.
+
+3) Consultas úteis
+
+a) Buscar o passaporte e todos os vistos vinculados:
+
+select p.id as passport_id,
+       p.passport_number,
+       v.id as visa_id,
+       v.visa_number,
+       v.related_to_passport_number
+from documents p
+left join documents v
+  on v.doc_type = 'visa'
+ and v.related_to_passport_number = p.passport_number
+where p.doc_type = 'passport'
+  and p.passport_number = 'GM283081';
+
+
+b) Trazer timeline do titular (passaporte + vistos):
+
+select doc_type,
+       coalesce(passport_number, visa_number) as doc_no,
+       created_at,
+       case when doc_type='passport' then payload->'holder'->>'full_name'
+            else payload->'holder'->>'full_name' end as full_name,
+       payload->'document'->>'issue_date' as issue_date,
+       payload->'document'->>'expiration_date' as expiration_date
+from documents
+where (passport_number = 'GM283081'
+   or related_to_passport_number = 'GM283081')
+order by created_at desc;
+
+4) Validação MRZ (opcional)
+
+Para checar os check-digits (nascimento, expiração, nº passaporte), você pode usar um validador ICAO antes do insert. Se quiser, eu entrego uma função validateMrz() (TS) plug-and-play.
