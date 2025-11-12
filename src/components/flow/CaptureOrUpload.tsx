@@ -1,11 +1,13 @@
 /**
  * CAPTURE OR UPLOAD
- * Componente para capturar via câmera ou fazer upload de arquivo
+ * Componente para capturar via câmera (com modal) ou fazer upload de arquivo
  */
 
-import { useState, useRef } from "react";
-import { Camera, Upload, X, CheckCircle } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
+import { Camera, Upload, X, CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import CameraModal from "./CameraModal";
+import { hasVideoInput, blobToFile } from "@/utils/media";
 
 interface CaptureOrUploadProps {
   label: string;
@@ -16,6 +18,11 @@ interface CaptureOrUploadProps {
   preview?: string | null;
   onRemove?: () => void;
   disabled?: boolean;
+  enableCamera?: boolean; // Se true, oferece opção de câmera
+  cameraOnly?: boolean; // Se true, força uso de câmera (para selfie)
+  cameraTitle?: string;
+  cameraInstructions?: string;
+  facingMode?: 'user' | 'environment'; // 'user' = frontal, 'environment' = traseira
 }
 
 export default function CaptureOrUpload({
@@ -27,53 +34,48 @@ export default function CaptureOrUpload({
   preview,
   onRemove,
   disabled = false,
+  enableCamera = true,
+  cameraOnly = false,
+  cameraTitle = "Capturar Foto",
+  cameraInstructions = "Posicione-se no centro da tela e clique em 'Tirar Foto'",
+  facingMode = "user",
 }: CaptureOrUploadProps) {
-  const [isCapturing, setIsCapturing] = useState(false);
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraAvailable, setHasCameraAvailable] = useState<boolean | null>(null);
+  const [showCameraModal, setShowCameraModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleStartCapture = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: 1280, height: 720 },
-      });
-      setStream(mediaStream);
-      setIsCapturing(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
-    } catch (error) {
-      toast.error("Não foi possível acessar a câmera");
-      console.error("Camera access error:", error);
+  // Verificar disponibilidade de câmera ao montar
+  useEffect(() => {
+    if (!enableCamera) {
+      setHasCameraAvailable(false);
+      return;
     }
+
+    let mounted = true;
+
+    hasVideoInput().then((hasCamera) => {
+      if (mounted) {
+        setHasCameraAvailable(hasCamera);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [enableCamera]);
+
+  const handleOpenCamera = () => {
+    setShowCameraModal(true);
   };
 
-  const handleCapture = () => {
-    if (!videoRef.current || !stream) return;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    ctx.drawImage(videoRef.current, 0, 0);
-
-    canvas.toBlob((blob) => {
-      if (blob && onCapture) {
-        onCapture(blob);
-        handleStopCapture();
-      }
-    }, "image/jpeg", 0.95);
-  };
-
-  const handleStopCapture = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
+  const handleCameraConfirm = (blob: Blob) => {
+    if (onCapture) {
+      onCapture(blob);
+    } else if (onUpload) {
+      // Converter blob para file se apenas onUpload estiver disponível
+      const file = blobToFile(blob, `captured-${Date.now()}.jpg`);
+      onUpload(file);
     }
-    setIsCapturing(false);
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,11 +83,18 @@ export default function CaptureOrUpload({
     if (file && onUpload) {
       onUpload(file);
     }
+    // Limpar input para permitir selecionar o mesmo arquivo novamente
+    event.target.value = '';
   };
 
+  // Se já tem preview, mostrar
   if (preview) {
     return (
       <div className="relative">
+        <label className="block text-sm font-semibold text-gray-900 mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
+          {label}
+        </label>
+        
         <div className="border-2 border-green-500 rounded-xl overflow-hidden bg-white">
           {preview.endsWith(".pdf") ? (
             <div className="flex items-center justify-center h-64 bg-gray-100">
@@ -98,14 +107,16 @@ export default function CaptureOrUpload({
             <img src={preview} alt="Preview" className="w-full h-auto" />
           )}
         </div>
-        <div className="absolute top-2 right-2 flex gap-2">
-          <div className="bg-green-500 text-white rounded-full p-2">
+        
+        <div className="absolute top-8 right-2 flex gap-2">
+          <div className="bg-green-500 text-white rounded-full p-2 shadow-lg">
             <CheckCircle className="h-5 w-5" />
           </div>
           {onRemove && !disabled && (
             <button
               onClick={onRemove}
-              className="bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
+              className="bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors shadow-lg"
+              aria-label="Remover arquivo"
             >
               <X className="h-5 w-5" />
             </button>
@@ -115,32 +126,40 @@ export default function CaptureOrUpload({
     );
   }
 
-  if (isCapturing) {
+  // Modo cameraOnly sem câmera disponível
+  if (cameraOnly && hasCameraAvailable === false) {
     return (
       <div className="space-y-4">
-        <div className="relative rounded-xl overflow-hidden bg-black">
-          <video ref={videoRef} autoPlay playsInline className="w-full" />
-        </div>
-        <div className="flex gap-3">
-          <button
-            onClick={handleStopCapture}
-            className="flex-1 px-4 py-3 rounded-xl bg-white border-2 border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all duration-200"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={handleCapture}
-            className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-[#0A4B9E] to-[#0058CC] text-white font-semibold hover:opacity-90 transition-all duration-200 shadow-lg"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            Capturar Foto
-          </button>
+        <label className="block text-sm font-semibold text-gray-900 mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
+          {label}
+        </label>
+        
+        <div className="border-2 border-orange-500 bg-orange-50 rounded-xl p-6">
+          <div className="flex items-start gap-4">
+            <AlertCircle className="h-6 w-6 text-orange-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-gray-900 mb-2" style={{ fontFamily: "Poppins, sans-serif" }}>
+                Câmera não disponível
+              </p>
+              <p className="text-sm text-gray-600 mb-4" style={{ fontFamily: "Inter, sans-serif" }}>
+                Seu dispositivo não possui câmera disponível ou a permissão foi negada. 
+                Para continuar, utilize um dispositivo com câmera.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-600 transition-colors text-sm"
+                style={{ fontFamily: "Poppins, sans-serif" }}
+              >
+                Tentar Novamente
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
+  // Modo normal: captura ou upload
   return (
     <div className="space-y-4">
       <div>
@@ -154,52 +173,73 @@ export default function CaptureOrUpload({
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {onCapture && (
-          <button
-            onClick={handleStartCapture}
-            disabled={disabled}
-            className="flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#0A4B9E] hover:bg-blue-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Camera className="h-12 w-12 text-[#0A4B9E]" />
-            <div className="text-center">
-              <p className="font-semibold text-gray-900" style={{ fontFamily: "Poppins, sans-serif" }}>
-                Usar Câmera
-              </p>
-              <p className="text-sm text-gray-600" style={{ fontFamily: "Inter, sans-serif" }}>
-                Tirar foto agora
-              </p>
-            </div>
-          </button>
-        )}
-
-        {onUpload && (
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled}
-            className="flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#0A4B9E] hover:bg-blue-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Upload className="h-12 w-12 text-[#0A4B9E]" />
-            <div className="text-center">
-              <p className="font-semibold text-gray-900" style={{ fontFamily: "Poppins, sans-serif" }}>
-                Fazer Upload
-              </p>
-              <p className="text-sm text-gray-600" style={{ fontFamily: "Inter, sans-serif" }}>
-                Escolher arquivo
-              </p>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={accept}
-              onChange={handleFileSelect}
-              className="hidden"
+      {/* Loading state enquanto verifica câmera */}
+      {hasCameraAvailable === null && enableCamera ? (
+        <div className="flex items-center justify-center p-8 border-2 border-dashed border-gray-300 rounded-xl">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-4 border-[#0A4B9E] border-t-transparent mx-auto mb-2"></div>
+            <p className="text-sm text-gray-600">Verificando câmera...</p>
+          </div>
+        </div>
+      ) : (
+        <div className={`grid ${hasCameraAvailable && !cameraOnly ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'} gap-4`}>
+          {/* Botão de Câmera */}
+          {hasCameraAvailable && enableCamera && (
+            <button
+              onClick={handleOpenCamera}
               disabled={disabled}
-            />
-          </button>
-        )}
-      </div>
+              className="flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#0A4B9E] hover:bg-blue-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Camera className="h-12 w-12 text-[#0A4B9E]" />
+              <div className="text-center">
+                <p className="font-semibold text-gray-900" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  Usar Câmera
+                </p>
+                <p className="text-sm text-gray-600" style={{ fontFamily: "Inter, sans-serif" }}>
+                  Tirar foto agora
+                </p>
+              </div>
+            </button>
+          )}
+
+          {/* Botão de Upload */}
+          {!cameraOnly && onUpload && (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={disabled}
+              className="flex flex-col items-center justify-center gap-3 p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-[#0A4B9E] hover:bg-blue-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Upload className="h-12 w-12 text-[#0A4B9E]" />
+              <div className="text-center">
+                <p className="font-semibold text-gray-900" style={{ fontFamily: "Poppins, sans-serif" }}>
+                  Fazer Upload
+                </p>
+                <p className="text-sm text-gray-600" style={{ fontFamily: "Inter, sans-serif" }}>
+                  Escolher arquivo
+                </p>
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={accept}
+                onChange={handleFileSelect}
+                className="hidden"
+                disabled={disabled}
+              />
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={showCameraModal}
+        onClose={() => setShowCameraModal(false)}
+        onConfirm={handleCameraConfirm}
+        title={cameraTitle}
+        instructions={cameraInstructions}
+        facingMode={facingMode}
+      />
     </div>
   );
 }
-
