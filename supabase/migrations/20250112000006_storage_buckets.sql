@@ -1,20 +1,26 @@
 -- ============================================================================
--- FEDERAL EXPRESS BRASIL - STORAGE BUCKETS
--- Migration: Criar buckets e políticas de storage
+-- FEDERAL EXPRESS BRASIL - STORAGE POLICIES
+-- Migration: Criar políticas RLS para buckets de storage
 -- ============================================================================
-
--- ----------------------------------------------------------------------------
--- 1. CRIAR BUCKETS
--- ----------------------------------------------------------------------------
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES 
-  ('documents', 'documents', false, 52428800, ARRAY['image/jpeg', 'image/png', 'image/jpg', 'application/pdf']),
-  ('selfies', 'selfies', false, 10485760, ARRAY['image/jpeg', 'image/png', 'image/jpg'])
-ON CONFLICT (id) DO UPDATE SET
-  file_size_limit = EXCLUDED.file_size_limit,
-  allowed_mime_types = EXCLUDED.allowed_mime_types;
-
-COMMENT ON TABLE storage.buckets IS 'Buckets de armazenamento: documents (50MB, docs/fotos) e selfies (10MB, apenas fotos)';
+-- 
+-- ATENÇÃO: Os buckets 'documents' e 'selfies' devem ser criados manualmente
+-- no Supabase Dashboard antes de rodar esta migration:
+-- 
+-- 1. Acesse: Supabase Dashboard > Storage
+-- 2. Crie o bucket 'documents':
+--    - Name: documents
+--    - Public: false
+--    - File size limit: 50 MB (52428800 bytes)
+--    - Allowed MIME types: image/jpeg, image/png, image/jpg, application/pdf
+-- 
+-- 3. Crie o bucket 'selfies':
+--    - Name: selfies
+--    - Public: false
+--    - File size limit: 10 MB (10485760 bytes)
+--    - Allowed MIME types: image/jpeg, image/png, image/jpg
+-- 
+-- Esta migration criará apenas as políticas de segurança (RLS) para esses buckets.
+-- ============================================================================
 
 -- ----------------------------------------------------------------------------
 -- 2. POLÍTICAS PARA BUCKET DOCUMENTS
