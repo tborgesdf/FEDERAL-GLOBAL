@@ -9,8 +9,9 @@ Integração completa com **APIs externas** para capturar automaticamente a loca
 ## 🔗 APIs INTEGRADAS
 
 ### 1️⃣ **IP-API** (Geolocalização)
+
 - **URL**: http://ip-api.com/json/
-- **Campos capturados**: 
+- **Campos capturados**:
   - IP address
   - País, estado, cidade, CEP
   - Latitude e Longitude
@@ -20,6 +21,7 @@ Integração completa com **APIs externas** para capturar automaticamente a loca
 - **Sem API Key** ✅
 
 ### 2️⃣ **OpenWeatherMap** (Clima)
+
 - **URL**: https://api.openweathermap.org/data/2.5/weather
 - **API Key**: `09f658ba4de5826449168ce978dfcc9c`
 - **Campos capturados**:
@@ -35,21 +37,26 @@ Integração completa com **APIs externas** para capturar automaticamente a loca
 ## 📦 ARQUIVOS CRIADOS
 
 ### 1. Migration SQL
+
 **Arquivo**: `supabase/migrations/20250112000007_ip_geolocation_tracking.sql`
 
 **Tabela**: `geolocation_logs`
+
 - Armazena todos os acessos com IP, localização e clima
 - Campos: IP, país, cidade, lat/lon, temperatura, descrição, ícone, etc.
 - RLS: Usuários só veem seus próprios logs
 - Índices para performance
 
 **Função**: `get_user_latest_geolocation(user_id)`
+
 - Retorna a última geolocalização do usuário
 
 ### 2. Types TypeScript
+
 **Arquivo**: `src/types/geolocation.ts`
 
 Interfaces:
+
 - `IpApiResponse` - Response do ip-api.com
 - `OpenWeatherMapResponse` - Response do OpenWeatherMap
 - `GeolocationData` - Dados consolidados
@@ -57,39 +64,46 @@ Interfaces:
 - `GeolocationLog` - Tipo do banco
 
 ### 3. Service
+
 **Arquivo**: `src/services/geolocationService.ts`
 
 Funções principais:
+
 ```typescript
 // Busca IP e geolocalização
-async function getIpInfo(): Promise<IpApiResponse | null>
+async function getIpInfo(): Promise<IpApiResponse | null>;
 
 // Busca clima por lat/lon
-async function getWeatherInfo(lat: number, lon: number): Promise<OpenWeatherMapResponse | null>
+async function getWeatherInfo(
+  lat: number,
+  lon: number
+): Promise<OpenWeatherMapResponse | null>;
 
 // Consolida IP + clima
-async function getGeolocationAndWeather(): Promise<GeolocationData | null>
+async function getGeolocationAndWeather(): Promise<GeolocationData | null>;
 
 // Salva log no banco
-async function saveGeolocationLog(data, userId?, sessionId?): Promise<void>
+async function saveGeolocationLog(data, userId?, sessionId?): Promise<void>;
 
 // Busca última geolocalização do usuário
-async function getUserLatestGeolocation(userId): Promise<GeolocationLog | null>
+async function getUserLatestGeolocation(userId): Promise<GeolocationLog | null>;
 
 // Converte para formato do Header
-function convertToWeatherData(data): WeatherData
+function convertToWeatherData(data): WeatherData;
 
 // Inicializa com cache (30 min)
-async function initializeGeolocation(userId?): Promise<WeatherData | null>
+async function initializeGeolocation(userId?): Promise<WeatherData | null>;
 
 // Busca com cache
-async function getWeatherData(userId?): Promise<WeatherData | null>
+async function getWeatherData(userId?): Promise<WeatherData | null>;
 ```
 
 ### 4. Header Atualizado
+
 **Arquivo**: `src/components/Header.tsx`
 
 **Mudanças**:
+
 - ❌ Removido: `mockWeatherData` (dados fixos)
 - ✅ Adicionado: Integração com `geolocationService`
 - ✅ Adicionado: `useEffect` para carregar clima ao montar
@@ -103,28 +117,34 @@ async function getWeatherData(userId?): Promise<WeatherData | null>
 ### Fluxo Automático
 
 1. **Usuário acessa o site**
+
    - Header é montado
    - `useEffect` dispara automaticamente
 
 2. **Busca dados de clima**
+
    - Verifica cache no `localStorage` (validade: 30 min)
    - Se cache válido: usa dados salvos ✅
    - Se cache expirado ou inexistente: chama APIs 🌐
 
 3. **Chama API ip-api.com**
+
    - Captura IP do usuário automaticamente
    - Retorna: país, cidade, lat, lon, ISP, etc.
 
 4. **Chama API OpenWeatherMap**
+
    - Usa `lat` e `lon` da etapa anterior
    - Retorna: temperatura, descrição, ícone, etc.
 
 5. **Salva no banco**
+
    - Insert em `geolocation_logs`
    - Inclui `user_id` (se logado) ou `session_id` (anônimo)
    - RLS garante privacidade
 
 6. **Armazena no cache**
+
    - Salva no `localStorage` com timestamp
    - Validade: 30 minutos
    - Evita rate limit das APIs
@@ -153,6 +173,7 @@ async function getWeatherData(userId?): Promise<WeatherData | null>
 ### 2️⃣ Verificar Tabela
 
 Execute no SQL Editor:
+
 ```sql
 SELECT * FROM public.geolocation_logs LIMIT 5;
 ```
@@ -174,12 +195,13 @@ npm run dev
 ### 4️⃣ Verificar Logs no Banco
 
 Após acessar o site, execute:
+
 ```sql
-SELECT 
-  ip_address, 
-  city, 
-  country, 
-  weather_temp, 
+SELECT
+  ip_address,
+  city,
+  country,
+  weather_temp,
   weather_description,
   created_at
 FROM public.geolocation_logs
@@ -195,48 +217,54 @@ Você deve ver seu acesso registrado!
 
 O sistema converte automaticamente os códigos do OpenWeatherMap em emojis:
 
-| Código | Emoji | Descrição |
-|--------|-------|-----------|
-| `01d` | ☀️ | Céu limpo (dia) |
-| `01n` | 🌙 | Céu limpo (noite) |
-| `02d` | ⛅ | Poucas nuvens (dia) |
-| `02n` | ☁️ | Poucas nuvens (noite) |
-| `03d/03n` | ☁️ | Nuvens dispersas |
-| `04d/04n` | ☁️ | Nublado |
-| `09d/09n` | 🌧️ | Chuva |
-| `10d` | 🌦️ | Chuva com sol |
-| `10n` | 🌧️ | Chuva (noite) |
-| `11d/11n` | ⛈️ | Tempestade |
-| `13d/13n` | ❄️ | Neve |
-| `50d/50n` | 🌫️ | Neblina |
+| Código    | Emoji | Descrição             |
+| --------- | ----- | --------------------- |
+| `01d`     | ☀️    | Céu limpo (dia)       |
+| `01n`     | 🌙    | Céu limpo (noite)     |
+| `02d`     | ⛅    | Poucas nuvens (dia)   |
+| `02n`     | ☁️    | Poucas nuvens (noite) |
+| `03d/03n` | ☁️    | Nuvens dispersas      |
+| `04d/04n` | ☁️    | Nublado               |
+| `09d/09n` | 🌧️    | Chuva                 |
+| `10d`     | 🌦️    | Chuva com sol         |
+| `10n`     | 🌧️    | Chuva (noite)         |
+| `11d/11n` | ⛈️    | Tempestade            |
+| `13d/13n` | ❄️    | Neve                  |
+| `50d/50n` | 🌫️    | Neblina               |
 
 ---
 
 ## 🔒 SEGURANÇA & PRIVACIDADE
 
 ### RLS (Row Level Security)
+
 - ✅ Usuários só veem seus próprios logs
 - ✅ Backend (service role) vê tudo
 - ✅ Anônimos podem inserir (com `session_id`)
 
 ### Session Tracking
+
 - UUID único gerado no `sessionStorage`
 - Permite rastrear visitantes anônimos
 - Não persiste entre abas/janelas
 
 ### Cache Local
+
 - Dados salvos no `localStorage`
 - Validade: 30 minutos
 - Chave: `weatherData`
 - Estrutura:
   ```json
   {
-    "data": { /* WeatherData */ },
+    "data": {
+      /* WeatherData */
+    },
     "expiresAt": 1704067200000
   }
   ```
 
 ### Rate Limiting
+
 - **IP-API**: 45 req/min
 - **OpenWeatherMap**: 60 req/min
 - **Cache**: Reduz para ~2 req/hora por usuário ✅
@@ -248,8 +276,9 @@ O sistema converte automaticamente os códigos do OpenWeatherMap em emojis:
 Com os logs de geolocalização, você pode:
 
 ### 1. Dashboard de Usuários
+
 ```sql
-SELECT 
+SELECT
   country,
   COUNT(*) as total_acessos,
   COUNT(DISTINCT user_id) as usuarios_unicos
@@ -259,8 +288,9 @@ ORDER BY total_acessos DESC;
 ```
 
 ### 2. Cidades Mais Acessadas
+
 ```sql
-SELECT 
+SELECT
   city,
   region_name,
   country,
@@ -273,8 +303,9 @@ LIMIT 20;
 ```
 
 ### 3. ISPs Mais Comuns
+
 ```sql
-SELECT 
+SELECT
   isp,
   COUNT(*) as total
 FROM geolocation_logs
@@ -284,8 +315,9 @@ LIMIT 10;
 ```
 
 ### 4. Clima Médio por Cidade
+
 ```sql
-SELECT 
+SELECT
   city,
   AVG(weather_temp) as temp_media,
   MODE() WITHIN GROUP (ORDER BY weather_description) as clima_comum
@@ -300,29 +332,37 @@ ORDER BY temp_media DESC;
 ## 🐛 TROUBLESHOOTING
 
 ### Erro: "API ip-api.com não responde"
+
 **Causa**: Rate limit excedido ou site bloqueado
-**Solução**: 
+**Solução**:
+
 - Aguardar 1 minuto
 - Verificar firewall/proxy
 - Usar VPN se bloqueado
 
 ### Erro: "OpenWeatherMap retorna 401"
+
 **Causa**: API key inválida
-**Solução**: 
+**Solução**:
+
 - Verificar chave em `geolocationService.ts`
 - Gerar nova chave em: https://openweathermap.org/api
 
 ### Clima não aparece no Header
+
 **Causa**: APIs falharam ou cache corrompido
 **Solução**:
+
 1. Abrir DevTools > Console
 2. Limpar cache: `localStorage.removeItem('weatherData')`
 3. Recarregar página
 4. Verificar erros no console
 
 ### Logs não aparecem no banco
+
 **Causa**: RLS bloqueando ou migration não executada
 **Solução**:
+
 1. Verificar tabela existe: `SELECT * FROM geolocation_logs LIMIT 1;`
 2. Verificar RLS: `SELECT tablename, policyname FROM pg_policies WHERE tablename='geolocation_logs';`
 3. Desabilitar RLS temporariamente para testar: `ALTER TABLE geolocation_logs DISABLE ROW LEVEL SECURITY;`
@@ -332,24 +372,30 @@ ORDER BY temp_media DESC;
 ## 🔮 MELHORIAS FUTURAS
 
 ### 1. Previsão 5 Dias
+
 Adicionar chamada para:
+
 ```
 https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}&units=metric&lang=pt_br
 ```
 
 ### 2. Clima em Tempo Real
+
 - Atualizar a cada 30 minutos automaticamente
 - Usar `setInterval` ou Web Workers
 
 ### 3. Notificações de Clima
+
 - Alertas de tempestade
 - Avisos de frio/calor extremo
 
 ### 4. Personalização
+
 - Permitir usuário escolher cidade manualmente
 - Salvar preferência no banco
 
 ### 5. Gráficos
+
 - Histórico de temperatura
 - Mapa de calor de acessos
 
@@ -374,6 +420,7 @@ https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}
 ## 📞 SUPORTE
 
 **Dúvidas sobre:**
+
 - API ip-api: https://ip-api.com/docs
 - OpenWeatherMap: https://openweathermap.org/api
 - Migration: Ver `supabase/migrations/20250112000007_ip_geolocation_tracking.sql`
@@ -384,6 +431,7 @@ https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}
 ## 🎉 RESULTADO FINAL
 
 Com esta implementação, o Header agora:
+
 - 🌍 **Detecta automaticamente** a localização do usuário
 - 🌡️ **Exibe clima em tempo real** (temperatura, descrição, ícone)
 - 💾 **Salva logs** de todos os acessos (analytics)
@@ -391,4 +439,3 @@ Com esta implementação, o Header agora:
 - 🔒 **Respeita privacidade** (RLS + session tracking)
 
 **Sistema 100% funcional e pronto para produção!** 🚀
-
