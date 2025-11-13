@@ -1,208 +1,156 @@
 /**
- * API DE QUALIDADE DE SELFIE
- * Analisa qualidade da selfie e aceita/rejeita
+ * FEDERAL EXPRESS BRASIL
+ * API: Selfie Quality Check
+ * 
+ * Valida qualidade de selfie (versão simplificada)
+ * Versão 1: Validação básica (tamanho, formato)
+ * Versão 2: Face detection com TensorFlow/MediaPipe (futuro)
  */
 
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabaseAdmin, getUserIdFromToken, logAudit } from "./lib/supabase-admin";
-import formidable from "formidable";
-import fs from "fs";
-import sharp from "sharp";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import formidable from 'formidable';
+import sharp from 'sharp';
 
-/**
- * Análise simples de qualidade de imagem
- * Em produção, use ML (Face Detection API, TensorFlow.js, etc)
- */
-async function analyzeImageQuality(filePath: string): Promise<{
-  accepted: boolean;
-  qualityScore: number;
-  rejectionReason?: string;
-}> {
-  try {
-    const metadata = await sharp(filePath).metadata();
+// Configuração do formidable
+const parseForm = (req: VercelRequest): Promise<{ fields: any; files: any }> => {
+  return new Promise((resolve, reject) => {
+    const form = formidable({ 
+      maxFileSize: 10 * 1024 * 1024, // 10MB
+      keepExtensions: true,
+    });
     
-    // Verificar dimensões mínimas
-    if (!metadata.width || !metadata.height) {
-      return {
-        accepted: false,
-        qualityScore: 0,
-        rejectionReason: "Não foi possível ler dimensões da imagem",
-      };
-    }
-
-    if (metadata.width < 640 || metadata.height < 480) {
-      return {
-        accepted: false,
-        qualityScore: 0.3,
-        rejectionReason: "Resolução muito baixa (mínimo 640x480)",
-      };
-    }
-
-    // Verificar tamanho do arquivo (muito pequeno = baixa qualidade)
-    const stats = fs.statSync(filePath);
-    if (stats.size < 50 * 1024) {
-      // < 50KB
-      return {
-        accepted: false,
-        qualityScore: 0.4,
-        rejectionReason: "Arquivo muito pequeno (possível compressão excessiva)",
-      };
-    }
-
-    // Calcular score baseado em dimensões e tamanho
-    const dimensionScore = Math.min(
-      (metadata.width * metadata.height) / (1920 * 1080),
-      1
-    );
-    const sizeScore = Math.min(stats.size / (500 * 1024), 1);
-    const qualityScore = (dimensionScore * 0.6 + sizeScore * 0.4);
-
-    // Aceitar se score > 0.5
-    if (qualityScore < 0.5) {
-      return {
-        accepted: false,
-        qualityScore: parseFloat(qualityScore.toFixed(2)),
-        rejectionReason: "Qualidade insuficiente. Tente com melhor iluminação e resolução.",
-      };
-    }
-
-    return {
-      accepted: true,
-      qualityScore: parseFloat(qualityScore.toFixed(2)),
-    };
-  } catch (error: any) {
-    console.error("Image analysis error:", error);
-    return {
-      accepted: false,
-      qualityScore: 0,
-      rejectionReason: "Erro ao analisar imagem: " + error.message,
-    };
-  }
-}
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
 };
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Apenas POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // 1. Autenticação
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const token = authHeader.substring(7);
-    const userId = await getUserIdFromToken(token);
-    if (!userId) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-
-    // 2. Parse multipart
-    const form = formidable({ multiples: false });
-    const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>(
-      (resolve, reject) => {
-        form.parse(req as any, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve([fields, files]);
-        });
-      }
-    );
-
-    const applicationId = Array.isArray(fields.application_id)
-      ? fields.application_id[0]
-      : fields.application_id;
+    // 1. Parse multipart form
+    const { fields, files } = await parseForm(req);
+    
     const file = Array.isArray(files.file) ? files.file[0] : files.file;
 
-    if (!applicationId || !file) {
-      return res.status(400).json({
-        error: "Campos obrigatórios: application_id, file",
+    if (!file) {
+      return res.status(400).json({ 
+        error: 'Arquivo não fornecido' 
       });
     }
 
-    // 3. Verificar se application pertence ao usuário
-    const { data: app } = await supabaseAdmin
-      .from("applications")
-      .select("id, user_id")
-      .eq("id", applicationId)
-      .single();
+    // 2. Ler arquivo
+    const fs = require('fs');
+    const fileBuffer = fs.readFileSync(file.filepath);
 
-    if (!app || app.user_id !== userId) {
-      return res.status(403).json({ error: "Application não encontrada ou acesso negado" });
-    }
-
-    // 4. Analisar qualidade
-    const analysis = await analyzeImageQuality(file.filepath);
-
-    // 5. Se aceita, fazer upload
-    let storagePath: string | null = null;
-    if (analysis.accepted) {
-      const timestamp = Date.now();
-      storagePath = `applications/${applicationId}/selfie-${timestamp}.jpg`;
-
-      const fileBuffer = fs.readFileSync(file.filepath);
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("selfies")
-        .upload(storagePath, fileBuffer, {
-          contentType: file.mimetype || "image/jpeg",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error("Storage upload error:", uploadError);
-        return res.status(500).json({ error: "Falha ao salvar selfie" });
-      }
-
-      // 6. Persistir selfie no banco
-      const { error: selfieError } = await supabaseAdmin
-        .from("selfies")
-        .insert({
-          application_id: applicationId,
-          storage_path: storagePath,
-          file_size: file.size,
-          mime_type: file.mimetype,
-          quality_score: analysis.qualityScore,
-          accepted: true,
-        });
-
-      if (selfieError) {
-        console.error("Selfie insert error:", selfieError);
-        return res.status(500).json({ error: "Falha ao persistir selfie" });
-      }
-
-      await logAudit({
-        userId,
-        applicationId,
-        action: "selfie.uploaded",
-        details: { qualityScore: analysis.qualityScore },
+    // 3. Analisar imagem com Sharp
+    const metadata = await sharp(fileBuffer).metadata();
+    
+    if (!metadata.width || !metadata.height) {
+      return res.status(400).json({ 
+        error: 'Não foi possível analisar a imagem' 
       });
     }
 
-    // 7. Limpar arquivo temporário
-    fs.unlinkSync(file.filepath);
+    // 4. Validações básicas
+    const checks = {
+      min_width: metadata.width >= 640,
+      min_height: metadata.height >= 480,
+      aspect_ratio: checkAspectRatio(metadata.width, metadata.height),
+      file_size: file.size >= 50 * 1024 && file.size <= 10 * 1024 * 1024, // 50KB - 10MB
+      format: ['jpeg', 'jpg', 'png'].includes(metadata.format || ''),
+    };
 
-    // 8. Retornar resultado
+    // 5. Detectar blur (básico)
+    const stats = await sharp(fileBuffer)
+      .greyscale()
+      .stats();
+    
+    const blurScore = calculateBlurScore(stats);
+    checks['not_blurry'] = blurScore > 0.3; // Threshold simples
+
+    // 6. Calcular score geral
+    const passedChecks = Object.values(checks).filter(Boolean).length;
+    const totalChecks = Object.keys(checks).length;
+    const qualityScore = passedChecks / totalChecks;
+
+    // 7. Decisão: aceitar ou rejeitar
+    const accepted = qualityScore >= 0.7; // Threshold: 70%
+
+    // 8. Motivos de rejeição
+    const reasons: string[] = [];
+    if (!checks.min_width || !checks.min_height) {
+      reasons.push('Resolução muito baixa (mínimo: 640x480)');
+    }
+    if (!checks.aspect_ratio) {
+      reasons.push('Proporção da imagem incorreta (use orientação retrato)');
+    }
+    if (!checks.file_size) {
+      reasons.push('Tamanho do arquivo inválido (50KB - 10MB)');
+    }
+    if (!checks.format) {
+      reasons.push('Formato não suportado (use JPEG ou PNG)');
+    }
+    if (!checks.not_blurry) {
+      reasons.push('Imagem muito embaçada ou com pouca luz');
+    }
+
+    // 9. Retornar resultado
     return res.status(200).json({
-      accepted: analysis.accepted,
-      qualityScore: analysis.qualityScore,
-      rejectionReason: analysis.rejectionReason,
-      storagePath,
+      accepted,
+      quality_score: Math.round(qualityScore * 100) / 100,
+      checks,
+      reasons: accepted ? [] : reasons,
+      metadata: {
+        width: metadata.width,
+        height: metadata.height,
+        format: metadata.format,
+        size_bytes: file.size,
+        blur_score: Math.round(blurScore * 100) / 100,
+      },
     });
+
   } catch (error: any) {
-    console.error("Selfie quality API error:", error);
-    return res.status(500).json({
-      error: "Internal server error",
-      message: error.message,
+    console.error('Erro ao validar selfie:', error);
+    return res.status(500).json({ 
+      error: 'Erro ao processar selfie',
+      details: error.message,
     });
   }
 }
 
+/**
+ * Verifica aspect ratio (deve ser retrato ou quadrado)
+ */
+function checkAspectRatio(width: number, height: number): boolean {
+  const ratio = width / height;
+  // Aceitar de 0.5 (retrato) até 1.2 (quase quadrado)
+  return ratio >= 0.5 && ratio <= 1.2;
+}
+
+/**
+ * Calcula score de blur (0 = muito embaçado, 1 = nítido)
+ * Baseado em variância de pixels (método Laplaciano simplificado)
+ */
+function calculateBlurScore(stats: sharp.Stats): number {
+  // Usar desvio padrão dos canais como proxy para nitidez
+  // Imagens nítidas têm maior variação de pixels (maior desvio padrão)
+  const avgStdDev = stats.channels.reduce((sum, ch) => sum + ch.stdev, 0) / stats.channels.length;
+  
+  // Normalizar para 0-1 (assumindo que stdev > 30 = nítido)
+  const normalizedScore = Math.min(avgStdDev / 30, 1);
+  
+  return normalizedScore;
+}
+
+// Export config para Vercel
+export const config = {
+  api: {
+    bodyParser: false, // Desabilitar body parser padrão (formidable cuida disso)
+  },
+};

@@ -1,202 +1,509 @@
 /**
- * API DE OCR - GOOGLE VISION
- * Recebe documento, faz upload para Storage e extrai texto via Vision API
+ * FEDERAL EXPRESS BRASIL
+ * API: OCR Universal
+ * 
+ * Processa documentos enviados e extrai dados via Google Vision API
+ * Suporta: passport, previous_visa, rg, cnh, cnh_digital, marriage_cert
  */
 
-import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { supabaseAdmin, getUserIdFromToken, logAudit } from "./lib/supabase-admin";
-import formidable from "formidable";
-import fs from "fs";
-import { ImageAnnotatorClient } from "@google-cloud/vision";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import formidable from 'formidable';
+import { ImageAnnotatorClient } from '@google-cloud/vision';
+import { createClient } from '@supabase/supabase-js';
 
-// Configurar Google Vision Client
-let visionClient: ImageAnnotatorClient | null = null;
+// Supabase Admin Client
+const supabaseUrl = process.env.VITE_SUPABASE_URL!;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-function getVisionClient(): ImageAnnotatorClient {
-  if (visionClient) return visionClient;
+// Google Vision Client
+const visionCredentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || '{}');
+const visionClient = new ImageAnnotatorClient({
+  credentials: visionCredentials,
+});
 
-  const credentials = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-  if (!credentials) {
-    throw new Error("GOOGLE_APPLICATION_CREDENTIALS_JSON não configurada");
-  }
-
-  try {
-    const parsed = JSON.parse(credentials);
-    visionClient = new ImageAnnotatorClient({ credentials: parsed });
-    return visionClient;
-  } catch (error) {
-    throw new Error("Falha ao inicializar Google Vision Client");
-  }
+// Tipos
+interface OcrResult {
+  doc_type: string;
+  confidence: number;
+  fields_detected: string[];
+  fields_missing: string[];
+  ocr_json: any;
 }
 
-/**
- * Extrai texto de imagem usando Google Vision
- */
-async function extractTextFromImage(filePath: string): Promise<any> {
-  const client = getVisionClient();
-  const [result] = await client.textDetection(filePath);
-  const detections = result.textAnnotations || [];
-  
-  // Primeiro elemento contém o texto completo
-  const fullText = detections[0]?.description || "";
-  
-  // Tentar estruturar dados comuns (heurísticas simples)
-  const structured: any = {
-    fullText,
-    lines: detections.slice(1).map((d) => d.description),
-  };
-
-  // Heurísticas para passaporte (exemplo)
-  if (fullText.includes("PASSPORT") || fullText.includes("PASSAPORTE")) {
-    structured.documentType = "passport";
-    // Tentar extrair número (padrão comum: 2 letras + 6 dígitos)
-    const passportNumber = fullText.match(/[A-Z]{2}\d{6}/);
-    if (passportNumber) structured.passportNumber = passportNumber[0];
-  }
-
-  // Heurísticas para RG
-  if (fullText.includes("REPÚBLICA FEDERATIVA") || fullText.includes("CARTEIRA DE IDENTIDADE")) {
-    structured.documentType = "br_id";
-  }
-
-  return structured;
-}
-
-export const config = {
-  api: {
-    bodyParser: false, // Necessário para formidable
-  },
+// Configuração do formidable
+const parseForm = (req: VercelRequest): Promise<{ fields: any; files: any }> => {
+  return new Promise((resolve, reject) => {
+    const form = formidable({ 
+      maxFileSize: 50 * 1024 * 1024, // 50MB
+      keepExtensions: true,
+    });
+    
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
 };
 
-export default async function handler(
-  req: VercelRequest,
-  res: VercelResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Apenas POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    // 1. Autenticação
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const token = authHeader.substring(7);
-    const userId = await getUserIdFromToken(token);
-    if (!userId) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-
-    // 2. Parse multipart/form-data
-    const form = formidable({ multiples: false });
-    const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>(
-      (resolve, reject) => {
-        form.parse(req as any, (err, fields, files) => {
-          if (err) reject(err);
-          else resolve([fields, files]);
-        });
-      }
-    );
-
-    const applicationId = Array.isArray(fields.application_id)
-      ? fields.application_id[0]
-      : fields.application_id;
-    const docType = Array.isArray(fields.doc_type)
-      ? fields.doc_type[0]
-      : fields.doc_type;
-    const side = Array.isArray(fields.side) ? fields.side[0] : fields.side || "single";
-
+    // 1. Parse multipart form
+    const { fields, files } = await parseForm(req);
+    
     const file = Array.isArray(files.file) ? files.file[0] : files.file;
+    const docType = Array.isArray(fields.doc_type) ? fields.doc_type[0] : fields.doc_type;
+    const side = Array.isArray(fields.side) ? fields.side[0] : fields.side || 'single';
+    const applicationId = Array.isArray(fields.application_id) ? fields.application_id[0] : fields.application_id;
 
-    if (!applicationId || !docType || !file) {
-      return res.status(400).json({
-        error: "Campos obrigatórios: application_id, doc_type, file",
+    if (!file || !docType || !applicationId) {
+      return res.status(400).json({ 
+        error: 'Campos obrigatórios: file, doc_type, application_id' 
       });
     }
 
-    // 3. Verificar se application pertence ao usuário
-    const { data: app } = await supabaseAdmin
-      .from("applications")
-      .select("id, user_id")
-      .eq("id", applicationId)
-      .single();
+    // 2. Ler arquivo
+    const fs = require('fs');
+    const fileBuffer = fs.readFileSync(file.filepath);
 
-    if (!app || app.user_id !== userId) {
-      return res.status(403).json({ error: "Application não encontrada ou acesso negado" });
+    // 3. Chamar Google Vision API
+    const [result] = await visionClient.textDetection(fileBuffer);
+    const detections = result.textAnnotations || [];
+    
+    if (detections.length === 0) {
+      return res.status(400).json({ 
+        error: 'Nenhum texto detectado no documento' 
+      });
     }
 
-    // 4. Upload para Supabase Storage
-    const fileExtension = file.originalFilename?.split(".").pop() || "jpg";
-    const storagePath = `applications/${applicationId}/${docType}-${side}.${fileExtension}`;
+    const fullText = detections[0]?.description || '';
+    const lines = fullText.split('\n').filter(l => l.trim());
 
-    const fileBuffer = fs.readFileSync(file.filepath);
-    const { error: uploadError } = await supabaseAdmin.storage
-      .from("documents")
+    // 4. Processar OCR baseado no tipo de documento
+    const ocrResult = processOcrByDocType(docType, lines, fullText);
+
+    // 5. Upload para Supabase Storage
+    const fileName = `${applicationId}/${docType}-${side}-${Date.now()}.${file.originalFilename?.split('.').pop() || 'jpg'}`;
+    const storagePath = `documents/${fileName}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('documents')
       .upload(storagePath, fileBuffer, {
-        contentType: file.mimetype || "image/jpeg",
+        contentType: file.mimetype || 'image/jpeg',
         upsert: true,
       });
 
     if (uploadError) {
-      console.error("Storage upload error:", uploadError);
-      return res.status(500).json({ error: "Falha ao salvar arquivo" });
+      console.error('Erro ao fazer upload:', uploadError);
+      return res.status(500).json({ error: 'Erro ao salvar documento' });
     }
 
-    // 5. OCR com Google Vision
-    let ocrJson: any = null;
-    try {
-      ocrJson = await extractTextFromImage(file.filepath);
-    } catch (ocrError: any) {
-      console.error("OCR error:", ocrError);
-      ocrJson = { error: "OCR falhou", message: ocrError.message };
-    }
-
-    // 6. Salvar documento no banco
-    const { data: document, error: docError } = await supabaseAdmin
-      .from("documents")
+    // 6. Salvar registro no banco
+    const { data: document, error: dbError } = await supabase
+      .from('documents')
       .insert({
         application_id: applicationId,
         doc_type: docType,
         side: side,
         storage_path: storagePath,
-        file_size: file.size,
-        mime_type: file.mimetype,
-        ocr_json: ocrJson,
+        ocr_json: ocrResult.ocr_json,
         verified: false,
       })
       .select()
       .single();
 
-    if (docError) {
-      console.error("Document insert error:", docError);
-      return res.status(500).json({ error: "Falha ao persistir documento" });
+    if (dbError) {
+      console.error('Erro ao salvar no banco:', dbError);
+      return res.status(500).json({ error: 'Erro ao salvar no banco' });
     }
 
-    // 7. Log de auditoria
-    await logAudit({
-      userId,
-      applicationId,
-      action: "document.uploaded",
-      details: { documentId: document.id, docType, side },
-    });
-
-    // 8. Limpar arquivo temporário
-    fs.unlinkSync(file.filepath);
-
-    // 9. Retornar resultado
+    // 7. Retornar resultado
     return res.status(200).json({
-      ok: true,
-      document: {
-        id: document.id,
-        storage_path: storagePath,
-        ocr_json: ocrJson,
-      },
+      success: true,
+      document: document,
+      ocr: ocrResult,
     });
+
   } catch (error: any) {
-    console.error("OCR API error:", error);
-    return res.status(500).json({ error: "Internal server error", message: error.message });
+    console.error('Erro no OCR:', error);
+    return res.status(500).json({ 
+      error: 'Erro ao processar documento',
+      details: error.message,
+    });
   }
 }
 
+/**
+ * Processa OCR baseado no tipo de documento
+ */
+function processOcrByDocType(docType: string, lines: string[], fullText: string): OcrResult {
+  switch (docType) {
+    case 'passport':
+      return extractPassportData(lines, fullText);
+    case 'previous_visa':
+      return extractPreviousVisaData(lines, fullText);
+    case 'rg':
+    case 'cnh':
+    case 'cnh_digital':
+      return extractBrazilianIdData(lines, fullText, docType);
+    case 'marriage_cert':
+      return extractMarriageCertData(lines, fullText);
+    default:
+      return {
+        doc_type: docType,
+        confidence: 0,
+        fields_detected: [],
+        fields_missing: [],
+        ocr_json: { raw_text: fullText },
+      };
+  }
+}
+
+/**
+ * Extrai dados de passaporte
+ */
+function extractPassportData(lines: string[], fullText: string): OcrResult {
+  const data: any = {
+    document: {},
+    holder: {},
+    mrz: {},
+    issuer: {},
+  };
+
+  const fields_detected: string[] = [];
+  const fields_missing: string[] = [];
+
+  // Extrair MRZ (Machine Readable Zone)
+  const mrzLines = lines.filter(l => l.length >= 30 && /^[A-Z0-9<]+$/.test(l));
+  if (mrzLines.length >= 2) {
+    data.mrz.line1 = mrzLines[0];
+    data.mrz.line2 = mrzLines[1];
+    fields_detected.push('mrz');
+
+    // Parsear MRZ
+    const mrzData = parseMRZ(mrzLines);
+    Object.assign(data, mrzData);
+  }
+
+  // Número do passaporte
+  const passportNumMatch = fullText.match(/\b([A-Z]{2}\d{6,9})\b/);
+  if (passportNumMatch) {
+    data.document.passport_number = passportNumMatch[1];
+    fields_detected.push('passport_number');
+  } else {
+    fields_missing.push('passport_number');
+  }
+
+  // Nome completo
+  const namePatterns = [
+    /Nome\/Name[:\s]*([A-ZÀ-Ú\s]+)/i,
+    /Surname[:\s]*([A-ZÀ-Ú\s]+)/i,
+  ];
+  
+  for (const pattern of namePatterns) {
+    const match = fullText.match(pattern);
+    if (match) {
+      data.holder.full_name = match[1].trim();
+      fields_detected.push('full_name');
+      break;
+    }
+  }
+
+  if (!data.holder.full_name) {
+    fields_missing.push('full_name');
+  }
+
+  // Data de nascimento
+  const dobMatch = fullText.match(/\b(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})\b/);
+  if (dobMatch) {
+    data.holder.birth_date = normalizeDate(dobMatch[1]);
+    fields_detected.push('birth_date');
+  } else {
+    fields_missing.push('birth_date');
+  }
+
+  // Nacionalidade
+  const nationalityMatch = fullText.match(/Nacional[ia]dade\/Nationality[:\s]*([A-ZÀ-Ú\s]+)/i);
+  if (nationalityMatch) {
+    data.holder.nationality = nationalityMatch[1].trim();
+    fields_detected.push('nationality');
+  } else {
+    fields_missing.push('nationality');
+  }
+
+  // Data de emissão
+  const issueDateMatch = fullText.match(/Emissão\/Issue[:\s]*(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
+  if (issueDateMatch) {
+    data.document.date_of_issue = normalizeDate(issueDateMatch[1]);
+    fields_detected.push('date_of_issue');
+  } else {
+    fields_missing.push('date_of_issue');
+  }
+
+  // Data de validade
+  const expiryDateMatch = fullText.match(/Validade\/Expiry[:\s]*(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
+  if (expiryDateMatch) {
+    data.document.date_of_expiry = normalizeDate(expiryDateMatch[1]);
+    fields_detected.push('date_of_expiry');
+  } else {
+    fields_missing.push('date_of_expiry');
+  }
+
+  return {
+    doc_type: 'passport',
+    confidence: fields_detected.length / (fields_detected.length + fields_missing.length),
+    fields_detected,
+    fields_missing,
+    ocr_json: data,
+  };
+}
+
+/**
+ * Parseia MRZ (Machine Readable Zone)
+ */
+function parseMRZ(mrzLines: string[]): any {
+  if (mrzLines.length < 2) return {};
+
+  const line1 = mrzLines[0];
+  const line2 = mrzLines[1];
+
+  return {
+    mrz: {
+      document_code: line1.substring(0, 2),
+      issuing_country: line1.substring(2, 5).replace(/</g, ''),
+      surname: line1.substring(5).split('<<')[0].replace(/</g, ' ').trim(),
+      given_names: line1.substring(5).split('<<')[1]?.replace(/</g, ' ').trim() || '',
+    },
+    document: {
+      passport_number: line2.substring(0, 9).replace(/</g, ''),
+    },
+    holder: {
+      nationality: line2.substring(10, 13).replace(/</g, ''),
+      birth_date: parseMRZDate(line2.substring(13, 19)),
+      gender: line2.charAt(20) === 'M' ? 'M' : line2.charAt(20) === 'F' ? 'F' : 'X',
+    },
+  };
+}
+
+/**
+ * Parseia data do MRZ (YYMMDD)
+ */
+function parseMRZDate(mrzDate: string): string {
+  if (mrzDate.length !== 6) return '';
+  
+  let year = parseInt(mrzDate.substring(0, 2));
+  const month = mrzDate.substring(2, 4);
+  const day = mrzDate.substring(4, 6);
+  
+  // Assumir século baseado no ano
+  year += year > 50 ? 1900 : 2000;
+  
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Normaliza data para formato ISO (YYYY-MM-DD)
+ */
+function normalizeDate(dateStr: string): string {
+  const parts = dateStr.split(/[\/\-\.]/);
+  if (parts.length !== 3) return dateStr;
+  
+  const [day, month, year] = parts;
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+}
+
+/**
+ * Extrai dados de visto anterior
+ */
+function extractPreviousVisaData(lines: string[], fullText: string): OcrResult {
+  const data: any = {
+    document: {},
+    holder: {},
+  };
+
+  const fields_detected: string[] = [];
+  const fields_missing: string[] = [];
+
+  // Número do visto
+  const visaNumMatch = fullText.match(/\b(\d{8,12})\b/);
+  if (visaNumMatch) {
+    data.document.number = visaNumMatch[1];
+    fields_detected.push('visa_number');
+  } else {
+    fields_missing.push('visa_number');
+  }
+
+  // Tipo de visto
+  const visaTypeMatch = fullText.match(/(?:Type|Tipo)[:\s]*([A-Z]\d?)/i);
+  if (visaTypeMatch) {
+    data.document.type = visaTypeMatch[1];
+    fields_detected.push('visa_type');
+  } else {
+    fields_missing.push('visa_type');
+  }
+
+  // Data de emissão
+  const issueDateMatch = fullText.match(/Issue Date[:\s]*(\d{2}\/\d{2}\/\d{4})/i);
+  if (issueDateMatch) {
+    data.document.date_of_issue = normalizeDate(issueDateMatch[1]);
+    fields_detected.push('date_of_issue');
+  } else {
+    fields_missing.push('date_of_issue');
+  }
+
+  // Data de expiração
+  const expiryDateMatch = fullText.match(/Expir(?:ation|y) Date[:\s]*(\d{2}\/\d{2}\/\d{4})/i);
+  if (expiryDateMatch) {
+    data.document.date_of_expiry = normalizeDate(expiryDateMatch[1]);
+    fields_detected.push('date_of_expiry');
+  } else {
+    fields_missing.push('date_of_expiry');
+  }
+
+  return {
+    doc_type: 'previous_visa',
+    confidence: fields_detected.length / (fields_detected.length + fields_missing.length),
+    fields_detected,
+    fields_missing,
+    ocr_json: data,
+  };
+}
+
+/**
+ * Extrai dados de documento brasileiro (RG/CNH)
+ */
+function extractBrazilianIdData(lines: string[], fullText: string, docType: string): OcrResult {
+  const data: any = {
+    document: { type: docType },
+    holder: {},
+    issuer: {},
+  };
+
+  const fields_detected: string[] = [];
+  const fields_missing: string[] = [];
+
+  // Número do documento
+  const docNumMatch = fullText.match(/\b(\d{2}\.\d{3}\.\d{3}-\d{1,2}|\d{11})\b/);
+  if (docNumMatch) {
+    data.document.number = docNumMatch[1];
+    fields_detected.push('document_number');
+  } else {
+    fields_missing.push('document_number');
+  }
+
+  // Nome
+  const nameMatch = fullText.match(/Nome[:\s]*([A-ZÀ-Ú\s]+)/i);
+  if (nameMatch) {
+    data.holder.full_name = nameMatch[1].trim();
+    fields_detected.push('full_name');
+  } else {
+    fields_missing.push('full_name');
+  }
+
+  // CPF
+  const cpfMatch = fullText.match(/CPF[:\s]*(\d{3}\.\d{3}\.\d{3}-\d{2})/i);
+  if (cpfMatch) {
+    data.holder.cpf = cpfMatch[1];
+    fields_detected.push('cpf');
+  } else {
+    fields_missing.push('cpf');
+  }
+
+  // Data de nascimento
+  const dobMatch = fullText.match(/Nascimento[:\s]*(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
+  if (dobMatch) {
+    data.holder.birth_date = normalizeDate(dobMatch[1]);
+    fields_detected.push('birth_date');
+  } else {
+    fields_missing.push('birth_date');
+  }
+
+  // UF emissor (para RG)
+  if (docType === 'rg') {
+    const ufMatch = fullText.match(/\b([A-Z]{2})\b/);
+    if (ufMatch) {
+      data.issuer.uf = ufMatch[1];
+      fields_detected.push('issuer_uf');
+    } else {
+      fields_missing.push('issuer_uf');
+    }
+  }
+
+  return {
+    doc_type: docType,
+    confidence: fields_detected.length / (fields_detected.length + fields_missing.length),
+    fields_detected,
+    fields_missing,
+    ocr_json: data,
+  };
+}
+
+/**
+ * Extrai dados de certidão de casamento
+ */
+function extractMarriageCertData(lines: string[], fullText: string): OcrResult {
+  const data: any = {
+    marriage: {},
+    spouse: {},
+    registry_office: {},
+  };
+
+  const fields_detected: string[] = [];
+  const fields_missing: string[] = [];
+
+  // Nome do cônjuge
+  const spouseMatch = fullText.match(/(?:Cônjuge|Spouse)[:\s]*([A-ZÀ-Ú\s]+)/i);
+  if (spouseMatch) {
+    data.spouse.full_name = spouseMatch[1].trim();
+    fields_detected.push('spouse_name');
+  } else {
+    fields_missing.push('spouse_name');
+  }
+
+  // Data do casamento
+  const marriageDateMatch = fullText.match(/Data[:\s]*(\d{2}[\/\-\.]\d{2}[\/\-\.]\d{4})/i);
+  if (marriageDateMatch) {
+    data.marriage.date = normalizeDate(marriageDateMatch[1]);
+    fields_detected.push('marriage_date');
+  } else {
+    fields_missing.push('marriage_date');
+  }
+
+  // Cartório
+  const registryMatch = fullText.match(/Cartório[:\s]*([A-ZÀ-Ú0-9\s]+)/i);
+  if (registryMatch) {
+    data.registry_office.name = registryMatch[1].trim();
+    fields_detected.push('registry_office');
+  } else {
+    fields_missing.push('registry_office');
+  }
+
+  // UF
+  const ufMatch = fullText.match(/\b([A-Z]{2})\b/);
+  if (ufMatch) {
+    data.registry_office.uf = ufMatch[1];
+    fields_detected.push('registry_uf');
+  } else {
+    fields_missing.push('registry_uf');
+  }
+
+  return {
+    doc_type: 'marriage_cert',
+    confidence: fields_detected.length / (fields_detected.length + fields_missing.length),
+    fields_detected,
+    fields_missing,
+    ocr_json: data,
+  };
+}
+
+// Export config para Vercel
+export const config = {
+  api: {
+    bodyParser: false, // Desabilitar body parser padrão (formidable cuida disso)
+  },
+};
