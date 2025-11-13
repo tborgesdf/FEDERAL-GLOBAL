@@ -1,21 +1,9 @@
 ﻿import { MapPin, Calendar } from "lucide-react";
 import { useState, useEffect } from "react";
 import logoImage from "figma:asset/fdb4ef494a99e771ad2534fa1ee70561858f6471.png";
-
-// Mock data structure para futura integração de API
-interface WeatherData {
-  location: string;
-  tempC: number;
-  description: string;
-  icon: string;
-  forecast: Array<{
-    dateISO: string;
-    minC: number;
-    maxC: number;
-    icon: string;
-  }>;
-  fetchedAt: string;
-}
+import { getWeatherData, initializeGeolocation } from "@/services/geolocationService";
+import type { WeatherData } from "@/types/geolocation";
+import { supabase } from "@/utils/supabase";
 
 interface HeaderProps {
   onNavigateToRegister?: () => void;
@@ -26,25 +14,21 @@ interface HeaderProps {
   userEmail?: string;
 }
 
-const mockWeatherData: WeatherData = {
+// Dados padrão caso a API falhe
+const defaultWeatherData: WeatherData = {
   location: "São Paulo, Brasil",
   tempC: 24,
   description: "Parcialmente nublado",
   icon: "⛅",
-  forecast: [
-    { dateISO: "2025-11-07", minC: 18, maxC: 26, icon: "⛅" },
-    { dateISO: "2025-11-08", minC: 19, maxC: 27, icon: "☀️" },
-    { dateISO: "2025-11-09", minC: 17, maxC: 25, icon: "🌧️" },
-    { dateISO: "2025-11-10", minC: 16, maxC: 23, icon: "⛈️" },
-    { dateISO: "2025-11-11", minC: 18, maxC: 26, icon: "☀️" }
-  ],
-  fetchedAt: "2025-11-06T20:21:00Z"
+  fetchedAt: new Date().toISOString()
 };
 
 export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavigateToHome, currentPage = "home", isLoggedIn = false, userEmail = "" }: HeaderProps = {}) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isSticky, setIsSticky] = useState(false);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData>(defaultWeatherData);
+  const [loadingWeather, setLoadingWeather] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -58,6 +42,36 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Carregar dados de clima ao montar o componente
+  useEffect(() => {
+    async function loadWeatherData() {
+      try {
+        setLoadingWeather(true);
+        
+        // Buscar user_id se estiver logado
+        let userId: string | undefined;
+        if (isLoggedIn) {
+          const { data: { user } } = await supabase.auth.getUser();
+          userId = user?.id;
+        }
+
+        // Buscar dados de clima (cache ou API)
+        const data = await getWeatherData(userId);
+        
+        if (data) {
+          setWeatherData(data);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados de clima:', error);
+        // Mantém dados padrão em caso de erro
+      } finally {
+        setLoadingWeather(false);
+      }
+    }
+
+    loadWeatherData();
+  }, [isLoggedIn]);
 
   const formatDate = (date: Date) => {
     const days = [
@@ -206,7 +220,9 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
               {/* Localização */}
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#0A4B9E]" />
-                <span className="text-[#555]">{mockWeatherData.location}</span>
+                <span className="text-[#555]">
+                  {loadingWeather ? "Carregando..." : weatherData.location}
+                </span>
               </div>
 
               {/* Data e hora */}
@@ -217,31 +233,19 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
 
               {/* Clima atual */}
               <div className="flex items-center gap-2 rounded-lg bg-[#F7F8FA] px-3 py-2">
-                <span className="text-2xl">{mockWeatherData.icon}</span>
-                <div className="flex flex-col">
-                  <span className="text-[#111]">{mockWeatherData.tempC}°C</span>
-                  <span className="text-xs text-[#555]">
-                    {mockWeatherData.description}
-                  </span>
-                </div>
-              </div>
-
-              {/* Previsão 5 dias */}
-              <div className="flex gap-2">
-                {mockWeatherData.forecast.map((day, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center rounded-lg bg-[#F7F8FA] px-2 py-2"
-                  >
-                    <span className="text-xs text-[#555]">
-                      {getDayName(day.dateISO)}
-                    </span>
-                    <span className="text-lg">{day.icon}</span>
-                    <span className="text-xs text-[#111]">
-                      {day.maxC}° / {day.minC}°
-                    </span>
-                  </div>
-                ))}
+                {loadingWeather ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-[#0A4B9E] border-t-transparent"></div>
+                ) : (
+                  <>
+                    <span className="text-2xl">{weatherData.icon}</span>
+                    <div className="flex flex-col">
+                      <span className="text-[#111]">{weatherData.tempC}°C</span>
+                      <span className="text-xs text-[#555]">
+                        {weatherData.description}
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
