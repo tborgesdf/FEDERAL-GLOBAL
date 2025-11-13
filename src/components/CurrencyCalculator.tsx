@@ -20,6 +20,7 @@ export default function CurrencyCalculator() {
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [showAllCurrencies, setShowAllCurrencies] = useState(false);
+  const [autoRefreshing, setAutoRefreshing] = useState(false);
 
   const currenciesToShow = showAllCurrencies ? ALL_CURRENCIES : POPULAR_CURRENCIES;
 
@@ -62,16 +63,50 @@ export default function CurrencyCalculator() {
     return () => clearTimeout(timer);
   }, [amount, fromCurrency, toCurrency]);
 
-  // Buscar última atualização ao montar
+  // Buscar última atualização ao montar e configurar auto-refresh
   useEffect(() => {
-    getExchangeRates()
-      .then((data) => {
+    // Buscar imediatamente
+    const fetchAndUpdate = async (isAutoRefresh = false) => {
+      try {
+        if (isAutoRefresh) {
+          setAutoRefreshing(true);
+          console.log('🔄 Auto-refreshing exchange rates...');
+        }
+        
+        const data = await getExchangeRates();
         if (data.timestamp) {
           setLastUpdate(new Date(data.timestamp).toLocaleString('pt-BR'));
         }
-      })
-      .catch(console.error);
-  }, []);
+        
+        // Se já há valores, reconverter automaticamente
+        if (amount && fromCurrency && toCurrency && parseFloat(amount) > 0) {
+          const amountNum = parseFloat(amount);
+          const result = await convertCurrency(amountNum, fromCurrency, toCurrency);
+          setConvertedAmount(result.converted_amount);
+          setRate(result.rate);
+          
+          if (isAutoRefresh) {
+            console.log('✅ Auto-refresh completed!');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching rates:', error);
+      } finally {
+        if (isAutoRefresh) {
+          setTimeout(() => setAutoRefreshing(false), 2000);
+        }
+      }
+    };
+    
+    // Executar imediatamente
+    fetchAndUpdate(false);
+    
+    // Configurar intervalo de 10 minutos (600.000ms)
+    const intervalId = setInterval(() => fetchAndUpdate(true), 10 * 60 * 1000);
+    
+    // Limpar intervalo ao desmontar
+    return () => clearInterval(intervalId);
+  }, [amount, fromCurrency, toCurrency]);
 
   const getCurrencyInfo = (code: string): Currency | undefined => {
     return ALL_CURRENCIES.find((c) => c.code === code);
@@ -232,8 +267,14 @@ export default function CurrencyCalculator() {
 
       {/* Info Footer */}
       <div className="mt-6 text-center text-sm text-[#6B7280]">
+        {autoRefreshing && (
+          <div className="mb-3 inline-flex items-center gap-2 px-4 py-2 bg-[#10B981] text-white rounded-lg animate-pulse">
+            <RefreshCw className="h-4 w-4 animate-spin" />
+            <span className="font-semibold">Atualizando cotações...</span>
+          </div>
+        )}
         <p>
-          💱 Cotações atualizadas automaticamente a cada 10 minutos (seg-sex, 9h-17h BRT)
+          💱 Cotações atualizadas automaticamente a cada 10 minutos
         </p>
         <p className="mt-1">
           Fonte:{' '}
