@@ -109,6 +109,7 @@ Storage
 4. Cole o conteúdo e clique em **Run**
 
 Este script irá criar **8 políticas** (4 para cada bucket):
+
 - `documents_read_own`, `documents_insert_own`, `documents_update_own`, `documents_delete_own`
 - `selfies_read_own`, `selfies_insert_own`, `selfies_update_own`, `selfies_delete_own`
 
