@@ -9,7 +9,8 @@ interface HeaderProps {
   onNavigateToRegister?: () => void;
   onNavigateToLogin?: () => void;
   onNavigateToHome?: () => void;
-  currentPage?: "home" | "register" | "login" | "dashboard";
+  onNavigateToCalculator?: () => void;
+  currentPage?: "home" | "register" | "login" | "dashboard" | "calculator";
   isLoggedIn?: boolean;
   userEmail?: string;
 }
@@ -23,7 +24,7 @@ const defaultWeatherData: WeatherData = {
   fetchedAt: new Date().toISOString()
 };
 
-export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavigateToHome, currentPage = "home", isLoggedIn = false, userEmail = "" }: HeaderProps = {}) {
+export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavigateToHome, onNavigateToCalculator, currentPage = "home", isLoggedIn = false, userEmail = "" }: HeaderProps = {}) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isSticky, setIsSticky] = useState(false);
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
@@ -177,6 +178,25 @@ export default function Header({ onNavigateToRegister, onNavigateToLogin, onNavi
                 </>
               ) : (
                 <>
+                  <button
+                    onClick={onNavigateToCalculator}
+                    onMouseEnter={() => setHoveredButton("calculator")}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    className="rounded-xl px-6 py-2 shadow-lg transition-all duration-200"
+                    style={{
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "16px",
+                      fontWeight: 600,
+                      backgroundColor: "#10B981",
+                      color: "white",
+                      opacity: hoveredButton === "calculator" ? 0.9 : 1,
+                      transform: hoveredButton === "calculator" ? "scale(1.03)" : "scale(1)"
+                    }}
+                    title="Calculadora de Moedas"
+                  >
+                    💱 Calculadora
+                  </button>
+                  
                   <button
                     onClick={onNavigateToLogin}
                     onMouseEnter={() => setHoveredButton("login")}

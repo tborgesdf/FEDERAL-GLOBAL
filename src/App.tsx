@@ -7,11 +7,12 @@ import Footer from "./components/Footer";
 import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
+import CurrencyCalculatorPage from "./pages/CurrencyCalculatorPage";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator">("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
@@ -178,6 +179,7 @@ export default function App() {
             onNavigateToRegister={() => setCurrentPage("register")}
             onNavigateToLogin={() => setCurrentPage("login")}
             onNavigateToHome={() => setCurrentPage("home")}
+            onNavigateToCalculator={() => setCurrentPage("calculator")}
             currentPage="home"
           />
           
@@ -215,6 +217,8 @@ export default function App() {
           onNavigateToRegister={() => setCurrentPage("register")}
           onLoginSuccess={handleLoginSuccess}
         />
+      ) : currentPage === "calculator" ? (
+        <CurrencyCalculatorPage />
       ) : (
         <Dashboard 
           onLogout={handleLogout}
