@@ -1,303 +1,252 @@
-﻿import { useState } from "react";
-import { ArrowDownUp, DollarSign } from "lucide-react";
-import { Button } from "./ui/button";
+﻿/**
+ * FEDERAL EXPRESS BRASIL
+ * Component: Currency Calculator
+ * 
+ * Calculadora de conversão de moedas com taxas em tempo real
+ */
 
-type TabMode = "receive" | "send";
-
-interface CurrencyOption {
-  code: string;
-  name: string;
-  rate: number;
-}
-
-const currencies: CurrencyOption[] = [
-  { code: "USD", name: "Dólar Americano", rate: 5.3025 },
-  { code: "EUR", name: "Euro", rate: 5.7850 },
-  { code: "GBP", name: "Libra Esterlina", rate: 6.7215 },
-  { code: "CAD", name: "Dólar Canadense", rate: 3.8940 },
-  { code: "AUD", name: "Dólar Australiano", rate: 3.4560 },
-  { code: "CHF", name: "Franco Suíço", rate: 6.0325 },
-  { code: "JPY", name: "Iene Japonês", rate: 0.0357 },
-];
+import { useState, useEffect } from 'react';
+import { ArrowRightLeft, RefreshCw, TrendingUp, Calendar } from 'lucide-react';
+import { POPULAR_CURRENCIES, ALL_CURRENCIES } from '@/types/exchange';
+import type { Currency } from '@/types/exchange';
+import { getExchangeRates, convertCurrency, formatCurrency } from '@/services/exchangeService';
 
 export default function CurrencyCalculator() {
-  const [mode, setMode] = useState<TabMode>("receive");
-  const [amount, setAmount] = useState<string>("1000.00");
-  const [selectedCurrency, setSelectedCurrency] = useState<string>("USD");
+  const [amount, setAmount] = useState<string>('100');
+  const [fromCurrency, setFromCurrency] = useState<string>('USD');
+  const [toCurrency, setToCurrency] = useState<string>('BRL');
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
+  const [rate, setRate] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+  const [showAllCurrencies, setShowAllCurrencies] = useState(false);
 
-  const getCurrentRate = () => {
-    return currencies.find(c => c.code === selectedCurrency)?.rate || 5.3025;
-  };
+  const currenciesToShow = showAllCurrencies ? ALL_CURRENCIES : POPULAR_CURRENCIES;
 
-  const calculateResult = () => {
-    const numAmount = parseFloat(amount.replace(/[^\d.-]/g, "")) || 0;
-    const rate = getCurrentRate();
-    const iof = numAmount * rate * 0.0038; // 0.38%
-    const ourCost = numAmount * rate * 0.01; // 1%
-    const externalFees = 62.99; // Fixo
-    const vet = rate * 0.974; // VET = taxa - 2.6%
+  // Função para converter
+  const handleConvert = async () => {
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return;
+    }
 
-    if (mode === "receive") {
-      const total = numAmount * rate - iof - ourCost - externalFees;
-      return {
-        conversionLine: `1 ${selectedCurrency} = R$ ${rate.toFixed(4)}`,
-        iofLine: `IOF 0,38% = R$ ${iof.toFixed(2)}`,
-        costLine: `Nosso custo = R$ ${ourCost.toFixed(2)}`,
-        feesLine: `Tarifas externas = R$ ${externalFees.toFixed(2)}`,
-        vetLine: `VET = R$ ${vet.toFixed(4)}`,
-        total: total
-      };
-    } else {
-      const total = numAmount / rate + iof + ourCost + externalFees;
-      return {
-        conversionLine: `1 ${selectedCurrency} = R$ ${rate.toFixed(4)}`,
-        iofLine: `IOF 0,38% = R$ ${iof.toFixed(2)}`,
-        costLine: `Nosso custo = R$ ${ourCost.toFixed(2)}`,
-        feesLine: `Tarifas externas = R$ ${externalFees.toFixed(2)}`,
-        vetLine: `VET = R$ ${vet.toFixed(4)}`,
-        total: total
-      };
+    setLoading(true);
+    try {
+      const result = await convertCurrency(amountNum, fromCurrency, toCurrency);
+      setConvertedAmount(result.converted_amount);
+      setRate(result.rate);
+      setLastUpdate(new Date(result.timestamp).toLocaleString('pt-BR'));
+    } catch (error) {
+      console.error('Conversion error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const result = calculateResult();
+  // Inverter moedas
+  const handleSwap = () => {
+    setFromCurrency(toCurrency);
+    setToCurrency(fromCurrency);
+    setConvertedAmount(null);
+    setRate(null);
+  };
+
+  // Auto-converter quando mudar amount, from ou to (debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (amount && fromCurrency && toCurrency) {
+        handleConvert();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [amount, fromCurrency, toCurrency]);
+
+  // Buscar última atualização ao montar
+  useEffect(() => {
+    getExchangeRates()
+      .then((data) => {
+        if (data.timestamp) {
+          setLastUpdate(new Date(data.timestamp).toLocaleString('pt-BR'));
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  const getCurrencyInfo = (code: string): Currency | undefined => {
+    return ALL_CURRENCIES.find((c) => c.code === code);
+  };
 
   return (
-    <div
-      className="rounded-3xl p-6 md:p-8"
-      style={{
-        backgroundColor: "#063E74",
-        boxShadow: "0 8px 24px rgba(0,0,0,0.12)"
-      }}
-    >
-      {/* Título */}
-      <div className="flex items-center gap-3 mb-6">
-        <DollarSign className="h-6 w-6 text-[#8CD000]" />
-        <h3
-          style={{
-            fontFamily: "Poppins, sans-serif",
-            fontSize: "clamp(18px, 3vw, 24px)",
-            fontWeight: 700,
-            color: "#FFFFFF"
-          }}
-        >
-          Calculadora de Câmbio PTAX
-        </h3>
+    <div className="w-full max-w-4xl mx-auto">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h2 className="text-3xl font-bold text-[#0A4B9E] mb-2">
+          Calculadora de Moedas
+        </h2>
+        <p className="text-[#555] flex items-center justify-center gap-2">
+          <Calendar className="h-4 w-4" />
+          Última atualização: {lastUpdate || 'Carregando...'}
+        </p>
       </div>
 
-      {/* Abas */}
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setMode("receive")}
-          className="flex-1 py-3 px-6 rounded-full transition-all duration-300"
-          style={{
-            backgroundColor: mode === "receive" ? "#8CD000" : "rgba(255,255,255,0.1)",
-            color: mode === "receive" ? "#063E74" : "#FFFFFF",
-            fontFamily: "Inter, sans-serif",
-            fontSize: "14px",
-            fontWeight: 600
-          }}
-        >
-          Receber
-        </button>
-        <button
-          onClick={() => setMode("send")}
-          className="flex-1 py-3 px-6 rounded-full transition-all duration-300"
-          style={{
-            backgroundColor: mode === "send" ? "#8CD000" : "rgba(255,255,255,0.1)",
-            color: mode === "send" ? "#063E74" : "#FFFFFF",
-            fontFamily: "Inter, sans-serif",
-            fontSize: "14px",
-            fontWeight: 600
-          }}
-        >
-          Enviar
-        </button>
-      </div>
+      {/* Calculadora */}
+      <div className="bg-white rounded-2xl shadow-xl p-8 border border-[#E5E7EB]">
+        {/* From Currency */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-[#374151] mb-2">
+            De
+          </label>
+          <div className="flex gap-4">
+            {/* Amount Input */}
+            <div className="flex-1">
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Digite o valor"
+                className="w-full px-4 py-3 text-2xl font-bold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] focus:border-transparent transition-all"
+                min="0"
+                step="0.01"
+              />
+            </div>
 
-      {/* Linha superior - Input */}
-      <div className="mb-6">
-        <label
-          className="block mb-2"
-          style={{
-            fontFamily: "Inter, sans-serif",
-            fontSize: "13px",
-            fontWeight: 500,
-            color: "rgba(255,255,255,0.8)"
-          }}
-        >
-          {mode === "receive" ? "Valor a receber" : "Valor a enviar"}
-        </label>
-        <div className="flex gap-3">
-          <select
-            value={selectedCurrency}
-            onChange={(e) => setSelectedCurrency(e.target.value)}
-            className="px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white"
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "14px",
-              fontWeight: 600,
-              minWidth: "100px"
-            }}
-          >
-            {currencies.map(curr => (
-              <option 
-                key={curr.code} 
-                value={curr.code}
-                style={{ backgroundColor: "#063E74", color: "#FFFFFF" }}
+            {/* Currency Selector */}
+            <div className="w-48">
+              <select
+                value={fromCurrency}
+                onChange={(e) => setFromCurrency(e.target.value)}
+                className="w-full px-4 py-3 text-lg font-semibold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] cursor-pointer transition-all"
               >
-                {curr.code}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white"
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "16px",
-              fontWeight: 600
-            }}
-            placeholder="1000.00"
-          />
-        </div>
-      </div>
-
-      {/* écone de conversão */}
-      <div className="flex justify-center mb-6">
-        <div className="bg-white/10 rounded-full p-2">
-          <ArrowDownUp className="h-5 w-5 text-[#8CD000]" />
-        </div>
-      </div>
-
-      {/* Lista de detalhes */}
-      <div
-        className="mb-6 p-4 rounded-lg"
-        style={{
-          backgroundColor: "rgba(0,0,0,0.2)"
-        }}
-      >
-        <ul className="space-y-2">
-          <li
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
-              color: "rgba(255,255,255,0.9)"
-            }}
-          >
-            "¢ {result.conversionLine}
-          </li>
-          <li
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
-              color: "rgba(255,255,255,0.9)"
-            }}
-          >
-            "¢ {result.iofLine}
-          </li>
-          <li
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
-              color: "rgba(255,255,255,0.9)"
-            }}
-          >
-            "¢ {result.costLine}
-          </li>
-          <li
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
-              color: "rgba(255,255,255,0.9)"
-            }}
-          >
-            "¢ {result.feesLine}
-          </li>
-          <li
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
-              color: "rgba(255,255,255,0.9)"
-            }}
-          >
-            "¢ {result.vetLine}
-          </li>
-        </ul>
-      </div>
-
-      {/* Linha inferior - Resultado */}
-      <div className="mb-6">
-        <label
-          className="block mb-2"
-          style={{
-            fontFamily: "Inter, sans-serif",
-            fontSize: "13px",
-            fontWeight: 500,
-            color: "rgba(255,255,255,0.8)"
-          }}
-        >
-          {mode === "receive" ? "Você receberá" : "Custo total"}
-        </label>
-        <div className="flex gap-3">
-          <div
-            className="px-4 py-3 rounded-lg bg-white/10 border border-white/20"
-            style={{
-              fontFamily: "Inter, sans-serif",
-              fontSize: "14px",
-              fontWeight: 600,
-              color: "#FFFFFF",
-              minWidth: "100px"
-            }}
-          >
-            BRL
+                {currenciesToShow.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.flag} {currency.code}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-          <div
-            className="flex-1 px-4 py-3 rounded-lg border border-[#8CD000]"
-            style={{
-              backgroundColor: "rgba(140, 208, 0, 0.1)",
-              fontFamily: "Inter, sans-serif",
-              fontSize: "18px",
-              fontWeight: 700,
-              color: "#8CD000"
-            }}
+          {fromCurrency && (
+            <p className="mt-2 text-sm text-[#6B7280]">
+              {getCurrencyInfo(fromCurrency)?.name}
+            </p>
+          )}
+        </div>
+
+        {/* Swap Button */}
+        <div className="flex justify-center my-4">
+          <button
+            onClick={handleSwap}
+            className="p-3 rounded-full bg-[#0A4B9E] hover:bg-[#083A7E] text-white transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-110 active:scale-95"
+            title="Inverter moedas"
           >
-            R$ {result.total.toFixed(2)}
+            <ArrowRightLeft className="h-6 w-6" />
+          </button>
+        </div>
+
+        {/* To Currency */}
+        <div className="mb-6">
+          <label className="block text-sm font-semibold text-[#374151] mb-2">
+            Para
+          </label>
+          <div className="flex gap-4">
+            {/* Converted Amount (Read-only) */}
+            <div className="flex-1">
+              <input
+                type="text"
+                value={
+                  loading
+                    ? 'Convertendo...'
+                    : convertedAmount !== null
+                    ? convertedAmount.toFixed(2)
+                    : '0.00'
+                }
+                readOnly
+                className="w-full px-4 py-3 text-2xl font-bold text-[#0A4B9E] bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl cursor-not-allowed"
+              />
+            </div>
+
+            {/* Currency Selector */}
+            <div className="w-48">
+              <select
+                value={toCurrency}
+                onChange={(e) => setToCurrency(e.target.value)}
+                className="w-full px-4 py-3 text-lg font-semibold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] cursor-pointer transition-all"
+              >
+                {currenciesToShow.map((currency) => (
+                  <option key={currency.code} value={currency.code}>
+                    {currency.flag} {currency.code}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          {toCurrency && (
+            <p className="mt-2 text-sm text-[#6B7280]">
+              {getCurrencyInfo(toCurrency)?.name}
+            </p>
+          )}
+        </div>
+
+        {/* Exchange Rate Info */}
+        {rate !== null && convertedAmount !== null && (
+          <div className="mt-6 p-4 bg-gradient-to-r from-[#EFF6FF] to-[#DBEAFE] rounded-xl border border-[#BFDBFE]">
+            <div className="flex items-center gap-2 text-[#1E40AF] mb-2">
+              <TrendingUp className="h-5 w-5" />
+              <span className="font-semibold text-sm">Taxa de Câmbio</span>
+            </div>
+            <p className="text-2xl font-bold text-[#0A4B9E]">
+              1 {fromCurrency} = {rate.toFixed(4)} {toCurrency}
+            </p>
+            <p className="text-sm text-[#6B7280] mt-2">
+              {formatCurrency(parseFloat(amount), fromCurrency)} ={' '}
+              {formatCurrency(convertedAmount, toCurrency)}
+            </p>
+          </div>
+        )}
+
+        {/* Toggle All Currencies */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setShowAllCurrencies(!showAllCurrencies)}
+            className="text-[#0A4B9E] hover:text-[#083A7E] font-medium text-sm underline transition-colors"
+          >
+            {showAllCurrencies
+              ? '← Mostrar apenas moedas populares'
+              : 'Ver todas as moedas disponíveis →'}
+          </button>
+        </div>
+
+        {/* Refresh Button */}
+        <div className="mt-6 text-center">
+          <button
+            onClick={handleConvert}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0A4B9E] hover:bg-[#083A7E] disabled:bg-[#9CA3AF] text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed"
+          >
+            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            {loading ? 'Atualizando...' : 'Atualizar Cotação'}
+          </button>
         </div>
       </div>
 
-      {/* Rodapàde aviso */}
-      <p
-        className="mb-6 text-center"
-        style={{
-          fontFamily: "Inter, sans-serif",
-          fontSize: "11px",
-          color: "rgba(255,255,255,0.6)",
-          fontStyle: "italic"
-        }}
-      >
-        *Taxas PTAX atualizam ao longo do dia. Valores estimados.
-      </p>
-
-      {/* Botão CTA */}
-      <Button
-        className="w-full h-[56px] rounded-xl transition-all duration-300 hover:brightness-110 active:scale-[0.97]"
-        style={{
-          backgroundColor: "#56B544",
-          color: "#FFFFFF",
-          fontFamily: "Poppins, sans-serif",
-          fontSize: "16px",
-          fontWeight: 600,
-          boxShadow: "0 4px 12px rgba(86,181,68,0.3)"
-        }}
-      >
-        RECEBER ONLINE
-      </Button>
+      {/* Info Footer */}
+      <div className="mt-6 text-center text-sm text-[#6B7280]">
+        <p>
+          💱 Cotações atualizadas automaticamente a cada 10 minutos (seg-sex, 9h-17h BRT)
+        </p>
+        <p className="mt-1">
+          Fonte:{' '}
+          <a
+            href="https://www.exchangerate-api.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#0A4B9E] hover:underline"
+          >
+            ExchangeRate-API
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
-
-
