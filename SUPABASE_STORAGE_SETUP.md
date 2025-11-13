@@ -20,6 +20,7 @@ Você deve criá-los manualmente no Supabase Dashboard **ANTES** de rodar as mig
 ### 2️⃣ Criar Bucket: `documents`
 
 **Configurações:**
+
 ```
 Name: documents
 Public: ❌ false (privado)
@@ -32,6 +33,7 @@ Allowed MIME types:
 ```
 
 **O que será armazenado:**
+
 - Fotos de passaportes
 - Fotos de vistos anteriores
 - Fotos de RG/CNH
@@ -40,6 +42,7 @@ Allowed MIME types:
 - DS-160 gerado (Excel)
 
 **Estrutura de pastas:**
+
 ```
 documents/
   {user_id}/
@@ -58,6 +61,7 @@ documents/
 ### 3️⃣ Criar Bucket: `selfies`
 
 **Configurações:**
+
 ```
 Name: selfies
 Public: ❌ false (privado)
@@ -69,9 +73,11 @@ Allowed MIME types:
 ```
 
 **O que será armazenado:**
+
 - Selfies dos usuários (para validação de identidade)
 
 **Estrutura de pastas:**
+
 ```
 selfies/
   {user_id}/
@@ -93,19 +99,20 @@ Storage
 
 ---
 
-## 4️⃣ Rodar as Migrations
+## 4️⃣ Criar as Políticas RLS
 
-**Agora sim**, rode as migrations para criar as políticas RLS:
+**Após criar os buckets**, execute o script de políticas no SQL Editor:
 
-```bash
-# No SQL Editor do Supabase, execute na ordem:
-# 1. 20250112000001_create_visa_application_tables.sql
-# 2. 20250112000002_enable_rls_policies.sql
-# 3. 20250112000003_migrate_to_civil_status.sql
-# 4. 20250112000004_user_profiles.sql
-# 5. 20250112000005_social_accounts_extended.sql
-# 6. 20250112000006_storage_buckets.sql ✅ Esta cria as políticas
-```
+1. Abra o arquivo `supabase/storage-policies.sql`
+2. Copie todo o conteúdo
+3. No Supabase Dashboard, vá em **SQL Editor**
+4. Cole o conteúdo e clique em **Run**
+
+Este script irá criar **8 políticas** (4 para cada bucket):
+- `documents_read_own`, `documents_insert_own`, `documents_update_own`, `documents_delete_own`
+- `selfies_read_own`, `selfies_insert_own`, `selfies_update_own`, `selfies_delete_own`
+
+**⚠️ Nota:** As migrations normais (`20250112000001` a `20250112000006`) são para as tabelas do banco de dados. As políticas de storage precisam ser criadas separadamente porque requerem permissões especiais.
 
 ---
 
@@ -135,9 +142,10 @@ As políticas criadas pela migration garantem que:
 
 ✅ Cada usuário só acessa arquivos na **sua pasta** (`{user_id}/...`)  
 ✅ Ninguém consegue ler/modificar arquivos de outros usuários  
-✅ Admins (service role) podem acessar tudo  
+✅ Admins (service role) podem acessar tudo
 
 **Padrão de path seguro:**
+
 ```
 {bucket}/{user_id}/{application_id}/{filename}
                 ↑
@@ -169,13 +177,16 @@ As políticas criadas pela migration garantem que:
 ## 📞 Problemas?
 
 **Erro: "Row level security is not enabled"**
+
 - Execute `ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;`
 
 **Erro: "new row violates row-level security policy"**
+
 - Verifique se o path do arquivo segue o padrão `{user_id}/...`
 - Confira se o usuário está autenticado (`auth.uid()` não é null)
 
 **Erro: "bucket does not exist"**
+
 - Os buckets devem ser criados manualmente no Dashboard primeiro
 - Não tente criá-los via SQL (requer permissões de superusuário)
 
@@ -184,6 +195,7 @@ As políticas criadas pela migration garantem que:
 ## 🚀 Próximos Passos
 
 Depois de configurar o storage:
+
 1. Rodar todas as migrations
 2. Implementar as páginas do fluxo (`/flow/*`)
 3. Testar upload de documentos
@@ -193,6 +205,6 @@ Depois de configurar o storage:
 ---
 
 **Dúvidas?** Consulte:
+
 - [Supabase Storage Docs](https://supabase.com/docs/guides/storage)
 - [Row Level Security](https://supabase.com/docs/guides/auth/row-level-security)
-
