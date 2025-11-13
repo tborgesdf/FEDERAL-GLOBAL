@@ -33,15 +33,27 @@ export async function getExchangeRates(): Promise<ExchangeRatesResponse> {
       }
     }
     
-    // Buscar da API
-    console.log('📡 Fetching exchange rates from API...');
-    const response = await fetch('/api/exchange-rates');
+    // Buscar da API externa diretamente (para desenvolvimento local)
+    console.log('📡 Fetching exchange rates from ExchangeRate-API...');
+    const apiKey = '5837ee8ab0477e0ba169aaf3';
+    const apiUrl = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/USD`;
+    
+    const response = await fetch(apiUrl);
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
     
-    const data: ExchangeRatesResponse = await response.json();
+    const apiData = await response.json();
+    
+    // Converter para o formato esperado
+    const data: ExchangeRatesResponse = {
+      base_code: apiData.base_code,
+      rates: apiData.conversion_rates,
+      cached: false,
+      last_update: apiData.time_last_update_utc,
+      timestamp: new Date().toISOString(),
+    };
     
     // Salvar no cache
     const cacheData: CachedRates = {
@@ -49,6 +61,8 @@ export async function getExchangeRates(): Promise<ExchangeRatesResponse> {
       timestamp: Date.now(),
     };
     localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    
+    console.log('✅ Exchange rates loaded:', Object.keys(data.rates).length, 'currencies');
     
     return data;
   } catch (error) {
@@ -75,14 +89,26 @@ export async function convertCurrency(
   to: string
 ): Promise<ConversionResponse> {
   try {
-    const response = await fetch(`/api/exchange-rates?from=${from}&to=${to}&amount=${amount}`);
+    // Buscar taxas
+    const rates = await getExchangeRates();
     
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
+    const fromRate = rates.rates[from] || 1;
+    const toRate = rates.rates[to] || 1;
     
-    const data: ConversionResponse = await response.json();
-    return data;
+    // Converter via USD: amount -> USD -> target
+    const amountInUSD = amount / fromRate;
+    const convertedAmount = amountInUSD * toRate;
+    const rate = toRate / fromRate;
+    
+    return {
+      from,
+      to,
+      amount,
+      converted_amount: parseFloat(convertedAmount.toFixed(2)),
+      rate: parseFloat(rate.toFixed(8)),
+      cached: rates.cached,
+      timestamp: rates.timestamp,
+    };
   } catch (error) {
     console.error('Error converting currency:', error);
     throw error;
