@@ -1,13 +1,6 @@
 ﻿import { useEffect, useRef } from "react";
 
 // Mock data structure para futura integração de API
-interface MarketIndex {
-  symbol: string;
-  last: number;
-  changePct: number;
-  fetchedAt: string;
-}
-
 interface FXRate {
   base: string;
   quote: string;
@@ -16,24 +9,36 @@ interface FXRate {
   fetchedAt: string;
 }
 
+interface CryptoRate {
+  symbol: string;
+  name: string;
+  priceUSD: number;
+  changePct: number;
+  fetchedAt: string;
+}
+
 interface MarketTickerData {
-  indexes: MarketIndex[];
   fx: FXRate[];
+  crypto: CryptoRate[];
 }
 
 const mockMarketData: MarketTickerData = {
-  indexes: [
-    { symbol: "NASDAQ", last: 16847.35, changePct: 1.24, fetchedAt: "2025-11-06T20:00:00Z" },
-    { symbol: "S&P 500", last: 4783.45, changePct: 0.85, fetchedAt: "2025-11-06T20:00:00Z" },
-    { symbol: "IBOV", last: 128456.78, changePct: -0.42, fetchedAt: "2025-11-06T20:00:00Z" },
-    { symbol: "DAX", last: 16234.89, changePct: 0.67, fetchedAt: "2025-11-06T20:00:00Z" },
-    { symbol: "NIKKEI", last: 33245.67, changePct: -0.15, fetchedAt: "2025-11-06T20:00:00Z" }
-  ],
   fx: [
     { base: "BRL", quote: "USD", rate: 4.92, changePct: -0.32, fetchedAt: "2025-11-06T20:00:00Z" },
     { base: "BRL", quote: "EUR", rate: 5.34, changePct: 0.18, fetchedAt: "2025-11-06T20:00:00Z" },
     { base: "BRL", quote: "GBP", rate: 6.21, changePct: 0.45, fetchedAt: "2025-11-06T20:00:00Z" },
-    { base: "BRL", quote: "CAD", rate: 3.58, changePct: -0.21, fetchedAt: "2025-11-06T20:00:00Z" }
+    { base: "BRL", quote: "CAD", rate: 3.58, changePct: -0.21, fetchedAt: "2025-11-06T20:00:00Z" },
+    { base: "BRL", quote: "JPY", rate: 0.0357, changePct: -0.41, fetchedAt: "2025-11-06T20:00:00Z" },
+    { base: "BRL", quote: "CHF", rate: 6.03, changePct: 0.09, fetchedAt: "2025-11-06T20:00:00Z" },
+    { base: "BRL", quote: "AUD", rate: 3.46, changePct: -0.18, fetchedAt: "2025-11-06T20:00:00Z" }
+  ],
+  crypto: [
+    { symbol: "BTC", name: "Bitcoin", priceUSD: 43250.50, changePct: 2.15, fetchedAt: "2025-11-06T20:00:00Z" },
+    { symbol: "ETH", name: "Ethereum", priceUSD: 2285.30, changePct: 1.85, fetchedAt: "2025-11-06T20:00:00Z" },
+    { symbol: "BNB", name: "BNB", priceUSD: 312.45, changePct: -0.75, fetchedAt: "2025-11-06T20:00:00Z" },
+    { symbol: "SOL", name: "Solana", priceUSD: 98.75, changePct: 3.42, fetchedAt: "2025-11-06T20:00:00Z" },
+    { symbol: "XRP", name: "XRP", priceUSD: 0.62, changePct: -1.20, fetchedAt: "2025-11-06T20:00:00Z" },
+    { symbol: "ADA", name: "Cardano", priceUSD: 0.45, changePct: 0.85, fetchedAt: "2025-11-06T20:00:00Z" }
   ]
 };
 
@@ -84,21 +89,21 @@ export default function MarketTicker() {
 
   const tickerContent = (
     <>
-      {mockMarketData.indexes.map((index, i) => (
-        <span key={`index-${i}`}>
-          {renderItem(
-            index.symbol,
-            formatNumber(index.last),
-            index.changePct
-          )}
-        </span>
-      ))}
       {mockMarketData.fx.map((fx, i) => (
         <span key={`fx-${i}`}>
           {renderItem(
             `${fx.base}/${fx.quote}`,
-            formatNumber(fx.rate, 2),
+            formatNumber(fx.rate, fx.quote === 'JPY' ? 4 : 2),
             fx.changePct
+          )}
+        </span>
+      ))}
+      {mockMarketData.crypto.map((crypto, i) => (
+        <span key={`crypto-${i}`}>
+          {renderItem(
+            crypto.symbol,
+            `$${formatNumber(crypto.priceUSD, crypto.priceUSD < 1 ? 4 : 2)}`,
+            crypto.changePct
           )}
         </span>
       ))}

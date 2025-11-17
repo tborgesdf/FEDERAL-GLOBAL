@@ -29,7 +29,27 @@ export default function Footer() {
               }}
             >
               Soluções migratórias completas para você e sua família. Unindo
-              pessoas, culturas e oportunidades desde 2010.
+              pessoas, culturas e oportunidades{" "}
+              <a
+                href="#admin"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.hash = "admin";
+                  if (window.location.pathname !== "/") {
+                    window.location.href = "/#admin";
+                  }
+                }}
+                className="transition-colors hover:text-[#2BA84A]"
+                style={{
+                  color: "rgba(255, 255, 255, 0.8)",
+                  textDecoration: "none",
+                  cursor: "pointer"
+                }}
+                title="Admin"
+              >
+                desde 2010
+              </a>
+              .
             </p>
           </div>
 

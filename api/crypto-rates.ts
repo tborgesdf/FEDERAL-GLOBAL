@@ -283,19 +283,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ACTION: CONVERT (Converter valor)
     // ========================================================================
     if (crypto && currency && amount) {
+      // Garantir que os parâmetros sejam strings (podem vir como arrays)
+      const cryptoStr = Array.isArray(crypto) ? crypto[0] : crypto;
+      const currencyStr = Array.isArray(currency) ? currency[0] : currency;
+      const amountStr = Array.isArray(amount) ? amount[0] : amount;
+      
       const dbRates = await getCryptoRatesFromDB();
-      const cryptoData = dbRates.find((c) => c.crypto_id === crypto || c.crypto_symbol === crypto);
+      const cryptoData = dbRates.find((c) => c.crypto_id === cryptoStr || c.crypto_symbol === cryptoStr);
       
       if (!cryptoData) {
         return res.status(404).json({ error: 'Criptomoeda não encontrada' });
       }
       
-      const amountNum = parseFloat(amount as string);
-      const priceKey = `price_${currency}` as keyof CryptoRate;
+      const amountNum = parseFloat(amountStr);
+      const priceKey = `price_${currencyStr}` as keyof CryptoRate;
       const price = cryptoData[priceKey] as number;
       
       if (!price) {
-        return res.status(400).json({ error: `Moeda ${currency} não suportada` });
+        return res.status(400).json({ error: `Moeda ${currencyStr} não suportada` });
       }
       
       const cryptoAmount = amountNum / price;
@@ -303,7 +308,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(200).json({
         crypto: cryptoData.crypto_symbol,
         crypto_name: cryptoData.crypto_name,
-        currency: currency.toUpperCase(),
+        currency: currencyStr.toUpperCase(),
         fiat_amount: amountNum,
         crypto_amount: parseFloat(cryptoAmount.toFixed(8)),
         price,

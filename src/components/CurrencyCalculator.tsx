@@ -5,8 +5,8 @@
  * Calculadora de conversão de moedas com taxas em tempo real
  */
 
-import { useState, useEffect } from 'react';
-import { ArrowRightLeft, RefreshCw, TrendingUp, Calendar } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowRightLeft, RefreshCw, TrendingUp, Calendar, ChevronDown } from 'lucide-react';
 import { POPULAR_CURRENCIES, ALL_CURRENCIES } from '@/types/exchange';
 import type { Currency } from '@/types/exchange';
 import { getExchangeRates, convertCurrency, formatCurrency } from '@/services/exchangeService';
@@ -21,6 +21,10 @@ export default function CurrencyCalculator() {
   const [lastUpdate, setLastUpdate] = useState<string>('');
   const [showAllCurrencies, setShowAllCurrencies] = useState(false);
   const [autoRefreshing, setAutoRefreshing] = useState(false);
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
+  const [searchFrom, setSearchFrom] = useState('');
+  const [searchTo, setSearchTo] = useState('');
 
   const currenciesToShow = showAllCurrencies ? ALL_CURRENCIES : POPULAR_CURRENCIES;
 
@@ -112,6 +116,157 @@ export default function CurrencyCalculator() {
     return ALL_CURRENCIES.find((c) => c.code === code);
   };
 
+  // Filtrar moedas por pesquisa
+  const getFilteredCurrencies = (searchTerm: string) => {
+    if (!searchTerm) return currenciesToShow;
+    const term = searchTerm.toLowerCase();
+    return currenciesToShow.filter(
+      (c) =>
+        c.code.toLowerCase().includes(term) ||
+        c.name.toLowerCase().includes(term)
+    );
+  };
+
+  // Componente de Dropdown Customizado com Grid
+  const CurrencyDropdown = ({
+    value,
+    onChange,
+    isOpen,
+    setIsOpen,
+    search,
+    setSearch,
+    label,
+  }: {
+    value: string;
+    onChange: (code: string) => void;
+    isOpen: boolean;
+    setIsOpen: (open: boolean) => void;
+    search: string;
+    setSearch: (search: string) => void;
+    label: string;
+  }) => {
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const selectedCurrency = getCurrencyInfo(value);
+    const filteredCurrencies = getFilteredCurrencies(search);
+
+    // Mostrar apenas moedas populares se não houver busca
+    const currenciesToDisplay = search 
+      ? filteredCurrencies 
+      : (showAllCurrencies ? filteredCurrencies : POPULAR_CURRENCIES);
+
+    // Fechar dropdown ao clicar fora
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setIsOpen(false);
+          setSearch('');
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen, setIsOpen, setSearch]);
+
+    return (
+      <div ref={dropdownRef} className="relative w-48">
+        {/* Botão do Select */}
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-4 py-3 text-lg font-semibold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] cursor-pointer transition-all flex items-center justify-between hover:bg-gray-50"
+        >
+          <span className="flex items-center gap-2">
+            <span className="text-2xl">{selectedCurrency?.flag}</span>
+            <span>{value}</span>
+          </span>
+          <ChevronDown className={`h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Dropdown com Grid */}
+        {isOpen && (
+          <div className="absolute z-50 left-0 right-0 mt-2 bg-white border border-[#D1D5DB] rounded-xl shadow-2xl w-[600px] max-h-[500px] overflow-hidden">
+            {/* Campo de Busca */}
+            <div className="p-4 border-b border-[#E5E7EB] sticky top-0 bg-white">
+              <input
+                type="text"
+                placeholder="🔍 Buscar por código ou nome da moeda..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-4 py-2 text-sm border border-[#D1D5DB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0A4B9E]"
+                onClick={(e) => e.stopPropagation()}
+              />
+              {!search && (
+                <p className="mt-2 text-xs text-[#6B7280]">
+                  {showAllCurrencies 
+                    ? `Mostrando ${currenciesToDisplay.length} moedas` 
+                    : 'Mostrando moedas populares'}
+                </p>
+              )}
+            </div>
+
+            {/* Grid de Moedas (3 colunas) */}
+            <div className="overflow-y-auto max-h-[380px] p-2">
+              {currenciesToDisplay.length > 0 ? (
+                <div className="grid grid-cols-3 gap-1">
+                  {currenciesToDisplay.map((currency) => (
+                    <button
+                      key={currency.code}
+                      type="button"
+                      onClick={() => {
+                        onChange(currency.code);
+                        setIsOpen(false);
+                        setSearch('');
+                      }}
+                      className={`px-3 py-2.5 text-left hover:bg-[#EFF6FF] transition-colors rounded-lg flex items-center gap-2 ${
+                        value === currency.code ? 'bg-[#DBEAFE] ring-2 ring-[#0A4B9E]' : ''
+                      }`}
+                      title={currency.name}
+                    >
+                      <span className="text-xl flex-shrink-0">{currency.flag}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm text-[#111]">{currency.code}</div>
+                        <div className="text-xs text-[#6B7280] truncate">{currency.name}</div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="px-4 py-12 text-center text-[#6B7280]">
+                  <p className="text-lg mb-2">😕</p>
+                  <p>Nenhuma moeda encontrada</p>
+                  <p className="text-xs mt-1">Tente outro termo de busca</p>
+                </div>
+              )}
+            </div>
+
+            {/* Rodapé com toggle */}
+            {!search && (
+              <div className="p-3 border-t border-[#E5E7EB] bg-[#F9FAFB] sticky bottom-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowAllCurrencies(!showAllCurrencies);
+                  }}
+                  className="w-full text-sm text-[#0A4B9E] hover:text-[#083A7E] font-medium transition-colors"
+                >
+                  {showAllCurrencies
+                    ? '← Mostrar apenas populares'
+                    : `Ver todas as ${ALL_CURRENCIES.length} moedas →`}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       {/* Header */}
@@ -132,7 +287,12 @@ export default function CurrencyCalculator() {
           <label className="block text-sm font-semibold text-[#374151] mb-2">
             De
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            {/* Currency Flag (Large Display) */}
+            <div className="flex items-center justify-center w-16 h-16 text-4xl bg-white border-2 border-[#D1D5DB] rounded-xl shadow-sm">
+              {getCurrencyInfo(fromCurrency)?.flag || '💱'}
+            </div>
+
             {/* Amount Input */}
             <div className="flex-1">
               <input
@@ -147,23 +307,22 @@ export default function CurrencyCalculator() {
             </div>
 
             {/* Currency Selector */}
-            <div className="w-48">
-              <select
-                value={fromCurrency}
-                onChange={(e) => setFromCurrency(e.target.value)}
-                className="w-full px-4 py-3 text-lg font-semibold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] cursor-pointer transition-all"
-              >
-                {currenciesToShow.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.flag} {currency.code}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CurrencyDropdown
+              value={fromCurrency}
+              onChange={setFromCurrency}
+              isOpen={showFromDropdown}
+              setIsOpen={setShowFromDropdown}
+              search={searchFrom}
+              setSearch={setSearchFrom}
+              label="De"
+            />
           </div>
           {fromCurrency && (
-            <p className="mt-2 text-sm text-[#6B7280]">
-              {getCurrencyInfo(fromCurrency)?.name}
+            <p className="mt-2 text-sm text-[#6B7280] flex items-center gap-2">
+              <span className="font-semibold">{getCurrencyInfo(fromCurrency)?.name}</span>
+              {getCurrencyInfo(fromCurrency)?.symbol && (
+                <span className="text-[#9CA3AF]">({getCurrencyInfo(fromCurrency)?.symbol})</span>
+              )}
             </p>
           )}
         </div>
@@ -184,7 +343,12 @@ export default function CurrencyCalculator() {
           <label className="block text-sm font-semibold text-[#374151] mb-2">
             Para
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            {/* Currency Flag (Large Display) */}
+            <div className="flex items-center justify-center w-16 h-16 text-4xl bg-white border-2 border-[#BFDBFE] rounded-xl shadow-sm">
+              {getCurrencyInfo(toCurrency)?.flag || '💱'}
+            </div>
+
             {/* Converted Amount (Read-only) */}
             <div className="flex-1">
               <input
@@ -202,23 +366,22 @@ export default function CurrencyCalculator() {
             </div>
 
             {/* Currency Selector */}
-            <div className="w-48">
-              <select
-                value={toCurrency}
-                onChange={(e) => setToCurrency(e.target.value)}
-                className="w-full px-4 py-3 text-lg font-semibold text-[#111] bg-[#F9FAFB] border border-[#D1D5DB] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0A4B9E] cursor-pointer transition-all"
-              >
-                {currenciesToShow.map((currency) => (
-                  <option key={currency.code} value={currency.code}>
-                    {currency.flag} {currency.code}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <CurrencyDropdown
+              value={toCurrency}
+              onChange={setToCurrency}
+              isOpen={showToDropdown}
+              setIsOpen={setShowToDropdown}
+              search={searchTo}
+              setSearch={setSearchTo}
+              label="Para"
+            />
           </div>
           {toCurrency && (
-            <p className="mt-2 text-sm text-[#6B7280]">
-              {getCurrencyInfo(toCurrency)?.name}
+            <p className="mt-2 text-sm text-[#6B7280] flex items-center gap-2">
+              <span className="font-semibold">{getCurrencyInfo(toCurrency)?.name}</span>
+              {getCurrencyInfo(toCurrency)?.symbol && (
+                <span className="text-[#9CA3AF]">({getCurrencyInfo(toCurrency)?.symbol})</span>
+              )}
             </p>
           )}
         </div>
@@ -239,18 +402,6 @@ export default function CurrencyCalculator() {
             </p>
           </div>
         )}
-
-        {/* Toggle All Currencies */}
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => setShowAllCurrencies(!showAllCurrencies)}
-            className="text-[#0A4B9E] hover:text-[#083A7E] font-medium text-sm underline transition-colors"
-          >
-            {showAllCurrencies
-              ? '← Mostrar apenas moedas populares'
-              : 'Ver todas as moedas disponíveis →'}
-          </button>
-        </div>
 
         {/* Refresh Button */}
         <div className="mt-6 text-center">

@@ -7,12 +7,13 @@ import Footer from "./components/Footer";
 import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
+import DashboardAdmin from "./components/DashboardAdmin";
 import CurrencyCalculatorPage from "./pages/CurrencyCalculatorPage";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator" | "admin">("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
 
@@ -25,6 +26,25 @@ export default function App() {
       setUserEmail(email);
       setCurrentPage("dashboard");
     }
+
+    // Verificar hash na URL para acesso direto
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'admin') {
+      setCurrentPage('admin');
+    }
+  }, []);
+
+  // Listener para mudanças no hash da URL
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'admin') {
+        setCurrentPage('admin');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   const handleLoginSuccess = (email: string) => {
@@ -173,6 +193,23 @@ export default function App() {
     <>
       <Toaster position="top-right" richColors />
       
+      {/* Botão Flutuante de Acesso ao Dashboard Admin */}
+      {currentPage !== "admin" && (
+        <button
+          onClick={() => {
+            window.location.hash = 'admin';
+            setCurrentPage('admin');
+          }}
+          className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-[#0A4B9E] to-[#083A7A] text-white px-4 py-3 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 font-semibold text-sm flex items-center gap-2"
+          title="Acessar Dashboard Admin"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Admin
+        </button>
+      )}
+      
       {currentPage === "home" ? (
         <div className="min-h-screen bg-white">
           <Header 
@@ -209,7 +246,8 @@ export default function App() {
         </div>
       ) : currentPage === "register" ? (
         <RegisterPage 
-          onBackToHome={() => setCurrentPage("home")} 
+          onBackToHome={() => setCurrentPage("home")}
+          onNavigateToLogin={() => setCurrentPage("login")}
         />
       ) : currentPage === "login" ? (
         <LoginPage 
@@ -219,6 +257,8 @@ export default function App() {
         />
       ) : currentPage === "calculator" ? (
         <CurrencyCalculatorPage />
+      ) : currentPage === "admin" ? (
+        <DashboardAdmin />
       ) : (
         <Dashboard 
           onLogout={handleLogout}
