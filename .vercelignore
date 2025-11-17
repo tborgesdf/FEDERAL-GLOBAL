@@ -1,0 +1,10 @@
+# Arquivos que não devem ser deployados no Vercel
+node_modules
+.git
+.env.local
+.env.*.local
+dist
+build
+*.log
+.DS_Store
+
