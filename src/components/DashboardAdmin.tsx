@@ -914,8 +914,15 @@ export default function DashboardAdmin({ onLogout }: DashboardAdminProps) {
                             <td className="px-6 py-4 text-gray-700 font-mono text-sm">{log.ip_address || "N/D"}</td>
                             <td className="px-6 py-4">
                               <div className="text-sm">
-                                <div className="font-medium">{log.device_type || "N/D"}</div>
-                                <div className="text-gray-500 text-xs">{log.device_os} • {log.device_browser}</div>
+                                <div className="font-medium">{log.device_full_name || log.device_type || "N/D"}</div>
+                                <div className="text-gray-500 text-xs">
+                                  {log.device_brand && log.device_model 
+                                    ? `${log.device_brand} ${log.device_model}` 
+                                    : log.device_type || "N/D"}
+                                </div>
+                                <div className="text-gray-400 text-xs mt-1">
+                                  {log.device_os} • {log.device_browser} {log.device_breakpoint && `• Breakpoint: ${log.device_breakpoint.toUpperCase()}`}
+                                </div>
                               </div>
                             </td>
                             <td className="px-6 py-4 text-center">
@@ -1210,7 +1217,17 @@ export default function DashboardAdmin({ onLogout }: DashboardAdminProps) {
                           <Smartphone className="h-4 w-4 text-purple-600" />
                           <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Marca/Modelo</label>
                         </div>
-                        <p className="text-gray-900 font-semibold">{selectedUser.device_type || "N/D"}</p>
+                        <p className="text-gray-900 font-semibold">
+                          {selectedUser.device_full_name || 
+                           (selectedUser.device_brand && selectedUser.device_model 
+                             ? `${selectedUser.device_brand} ${selectedUser.device_model}` 
+                             : selectedUser.device_type || "N/D")}
+                        </p>
+                        {selectedUser.device_breakpoint && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Breakpoint: {selectedUser.device_breakpoint.toUpperCase()}
+                          </p>
+                        )}
                       </div>
 
                       {/* Nome Completo */}
