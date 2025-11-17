@@ -3,3 +3,9 @@ dist
 build
 .env*
 .env.local
+
+# Credenciais e arquivos sensíveis
+anexos/*.json
+**/google-credentials.json
+**/deltabets-*.json
+**/*credentials*.json

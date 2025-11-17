@@ -1,0 +1,45 @@
+# ============================================================================
+# FEDERAL GLOBAL - Configurações de Ambiente
+# ============================================================================
+# 
+# IMPORTANTE: Copie este conteúdo para .env.local na raiz do projeto
+# 
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# SUPABASE (Frontend - React/Vite)
+# ----------------------------------------------------------------------------
+VITE_SUPABASE_URL=https://mhsuyzndkpprnyoqsbsz.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oc3V5em5ka3Bwcm55b3FzYnN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI3MzI0NjAsImV4cCI6MjA3ODMwODQ2MH0.COArtMyvcuZsivHARvR74IUa1LaVOOno6tlQRVLT1s8
+
+# ----------------------------------------------------------------------------
+# SUPABASE (Backend - Vercel Functions)
+# ----------------------------------------------------------------------------
+# ⚠️ VOCÊ PRECISA OBTER ESTA CHAVE DO SUPABASE!
+# Vá em: https://supabase.com/dashboard/project/mhsuyzndkpprnyoqsbsz/settings/api
+# Copie a chave "service_role (secret)"
+SUPABASE_SERVICE_ROLE_KEY=COLE_AQUI_A_SERVICE_ROLE_KEY
+
+# ----------------------------------------------------------------------------
+# GOOGLE VISION API (OCR de Documentos)
+# ----------------------------------------------------------------------------
+# Se você já tem as credenciais do Google Vision, cole aqui:
+GOOGLE_APPLICATION_CREDENTIALS_JSON=
+
+# ----------------------------------------------------------------------------
+# CONFIGURAÇÕES ADICIONAIS
+# ----------------------------------------------------------------------------
+VITE_NODE_ENV=development
+VITE_SITE_URL=http://localhost:5173
+VITE_BASE_PATH=/
+
+# ----------------------------------------------------------------------------
+# INSTRUÇÕES:
+# ----------------------------------------------------------------------------
+# 1. Renomeie este arquivo para .env.local
+# 2. Cole a SERVICE_ROLE_KEY do Supabase
+# 3. (Opcional) Cole as credenciais do Google Vision
+# 4. Salve o arquivo
+# 5. Reinicie o servidor: npm run dev
+# ============================================================================
+

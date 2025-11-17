@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { toast } from "sonner";
 
 interface UserData {
   id: string;
@@ -62,7 +64,11 @@ interface DashboardStats {
   hourStats: Array<{ hour: number; count: number }>;
 }
 
-export default function DashboardAdmin() {
+interface DashboardAdminProps {
+  onLogout?: () => void;
+}
+
+export default function DashboardAdmin({ onLogout }: DashboardAdminProps) {
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0,
@@ -78,10 +84,85 @@ export default function DashboardAdmin() {
   const [filterPeriod, setFilterPeriod] = useState<"all" | "today" | "week" | "month">("all");
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [showCreateAdmin, setShowCreateAdmin] = useState(false);
+  const [activeTab, setActiveTab] = useState<"usuarios" | "admin">("usuarios");
+  const [accessLogs, setAccessLogs] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+  const [newUser, setNewUser] = useState({
+    email: "",
+    password: "",
+    full_name: "",
+    cpf: "",
+    phone: "",
+    birth_date: "",
+  });
+  const [newAdmin, setNewAdmin] = useState({
+    email: "",
+    password: "",
+    full_name: "",
+    cpf: "",
+    phone: "",
+    birth_date: "",
+    profile_photo: null as File | null,
+  });
 
   useEffect(() => {
     loadDashboardData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "admin") {
+      loadAccessLogs();
+    }
+  }, [activeTab]);
+
+  const loadAccessLogs = async () => {
+    setLoadingLogs(true);
+    try {
+      const response = await fetch("/api/admin/get-access-logs?limit=100");
+      
+      // Verificar se a resposta é JSON válido
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.error("Resposta não é JSON:", text.substring(0, 200));
+        throw new Error("API retornou resposta inválida. Verifique se a tabela admin_access_logs existe no banco de dados.");
+      }
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao buscar logs");
+      }
+
+      if (data.success) {
+        setAccessLogs(data.logs || []);
+      } else {
+        throw new Error(data.error || "Erro desconhecido");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar logs:", error);
+      
+      // Se for erro de tabela não encontrada, mostrar mensagem específica
+      if (error instanceof Error) {
+        if (error.message.includes("relation") || error.message.includes("does not exist")) {
+          toast.error("Tabela admin_access_logs não encontrada. Execute as migrations SQL no Supabase.");
+        } else if (error.message.includes("JSON") || error.message.includes("import")) {
+          toast.error("Erro na API. Verifique se as migrations foram executadas no Supabase.");
+        } else {
+          toast.error(`Erro ao carregar logs: ${error.message}`);
+        }
+      } else {
+        toast.error("Erro ao carregar logs de acesso");
+      }
+      
+      // Definir array vazio em caso de erro
+      setAccessLogs([]);
+    } finally {
+      setLoadingLogs(false);
+    }
+  };
 
   // Função para gerar dados simulados
   const generateMockUsers = (): UserData[] => {
@@ -310,6 +391,171 @@ export default function DashboardAdmin() {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   };
 
+  const createAdmin = async () => {
+    if (!newAdmin.email || !newAdmin.password || !newAdmin.full_name || !newAdmin.cpf || !newAdmin.phone || !newAdmin.birth_date) {
+      toast.error("Por favor, preencha todos os campos obrigatórios");
+      return;
+    }
+
+    try {
+      // Capturar informações do dispositivo e geolocalização
+      const deviceInfo = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        screenWidth: window.screen.width,
+        screenHeight: window.screen.height,
+        deviceType: /mobile/i.test(navigator.userAgent) ? 'Mobile' : /tablet/i.test(navigator.userAgent) ? 'Tablet' : 'Desktop',
+        browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : 
+                 navigator.userAgent.includes('Firefox') ? 'Firefox' : 
+                 navigator.userAgent.includes('Safari') ? 'Safari' : 
+                 navigator.userAgent.includes('Edge') ? 'Edge' : 'Outro',
+        os: navigator.platform.includes('Win') ? 'Windows' : 
+            navigator.platform.includes('Mac') ? 'macOS' : 
+            navigator.platform.includes('Linux') ? 'Linux' : 
+            /android/i.test(navigator.userAgent) ? 'Android' : 
+            /iphone|ipad|ipod/i.test(navigator.userAgent) ? 'iOS' : 'Outro',
+      };
+
+      // Tentar obter geolocalização
+      let geoData: { latitude?: number; longitude?: number } = {};
+      if (navigator.geolocation) {
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0,
+            });
+          });
+          geoData = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+        } catch (geoError) {
+          console.warn("Geolocalização não disponível:", geoError);
+        }
+      }
+
+      // Upload de foto se houver
+      let photoUrl = null;
+      if (newAdmin.profile_photo) {
+        const formData = new FormData();
+        formData.append('file', newAdmin.profile_photo);
+        formData.append('folder', 'admin-profiles');
+        
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          photoUrl = uploadData.url;
+        }
+      }
+
+      // Criar admin via API
+      const response = await fetch("/api/admin/create-admin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: newAdmin.email,
+          password: newAdmin.password,
+          full_name: newAdmin.full_name,
+          cpf: newAdmin.cpf.replace(/[^\d]/g, ""),
+          phone: newAdmin.phone.replace(/[^\d]/g, ""),
+          birth_date: newAdmin.birth_date,
+          profile_photo_url: photoUrl,
+          latitude: geoData.latitude,
+          longitude: geoData.longitude,
+          device_type: deviceInfo.deviceType,
+          device_browser: deviceInfo.browser,
+          device_os: deviceInfo.os,
+          device_platform: deviceInfo.platform,
+          device_language: deviceInfo.language,
+          device_screen: `${deviceInfo.screenWidth}x${deviceInfo.screenHeight}`,
+          device_user_agent: deviceInfo.userAgent,
+          role: 'admin',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao criar admin");
+      }
+
+      toast.success("Admin criado com sucesso!");
+      setShowCreateAdmin(false);
+      setNewAdmin({
+        email: "",
+        password: "",
+        full_name: "",
+        cpf: "",
+        phone: "",
+        birth_date: "",
+        profile_photo: null,
+      });
+      loadAccessLogs();
+    } catch (error) {
+      console.error("Erro ao criar admin:", error);
+      toast.error(error instanceof Error ? error.message : "Erro ao criar admin");
+    }
+  };
+
+  const createUser = async () => {
+    if (!newUser.email || !newUser.password || !newUser.full_name) {
+      toast.error("Por favor, preencha pelo menos: E-mail, Senha e Nome Completo");
+      return;
+    }
+
+    try {
+      // Criar usuário via API usando Service Role Key
+      const response = await fetch("/api/admin/create-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: newUser.email,
+          password: newUser.password,
+          user_metadata: {
+            full_name: newUser.full_name,
+            cpf: newUser.cpf.replace(/[^\d]/g, ""),
+            phone: newUser.phone.replace(/[^\d]/g, ""),
+            birth_date: newUser.birth_date,
+            termos_aceitos: true,
+            data_aceite_termos: new Date().toISOString(),
+          },
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao criar usuário");
+      }
+
+      toast.success("Usuário criado com sucesso!");
+      setShowCreateUser(false);
+      setNewUser({
+        email: "",
+        password: "",
+        full_name: "",
+        cpf: "",
+        phone: "",
+        birth_date: "",
+      });
+      loadDashboardData();
+    } catch (error) {
+      console.error("Erro ao criar usuário:", error);
+      toast.error(error instanceof Error ? error.message : "Erro ao criar usuário");
+    }
+  };
+
   const exportToCSV = () => {
     const headers = [
       "Nome", 
@@ -392,20 +638,42 @@ export default function DashboardAdmin() {
               </div>
             </div>
             <div className="flex gap-3">
+              {activeTab === "usuarios" && (
+                <Button
+                  onClick={() => setShowCreateUser(true)}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Criar Usuário
+                </Button>
+              )}
               <Button
-                onClick={loadDashboardData}
+                onClick={activeTab === "usuarios" ? loadDashboardData : loadAccessLogs}
                 className="bg-white/20 hover:bg-white/30 backdrop-blur-sm"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar
               </Button>
-              <Button
-                onClick={exportToCSV}
-                className="bg-[#2BA84A] hover:bg-[#229639]"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Exportar CSV
-              </Button>
+              {activeTab === "usuarios" && (
+                <Button
+                  onClick={exportToCSV}
+                  className="bg-[#2BA84A] hover:bg-[#229639]"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar CSV
+                </Button>
+              )}
+              {onLogout && (
+                <Button
+                  onClick={onLogout}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Sair
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -501,21 +769,50 @@ export default function DashboardAdmin() {
           </div>
         </div>
 
-        {/* Filtros e Busca */}
+        {/* Tabs Usuários/Admin */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* Busca */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  placeholder="Buscar por nome, e-mail ou CPF..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-12"
-                />
-              </div>
-            </div>
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={() => setActiveTab("usuarios")}
+              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
+                activeTab === "usuarios"
+                  ? "bg-gradient-to-r from-[#0A4B9E] to-[#083A7A] text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Users className="h-5 w-5 inline mr-2" />
+              Usuários
+            </button>
+            <button
+              onClick={() => setActiveTab("admin")}
+              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all ${
+                activeTab === "admin"
+                  ? "bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              <Shield className="h-5 w-5 inline mr-2" />
+              Admin
+            </button>
+          </div>
+
+          {/* Conteúdo baseado na tab ativa */}
+          {activeTab === "usuarios" ? (
+            <>
+              {/* Filtros e Busca */}
+              <div className="flex flex-col md:flex-row gap-4">
+                {/* Busca */}
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <Input
+                      placeholder="Buscar por nome, e-mail ou CPF..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 h-12"
+                    />
+                  </div>
+                </div>
 
             {/* Filtros de Período */}
             <div className="flex gap-2">
@@ -550,14 +847,128 @@ export default function DashboardAdmin() {
             </div>
           </div>
 
-          <div className="mt-4 text-sm text-gray-600">
-            Exibindo <span className="font-semibold text-[#0A4B9E]">{filteredUsers.length}</span> de{" "}
-            <span className="font-semibold">{stats.totalUsers}</span> usuários
-          </div>
+              <div className="mt-4 text-sm text-gray-600">
+                Exibindo <span className="font-semibold text-[#0A4B9E]">{filteredUsers.length}</span> de{" "}
+                <span className="font-semibold">{stats.totalUsers}</span> usuários
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Seção Admin - Logs de Acesso */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-800">Logs de Acesso - Admin e Prestadores</h3>
+                <Button
+                  onClick={() => setShowCreateAdmin(true)}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Criar Admin
+                </Button>
+              </div>
+
+              {loadingLogs ? (
+                <div className="text-center py-12">
+                  <RefreshCw className="h-8 w-8 text-gray-400 animate-spin mx-auto mb-4" />
+                  <p className="text-gray-600">Carregando logs...</p>
+                </div>
+              ) : accessLogs.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                  <Shield className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-lg font-semibold text-gray-700 mb-2">Nenhum log de acesso encontrado</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    {accessLogs.length === 0 && !loadingLogs
+                      ? "Execute as migrations SQL no Supabase para criar a tabela admin_access_logs"
+                      : "Os logs de acesso aparecerão aqui após o primeiro login de um admin"}
+                  </p>
+                  <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200 max-w-md mx-auto">
+                    <p className="text-xs text-blue-800 text-left">
+                      <strong>Importante:</strong> Para que os logs funcionem, execute as migrations SQL:
+                      <br />
+                      <code className="text-xs">20251118000001_admin_system.sql</code>
+                      <br />
+                      <code className="text-xs">20251118000002_insert_ultra_admin.sql</code>
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gradient-to-r from-purple-600 to-purple-700 text-white">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Admin</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">E-mail</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Data/Hora</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">IP</th>
+                          <th className="px-6 py-4 text-left text-sm font-semibold">Dispositivo</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Localização</th>
+                          <th className="px-6 py-4 text-center text-sm font-semibold">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {accessLogs.map((log, index) => (
+                          <tr
+                            key={log.id}
+                            className={`hover:bg-purple-50 transition-colors ${
+                              index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                            }`}
+                          >
+                            <td className="px-6 py-4">
+                              <div className="font-medium text-gray-900">{log.admin_name}</div>
+                            </td>
+                            <td className="px-6 py-4 text-gray-700">{log.admin_email}</td>
+                            <td className="px-6 py-4 text-gray-700 text-sm">
+                              {new Date(log.access_timestamp).toLocaleString("pt-BR")}
+                            </td>
+                            <td className="px-6 py-4 text-gray-700 font-mono text-sm">{log.ip_address || "N/D"}</td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm">
+                                <div className="font-medium">{log.device_type || "N/D"}</div>
+                                <div className="text-gray-500 text-xs">{log.device_os} • {log.device_browser}</div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              {log.latitude && log.longitude ? (
+                                <a
+                                  href={`https://www.google.com/maps?q=${log.latitude},${log.longitude}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                                >
+                                  <MapPin className="h-3 w-3" />
+                                  Ver Mapa
+                                </a>
+                              ) : (
+                                <span className="text-xs text-gray-400">N/D</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              {log.login_successful ? (
+                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                  <UserCheck className="h-3 w-3" />
+                                  Sucesso
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                                  <Shield className="h-3 w-3" />
+                                  Falhou
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
-        {/* Tabela de Usuários */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        {/* Tabela de Usuários - Apenas quando tab Usuários está ativa */}
+        {activeTab === "usuarios" && (
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-[#0A4B9E] to-[#083A7A] text-white">
@@ -626,6 +1037,7 @@ export default function DashboardAdmin() {
             </table>
           </div>
         </div>
+        )}
       </div>
 
       {/* Modal de Detalhes do Usuário */}
@@ -930,6 +1342,403 @@ export default function DashboardAdmin() {
                   className="bg-gray-900 hover:bg-gray-800 text-white px-8 py-2.5 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
                 >
                   Fechar
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Criar Usuário */}
+      {showCreateUser && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCreateUser(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <User className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Criar Novo Usuário</h2>
+                    <p className="text-purple-100 text-sm">Preencha os dados do novo usuário</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCreateUser(false)}
+                  className="text-white/80 hover:text-white hover:bg-white/20 rounded-xl p-2 transition-all"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Conteúdo */}
+            <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+              <div className="space-y-6">
+                {/* E-mail */}
+                <div>
+                  <Label htmlFor="new-email" className="text-gray-700 font-semibold mb-2 block">
+                    E-mail *
+                  </Label>
+                  <Input
+                    id="new-email"
+                    type="email"
+                    placeholder="usuario@email.com"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Senha */}
+                <div>
+                  <Label htmlFor="new-password" className="text-gray-700 font-semibold mb-2 block">
+                    Senha *
+                  </Label>
+                  <Input
+                    id="new-password"
+                    type="password"
+                    placeholder="Mínimo 6 caracteres"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    required
+                    minLength={6}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Nome Completo */}
+                <div>
+                  <Label htmlFor="new-name" className="text-gray-700 font-semibold mb-2 block">
+                    Nome Completo *
+                  </Label>
+                  <Input
+                    id="new-name"
+                    type="text"
+                    placeholder="Nome completo do usuário"
+                    value={newUser.full_name}
+                    onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* CPF */}
+                <div>
+                  <Label htmlFor="new-cpf" className="text-gray-700 font-semibold mb-2 block">
+                    CPF
+                  </Label>
+                  <Input
+                    id="new-cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={newUser.cpf}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                        setNewUser({ ...newUser, cpf: value });
+                      }
+                    }}
+                    maxLength={14}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Telefone */}
+                <div>
+                  <Label htmlFor="new-phone" className="text-gray-700 font-semibold mb-2 block">
+                    Telefone
+                  </Label>
+                  <Input
+                    id="new-phone"
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    value={newUser.phone}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 11) {
+                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+                        setNewUser({ ...newUser, phone: value });
+                      }
+                    }}
+                    maxLength={15}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Data de Nascimento */}
+                <div>
+                  <Label htmlFor="new-birth" className="text-gray-700 font-semibold mb-2 block">
+                    Data de Nascimento
+                  </Label>
+                  <Input
+                    id="new-birth"
+                    type="text"
+                    placeholder="DD/MM/AAAA"
+                    value={newUser.birth_date}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 8) {
+                        value = value.replace(/(\d{2})(\d{2})(\d{4})/, "$1/$2/$3");
+                        setNewUser({ ...newUser, birth_date: value });
+                      }
+                    }}
+                    maxLength={10}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-200 bg-white px-8 py-5">
+              <div className="flex items-center justify-end gap-3">
+                <Button
+                  onClick={() => setShowCreateUser(false)}
+                  variant="outline"
+                  className="px-6"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={createUser}
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8"
+                >
+                  Criar Usuário
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Criar Admin */}
+      {showCreateAdmin && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowCreateAdmin(false);
+            }
+          }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-8 py-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                    <Shield className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Criar Novo Admin</h2>
+                    <p className="text-purple-100 text-sm">Preencha todos os dados do novo administrador</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowCreateAdmin(false)}
+                  className="text-white/80 hover:text-white hover:bg-white/20 rounded-xl p-2 transition-all"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Conteúdo */}
+            <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+              <div className="space-y-6">
+                {/* Foto de Perfil */}
+                <div>
+                  <Label className="text-gray-700 font-semibold mb-2 block">
+                    Foto de Perfil
+                  </Label>
+                  <div className="flex items-center gap-4">
+                    {newAdmin.profile_photo ? (
+                      <img
+                        src={URL.createObjectURL(newAdmin.profile_photo)}
+                        alt="Preview"
+                        className="w-24 h-24 rounded-full object-cover border-4 border-purple-200"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center border-4 border-purple-200">
+                        <User className="h-12 w-12 text-white" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setNewAdmin({ ...newAdmin, profile_photo: file });
+                          }
+                        }}
+                        className="h-12 rounded-xl"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, GIF (máx. 5MB)</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Nome Completo */}
+                <div>
+                  <Label htmlFor="admin-name" className="text-gray-700 font-semibold mb-2 block">
+                    Nome Completo *
+                  </Label>
+                  <Input
+                    id="admin-name"
+                    type="text"
+                    placeholder="Nome completo do administrador"
+                    value={newAdmin.full_name}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, full_name: e.target.value })}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* CPF */}
+                <div>
+                  <Label htmlFor="admin-cpf" className="text-gray-700 font-semibold mb-2 block">
+                    CPF *
+                  </Label>
+                  <Input
+                    id="admin-cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={newAdmin.cpf}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 11) {
+                        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+                        setNewAdmin({ ...newAdmin, cpf: value });
+                      }
+                    }}
+                    maxLength={14}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Data de Nascimento */}
+                <div>
+                  <Label htmlFor="admin-birth" className="text-gray-700 font-semibold mb-2 block">
+                    Data de Nascimento *
+                  </Label>
+                  <Input
+                    id="admin-birth"
+                    type="text"
+                    placeholder="DD/MM/AAAA"
+                    value={newAdmin.birth_date}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 8) {
+                        value = value.replace(/(\d{2})(\d{2})(\d{4})/, "$1/$2/$3");
+                        setNewAdmin({ ...newAdmin, birth_date: value });
+                      }
+                    }}
+                    maxLength={10}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* E-mail */}
+                <div>
+                  <Label htmlFor="admin-email" className="text-gray-700 font-semibold mb-2 block">
+                    E-mail *
+                  </Label>
+                  <Input
+                    id="admin-email"
+                    type="email"
+                    placeholder="admin@email.com"
+                    value={newAdmin.email}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Telefone */}
+                <div>
+                  <Label htmlFor="admin-phone" className="text-gray-700 font-semibold mb-2 block">
+                    Telefone Celular *
+                  </Label>
+                  <Input
+                    id="admin-phone"
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    value={newAdmin.phone}
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length <= 11) {
+                        value = value.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+                        setNewAdmin({ ...newAdmin, phone: value });
+                      }
+                    }}
+                    maxLength={15}
+                    required
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Senha */}
+                <div>
+                  <Label htmlFor="admin-password" className="text-gray-700 font-semibold mb-2 block">
+                    Senha *
+                  </Label>
+                  <Input
+                    id="admin-password"
+                    type="password"
+                    placeholder="Mínimo 6 caracteres"
+                    value={newAdmin.password}
+                    onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
+                    required
+                    minLength={6}
+                    className="h-12 rounded-xl"
+                  />
+                </div>
+
+                {/* Aviso sobre captura de dados */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <p className="text-sm text-blue-800">
+                    <Shield className="h-4 w-4 inline mr-1" />
+                    Ao criar o admin, serão capturados automaticamente: geolocalização, dispositivo, sistema operacional, navegador e outras informações de segurança.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="border-t border-gray-200 bg-white px-8 py-5">
+              <div className="flex items-center justify-end gap-3">
+                <Button
+                  onClick={() => setShowCreateAdmin(false)}
+                  variant="outline"
+                  className="px-6"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={createAdmin}
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8"
+                >
+                  Criar Admin
                 </Button>
               </div>
             </div>

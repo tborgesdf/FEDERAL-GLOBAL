@@ -8,14 +8,16 @@ import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
 import DashboardAdmin from "./components/DashboardAdmin";
+import AdminLogin from "./components/AdminLogin";
 import CurrencyCalculatorPage from "./pages/CurrencyCalculatorPage";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator" | "admin">("home");
+  const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator" | "admin" | "admin-login">("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
 
   // Verificar se há sessão ativa ao carregar
   useEffect(() => {
@@ -27,25 +29,69 @@ export default function App() {
       setCurrentPage("dashboard");
     }
 
+    // Verificar autenticação admin
+    const adminAuth = localStorage.getItem("admin_authenticated");
+    const adminTimestamp = localStorage.getItem("admin_timestamp");
+    if (adminAuth === "true" && adminTimestamp) {
+      // Verificar se a sessão não expirou (24 horas)
+      const timestamp = new Date(adminTimestamp).getTime();
+      const now = new Date().getTime();
+      const hoursDiff = (now - timestamp) / (1000 * 60 * 60);
+      
+      if (hoursDiff < 24) {
+        setIsAdminAuthenticated(true);
+      } else {
+        // Sessão expirada
+        localStorage.removeItem("admin_authenticated");
+        localStorage.removeItem("admin_email");
+        localStorage.removeItem("admin_role");
+        localStorage.removeItem("admin_timestamp");
+      }
+    }
+
     // Verificar hash na URL para acesso direto
     const hash = window.location.hash.replace('#', '');
     if (hash === 'admin') {
-      setCurrentPage('admin');
+      if (isAdminAuthenticated) {
+        setCurrentPage('admin');
+      } else {
+        setCurrentPage('admin-login');
+      }
     }
-  }, []);
+  }, [isAdminAuthenticated]);
 
   // Listener para mudanças no hash da URL
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (hash === 'admin') {
-        setCurrentPage('admin');
+        const adminAuth = localStorage.getItem("admin_authenticated");
+        if (adminAuth === "true") {
+          setIsAdminAuthenticated(true);
+          setCurrentPage('admin');
+        } else {
+          setCurrentPage('admin-login');
+        }
       }
     };
 
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  const handleAdminLoginSuccess = () => {
+    setIsAdminAuthenticated(true);
+    setCurrentPage('admin');
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_email");
+    localStorage.removeItem("admin_role");
+    localStorage.removeItem("admin_timestamp");
+    setIsAdminAuthenticated(false);
+    setCurrentPage('home');
+  };
 
   const handleLoginSuccess = (email: string) => {
     setIsLoggedIn(true);
@@ -257,8 +303,20 @@ export default function App() {
         />
       ) : currentPage === "calculator" ? (
         <CurrencyCalculatorPage />
+      ) : currentPage === "admin-login" ? (
+        <AdminLogin 
+          onLoginSuccess={handleAdminLoginSuccess}
+          onBack={() => setCurrentPage("home")}
+        />
       ) : currentPage === "admin" ? (
-        <DashboardAdmin />
+        isAdminAuthenticated ? (
+          <DashboardAdmin onLogout={handleAdminLogout} />
+        ) : (
+          <AdminLogin 
+            onLoginSuccess={handleAdminLoginSuccess}
+            onBack={() => setCurrentPage("home")}
+          />
+        )
       ) : (
         <Dashboard 
           onLogout={handleLogout}
