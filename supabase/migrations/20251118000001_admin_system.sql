@@ -20,11 +20,17 @@ CREATE TABLE IF NOT EXISTS admins (
     
     -- Dados do dispositivo (primeiro acesso)
     device_type VARCHAR(50),
-    device_browser VARCHAR(50),
-    device_os VARCHAR(50),
+    device_brand VARCHAR(50),
+    device_model VARCHAR(100),
+    device_full_name VARCHAR(150),
+    device_browser VARCHAR(100),
+    device_os VARCHAR(100),
     device_platform VARCHAR(100),
     device_language VARCHAR(10),
     device_screen VARCHAR(20),
+    device_breakpoint VARCHAR(10),
+    device_is_touch BOOLEAN,
+    device_is_retina BOOLEAN,
     device_user_agent TEXT,
     
     -- Metadados
@@ -59,11 +65,17 @@ CREATE TABLE IF NOT EXISTS admin_access_logs (
     
     -- Dados do dispositivo
     device_type VARCHAR(50),
-    device_browser VARCHAR(50),
-    device_os VARCHAR(50),
+    device_brand VARCHAR(50),
+    device_model VARCHAR(100),
+    device_full_name VARCHAR(150),
+    device_browser VARCHAR(100),
+    device_os VARCHAR(100),
     device_platform VARCHAR(100),
     device_language VARCHAR(10),
     device_screen VARCHAR(20),
+    device_breakpoint VARCHAR(10),
+    device_is_touch BOOLEAN,
+    device_is_retina BOOLEAN,
     
     -- Tipo de conexão
     connection_type VARCHAR(20),

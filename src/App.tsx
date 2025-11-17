@@ -12,6 +12,7 @@ import AdminLogin from "./components/AdminLogin";
 import CurrencyCalculatorPage from "./pages/CurrencyCalculatorPage";
 import { useState, useEffect } from "react";
 import { Toaster } from "sonner";
+import DeviceInfoDisplay from "./components/DeviceInfoDisplay";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<"home" | "register" | "login" | "dashboard" | "calculator" | "admin" | "admin-login">("home");
@@ -238,6 +239,9 @@ export default function App() {
   return (
     <>
       <Toaster position="top-right" richColors />
+      
+      {/* Componente de Informações do Dispositivo (apenas em desenvolvimento) */}
+      {import.meta.env.DEV && <DeviceInfoDisplay />}
       
       {/* Botão Flutuante de Acesso ao Dashboard Admin */}
       {currentPage !== "admin" && (

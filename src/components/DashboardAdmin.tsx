@@ -398,24 +398,9 @@ export default function DashboardAdmin({ onLogout }: DashboardAdminProps) {
     }
 
     try {
-      // Capturar informações do dispositivo e geolocalização
-      const deviceInfo = {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        screenWidth: window.screen.width,
-        screenHeight: window.screen.height,
-        deviceType: /mobile/i.test(navigator.userAgent) ? 'Mobile' : /tablet/i.test(navigator.userAgent) ? 'Tablet' : 'Desktop',
-        browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : 
-                 navigator.userAgent.includes('Firefox') ? 'Firefox' : 
-                 navigator.userAgent.includes('Safari') ? 'Safari' : 
-                 navigator.userAgent.includes('Edge') ? 'Edge' : 'Outro',
-        os: navigator.platform.includes('Win') ? 'Windows' : 
-            navigator.platform.includes('Mac') ? 'macOS' : 
-            navigator.platform.includes('Linux') ? 'Linux' : 
-            /android/i.test(navigator.userAgent) ? 'Android' : 
-            /iphone|ipad|ipod/i.test(navigator.userAgent) ? 'iOS' : 'Outro',
-      };
+      // Capturar informações do dispositivo usando detecção avançada
+      const { detectDevice } = await import('@/utils/deviceDetection');
+      const deviceInfo = detectDevice();
 
       // Tentar obter geolocalização
       let geoData: { latitude?: number; longitude?: number } = {};
@@ -471,13 +456,19 @@ export default function DashboardAdmin({ onLogout }: DashboardAdminProps) {
           profile_photo_url: photoUrl,
           latitude: geoData.latitude,
           longitude: geoData.longitude,
-          device_type: deviceInfo.deviceType,
-          device_browser: deviceInfo.browser,
-          device_os: deviceInfo.os,
+          device_type: deviceInfo.type,
+          device_browser: `${deviceInfo.browser} ${deviceInfo.browserVersion}`,
+          device_os: `${deviceInfo.os} ${deviceInfo.osVersion}`,
           device_platform: deviceInfo.platform,
           device_language: deviceInfo.language,
-          device_screen: `${deviceInfo.screenWidth}x${deviceInfo.screenHeight}`,
+          device_screen: deviceInfo.screenResolution,
           device_user_agent: deviceInfo.userAgent,
+          device_brand: deviceInfo.brand,
+          device_model: deviceInfo.model,
+          device_full_name: deviceInfo.fullName,
+          device_breakpoint: deviceInfo.breakpoint,
+          device_is_touch: deviceInfo.isTouchDevice,
+          device_is_retina: deviceInfo.isRetina,
           role: 'admin',
         }),
       });
