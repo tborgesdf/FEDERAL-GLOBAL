@@ -58,7 +58,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // 4. Validações básicas
-    const checks = {
+    const checks: {
+      min_width: boolean;
+      min_height: boolean;
+      aspect_ratio: boolean;
+      file_size: boolean;
+      format: boolean;
+      not_blurry?: boolean;
+    } = {
       min_width: metadata.width >= 640,
       min_height: metadata.height >= 480,
       aspect_ratio: checkAspectRatio(metadata.width, metadata.height),
@@ -72,7 +79,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .stats();
     
     const blurScore = calculateBlurScore(stats);
-    checks['not_blurry'] = blurScore > 0.3; // Threshold simples
+    checks.not_blurry = blurScore > 0.3; // Threshold simples
 
     // 6. Calcular score geral
     const passedChecks = Object.values(checks).filter(Boolean).length;
